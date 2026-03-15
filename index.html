@@ -1,0 +1,2869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
+    <title>My Phone - 虚拟手机</title>
+    <!-- 引入 Remix Icon 打造高级感图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style id="global-font-style"></style>
+    <style>
+        :root {
+            --bg-color: #000;
+            --text-main: #070707;
+            --btn-light-bg: #f2f2f7; 
+            --safe-bottom: env(safe-area-inset-bottom);
+            --base-font-size: 16px; 
+        }
+
+        /* 1. 基础设置 - 锁死滚动 */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            font-size: var(--base-font-size); 
+            background-color: transparent; 
+            color: var(--text-main);
+            position: fixed; 
+            inset: 0;
+            touch-action: none;
+        }
+
+        /* 2. 壁纸 */
+        #wallpaper-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -999;
+            background-color: #111;
+            background-image: url('https://placehold.co/430x932/1a1a1a/FFF?text=Wallpaper');
+            background-size: cover; background-position: center;
+        }
+        #wallpaper-layer::after {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(0,0,0,0.1); pointer-events: none;
+        }
+
+        /* 3. 主容器 */
+        #app-root {
+            position: relative; width: 100%; max-width: 430px; margin: 0 auto; height: 100%;
+            display: flex; flex-direction: column; overflow: hidden;
+            z-index: 1;
+        }
+
+        /* === 布局：静态无滚动 === */
+        .scroll-viewport {
+            flex: 1; 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+            width: 100%;
+            padding-bottom: 0; 
+        }
+
+        .top-section { padding: 40px 24px 5px; flex-shrink: 0; }
+        
+        .timestamp-label {
+            text-align: center; font-size: 14px; 
+            color: rgba(255, 255, 255, 0.85); 
+            font-weight: 500; margin-bottom: 15px; 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .ios-bubble-wrapper {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 12px 20px; 
+            border-radius: 24px; border-bottom-left-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 15px; 
+            max-width: 85%;
+        }
+        .mood-input {
+            border: none; background: transparent; outline: none;
+            font-size: 15px; color: #111; width: 100%; resize: none; 
+            font-family: inherit; line-height: 1.5; padding: 0;
+        }
+
+        .hero-complex {
+            display: flex; align-items: center; justify-content: flex-end;
+            gap: 12px; margin-bottom: 15px; padding-right: 5px;
+            min-height: 180px; 
+        }
+        
+        .send-btn-styled {
+            width: 40px; height: 40px;
+            background: var(--btn-light-bg);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            color: #333; cursor: pointer; transition: transform 0.1s;
+            flex-shrink: 0;
+        }
+        .send-btn-styled:active { transform: scale(0.95); }
+        .send-icon-svg { 
+            width: 18px; height: 18px; fill: currentColor; 
+            transform: rotate(-45deg) translate(2px, -1px);
+        }
+
+        .hero-img-box {
+            width: 140px; height: 190px; border-radius: 26px; border-bottom-right-radius: 6px;
+            overflow: hidden; background: rgba(255,255,255,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15); cursor: pointer;
+            flex-shrink: 0;
+        }
+        .hero-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .capsule-section { padding: 0 24px; margin-bottom: 25px; flex-shrink: 0; }
+        .capsule {
+            height: 54px; border-radius: 27px;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(20px);
+            display: flex; align-items: center; padding: 0 8px 0 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+        .capsule input {
+            flex: 1; border: none; background: transparent; outline: none;
+            font-size: 15px; color: #111; margin-right: 8px; min-width: 0;
+        }
+        .capsule-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .c-icon { width: 20px; height: 20px; stroke: #333; stroke-width: 1.8; fill: none; flex-shrink: 0; }
+        .c-btn-black {
+            width: 36px; height: 36px; background: #000; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            flex-shrink: 0; margin-right: 2px;
+        }
+
+        .content-body {
+            display: flex; padding: 0 24px; align-items: flex-start; margin-top: 5px; 
+        }
+        .left-col {
+            width: 38%; display: flex; flex-direction: column; align-items: center; padding-top: 10px;
+        }
+        .avatar {
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+            margin-bottom: 12px; border: 4px solid rgba(255,255,255,0.85);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); cursor: pointer;
+        }
+        .username {
+            font-size: 16px; font-weight: 700; text-align: center; color: #fff; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4); margin-bottom: 8px; 
+            width: 100%; border: none; background: transparent; outline: none; cursor: pointer;
+        }
+        .status-pill {
+            background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 14px;
+            font-size: 11px; color: #fff; font-weight: 500;
+            backdrop-filter: blur(10px); outline: none; border: 1px solid rgba(255,255,255,0.15); cursor: pointer;
+        }
+
+        .right-grid {
+            width: 62%; display: grid; grid-template-columns: 1fr 1fr;
+            gap: 50px 15px; padding-left: 15px;
+        }
+        .app-item {
+            width: 62px; height: 62px; border-radius: 18px; margin: 0 auto;
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .app-svg { width: 24px; height: 24px; stroke: #111; stroke-width: 1.5; fill: none; z-index: 2; }
+        .app-img-cover {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; border-radius: 18px; z-index: 10;
+        }
+        .app-label {
+            position: absolute; bottom: -22px; width: 200%; left: -50%; 
+            text-align: center; font-size: 11px; color: rgba(255,255,255,0.95); font-weight: 500;
+            pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+        }
+
+        /* === 搜索栏 (完美间隔) === */
+        .search-bar-container {
+            position: absolute; 
+            bottom: calc(100px + var(--safe-bottom)); 
+            left: 50%; transform: translateX(-50%);
+            width: 80px; height: 28px;
+            background: rgba(255,255,255,0.25); backdrop-filter: blur(15px);
+            border-radius: 14px; 
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); color: #fff;
+            font-size: 12px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            z-index: 20; 
+            pointer-events: none; 
+        }
+
+        /* Dock */
+        .dock-container {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            display: flex; justify-content: center; align-items: center; gap: 25px; 
+            padding: 15px 0 calc(25px + var(--safe-bottom));
+            background: linear-gradient(to top, rgba(0,0,0,0.3), transparent); 
+            z-index: 30;
+        }
+        .dock-icon {
+            width: 52px; height: 52px; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 16px; position: relative;
+            background: rgba(255,255,255,0.3); backdrop-filter: blur(20px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .dock-svg { width: 26px; height: 26px; stroke: #fff; stroke-width: 1.6; fill: none; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));}
+        .dock-img-cover { width: 100%; height: 100%; object-fit: cover; }
+        
+        .dock-icon.has-img .dock-svg, .app-item.has-img .app-svg { display: none !important; }
+        .dock-icon.has-img .dock-img-cover { position: absolute; top: 0; left: 0; border-radius: 16px; }
+
+        /* === 页面层 (无动画版) === */
+        .page-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f5f5f7; z-index: 1000;
+            flex-direction: column;
+            display: none; 
+        }
+        .page-layer.visible { 
+            display: flex; 
+        }
+        
+        .nav-header {
+            height: 50px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05); flex-shrink: 0; 
+            font-weight: 600; font-size: 16px; color: #000;
+            padding-top: env(safe-area-inset-top); position: relative;
+        }
+        .nav-btn {
+            position: absolute; height: 50px; width: 50px; bottom: 0;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #000;
+        }
+        .nav-left { left: 0; } .nav-right { right: 0; }
+        .icon-svg-btn { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; }
+        
+        .scroll-content { 
+            flex: 1; overflow-y: auto; padding: 25px 20px; 
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .group-header {
+            font-size: 13px; color: #888; margin: 25px 0 8px 10px;
+            font-weight: 600; letter-spacing: 0.5px;
+        }
+
+        .ipt-std { 
+            width: 100%; padding: 14px; border: none; border-radius: 14px; 
+            font-size: 15px; background: #fff; margin-bottom: 12px; outline: none; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .btn-std { 
+            width: 100%; padding: 14px; background: #000; color: #fff; 
+            border: none; border-radius: 14px; font-weight: 600; font-size: 15px; 
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn-sec { background: #fff; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .btn-danger { background: #ff3b30; color: #fff; }
+
+        .list-item { 
+            background: #fff; padding: 12px 15px; border-radius: 16px; margin-bottom: 12px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
+        }
+        .list-img-preview { width: 44px; height: 44px; border-radius: 12px; background: #eee; object-fit: cover; margin-right: 15px; border: 1px solid #f0f0f0;}
+        
+        /* 弹窗通用 (iOS 风格优化) */
+        .modal-mask {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9999; 
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.2s; backdrop-filter: blur(8px);
+        }
+        .modal-mask.show { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: rgba(255,255,255,0.95); width: 80%; max-width: 300px; 
+            padding: 20px; border-radius: 20px;
+            display: flex; flex-direction: column; gap: 15px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+        .modal-box h3 { margin-bottom: 5px; font-weight: 600; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .modal-btns button { flex: 1; }
+        .url-input-row { display: flex; gap: 8px; }
+        .url-input-row input { flex: 1; padding: 10px; border: 1px solid #eee; border-radius: 10px; outline: none; background: #f9f9f9; }
+        
+        /* Toast */
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); color: #fff; padding: 8px 16px;
+            border-radius: 20px; font-size: 12px; z-index: 3000;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        #toast.show { opacity: 1; }
+
+
+/* ============================================== */
+        /* Ins-Style Chat App 专属样式 */
+        /* ============================================== */
+        #app-chat-root { background: #fff; z-index: 1000; display: none; }
+        #app-chat-root.visible { display: flex; }
+        
+        .ins-header {
+            padding: calc(env(safe-area-inset-top) + 10px) 20px 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            border-bottom: 0.5px solid #E5E5EA; z-index: 50; flex-shrink: 0;
+        }
+        .ins-header-title { font-size: 24px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
+        .ins-btn { font-size: 26px; color: #111; cursor: pointer; transition: opacity 0.2s; }
+        .ins-btn:active { opacity: 0.5; }
+
+        .ins-main-view { flex: 1; overflow-y: auto; background: #fff; padding-bottom: 80px; }
+        .ins-main-view::-webkit-scrollbar { display: none; }
+        .ins-page { display: none; animation: fadeIn 0.3s ease; }
+        .ins-page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 底部 TabBar */
+        .ins-tab-bar {
+            position: absolute; bottom: 0; width: 100%; height: calc(56px + var(--safe-bottom));
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border-top: 0.5px solid #E5E5EA; display: flex; justify-content: space-around; padding-top: 8px; z-index: 100;
+        }
+        .ins-tab-item { width: 60px; text-align: center; color: #999; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
+        .ins-tab-item i { font-size: 26px; }
+        .ins-tab-item.active { color: #000; transform: translateY(-3px); }
+
+        /* 列表项 (Chats & Contacts) */
+        .ins-row { display: flex; padding: 12px 20px; align-items: center; transition: background 0.2s; cursor: pointer;}
+        .ins-row:active { background: #f9f9f9; }
+        .ins-avatar { width: 56px; height: 56px; border-radius: 50%; margin-right: 15px; object-fit: cover; border: 0.5px solid rgba(0,0,0,0.05); }
+        .ins-row-meta { flex: 1; min-width: 0; }
+        .ins-name { font-weight: 600; font-size: 16px; color: #111; margin-bottom: 4px; }
+        .ins-sub { font-size: 13px; color: #8E8E93; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 动态 Feed */
+        .ins-post { border-bottom: 0.5px solid #E5E5EA; padding-bottom: 15px; margin-bottom: 10px; }
+        .ins-post-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .ins-post-author { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; }
+        .ins-post-author img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .ins-post-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #f5f5f5; }
+        .ins-post-actions { padding: 12px 15px; display: flex; gap: 16px; font-size: 24px; }
+        .ins-post-content { padding: 0 15px; font-size: 14px; color: #111; line-height: 1.5; }
+        .ins-post-tags { padding: 5px 15px 0; font-size: 12px; color: #007AFF; font-weight: 500; }
+        .ins-post-loc { font-size: 11px; color: #999; display: flex; align-items: center; gap: 4px; }
+
+        /* 底部抽屉模态框 (Bottom Sheet) */
+        .ins-sheet-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9000; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; align-items: flex-end; }
+        .ins-sheet-mask.show { opacity: 1; pointer-events: auto; }
+        .ins-sheet-body { background: #fff; width: 100%; height: 90vh; border-radius: 20px 20px 0 0; transform: translateY(100%); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; overflow: hidden; }
+        .ins-sheet-mask.show .ins-sheet-body { transform: translateY(0); }
+        .ins-sheet-top { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid #eee; font-weight: 600; }
+        .ins-sheet-content { flex: 1; overflow-y: auto; padding: 20px; }
+
+        .ins-input-wrap { margin-bottom: 20px; }
+        .ins-label { font-size: 12px; color: #8E8E93; font-weight: 600; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
+        .ins-input { width: 100%; padding: 14px; background: #F2F2F7; border: none; border-radius: 12px; font-size: 15px; outline: none; transition: 0.2s; }
+        .ins-input:focus { background: #E5E5EA; }
+
+        /* 选择器横向滚动 */
+        .ins-picker-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
+        .ins-picker-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 60px; cursor: pointer; flex-shrink: 0; opacity: 0.5; transition: 0.2s;}
+        .ins-picker-item.selected { opacity: 1; }
+        .ins-picker-item img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid transparent; }
+        .ins-picker-item.selected img { border-color: #007AFF; padding: 2px; }
+        .ins-picker-item span { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+        
+        
+/* --- Favorites & Contacts 样式 --- */
+        #ins-tab-contacts { background: #F9F9F9; }
+        .fav-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; flex-shrink: 0; }
+        .fav-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,0,0,0.05); }
+        .fav-name { font-size: 13px; color: #111; max-width: 70px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fav-add-btn { width: 70px; height: 70px; border-radius: 50%; background: #E5E5EA; display: flex; align-items: center; justify-content: center; color: #8E8E93; font-size: 32px; cursor: pointer; }
+        
+        .contact-card { background: #fff; border-radius: 16px; padding: 12px 15px; display: flex; align-items: center; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .contact-card img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
+        .contact-card .name-info { flex: 1; min-width: 0; }
+        .contact-card .name { font-size: 16px; font-weight: 500; color: #111; }
+        
+        
+/* ============================================== */
+        /* 世界书 (WorldBook) 韩式极简专属样式 */
+        /* ============================================== */
+        :root {
+            --ko-bg: #FFFFFF;
+            --ko-text-main: #1A1A1A; 
+            --ko-text-sub: #888888;
+            --ko-line: #EFEFEF;
+            --ko-border: #E0E0E0;
+            --ani-curve: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        #page-world { background: var(--ko-bg); }
+
+        .ko-header {
+            padding: calc(env(safe-area-inset-top) + 20px) 24px 15px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+            border-bottom: 2px solid var(--ko-text-main); 
+            background: var(--ko-bg);
+            flex-shrink: 0;
+        }
+        
+        .header-title-box { display: flex; flex-direction: column; gap: 4px; }
+        .ko-micro-title { font-size: 10px; font-weight: 700; color: var(--ko-text-sub); letter-spacing: 2px; text-transform: uppercase; }
+        .ko-main-title { font-size: 28px; font-weight: 800; color: var(--ko-text-main); letter-spacing: -1px; line-height: 1; }
+        
+        .ko-list { flex: 1; overflow-y: auto; padding: 0 24px 100px; }
+        .ko-list::-webkit-scrollbar { display: none; }
+
+        .ko-item {
+            padding: 24px 0; border-bottom: 0.5px solid var(--ko-line);
+            cursor: pointer; transition: opacity 0.2s ease;
+        }
+        .ko-item:active { opacity: 0.5; }
+
+        .ko-item-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .ko-cat-tag {
+            font-size: 10px; font-weight: 700; color: var(--ko-text-main);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            position: relative; padding-right: 10px;
+        }
+        .ko-cat-tag::after { content:''; position: absolute; right: 0; top: 4px; width: 4px; height: 4px; background: var(--ko-text-main); border-radius: 50%; }
+
+        .ko-item-title { font-size: 18px; font-weight: 600; color: var(--ko-text-main); margin-bottom: 4px; }
+        .ko-item-meta { font-size: 12px; color: var(--ko-text-sub); display: flex; font-weight:300;}
+
+        .btn-create-pill {
+            position: absolute; bottom: calc(20px + var(--safe-bottom)); left: 50%; transform: translateX(-50%);
+            background: var(--ko-text-main); color: #fff;
+            height: 52px; padding: 0 32px; border-radius: 100px;
+            display: flex; align-items: center; gap: 8px;
+            font-size: 14px; font-weight: 600; letter-spacing: 0.5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+            z-index: 20; transition: transform 0.2s; cursor: pointer;
+        }
+        .btn-create-pill:active { transform: translateX(-50%) scale(0.96); }
+
+        /* === 词条编辑器 (Editor) === */
+        .ko-page-layer {
+            position: absolute; inset: 0; z-index: 100;
+            background: #fff;
+            transform: translateY(100%); transition: transform 0.4s var(--ani-curve);
+            display: flex; flex-direction: column;
+        }
+        .ko-page-layer.active { transform: translateY(0); }
+
+        .editor-header {
+            padding: calc(env(safe-area-inset-top) + 15px) 24px 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-text { font-size: 14px; font-weight: 600; color: var(--ko-text-main); cursor: pointer; text-transform:uppercase;}
+        .nav-close { font-size: 24px; color: var(--ko-text-main); cursor: pointer; }
+
+        .editor-form { padding: 20px 24px 40px; overflow-y: auto; flex:1; }
+        
+        .form-row { margin-bottom: 30px; position: relative; }
+        .f-label { 
+            font-size: 10px; color: var(--ko-text-sub); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px;
+        }
+
+        .input-title {
+            width: 100%; border:0; outline:0; 
+            font-size: 24px; font-weight: 700; color: var(--ko-text-main);
+            padding-bottom: 8px; border-bottom: 1px solid var(--ko-border);
+            border-radius: 0; background: transparent;
+        }
+        .input-title::placeholder { color: #D0D0D0; }
+
+        .input-line {
+            width: 100%; border:0; outline:0;
+            font-size: 16px; color: var(--ko-text-main);
+            padding-bottom: 8px; border-bottom: 1px solid var(--ko-border);
+            border-radius: 0; background: transparent;
+        }
+
+        .select-row-wrap {
+            position: relative; width: 100%;
+            border-bottom: 1px solid var(--ko-border); padding-bottom: 8px;
+        }
+        .select-styled {
+            width: 100%; border: none; background: transparent;
+            font-size: 16px; font-weight: 600; color: var(--ko-text-main);
+            outline: none; appearance: none; -webkit-appearance: none;
+            border-radius: 0; padding-right: 20px;
+        }
+        .select-icon { position: absolute; right: 0; bottom: 8px; pointer-events: none; color: var(--ko-text-main); }
+
+        .textarea-ghost {
+            width: 100%; min-height: 250px;
+            border: none; outline: none; resize: none;
+            font-size: 15px; line-height: 1.7; color: #333;
+            margin-top: 10px; background: transparent;
+        }
+        
+/* --- 世界书分类小药丸 (Filter Pills) --- */
+        .ko-filter-bar {
+            display: flex; gap: 8px; padding: 15px 24px 5px;
+            overflow-x: auto; white-space: nowrap;
+        }
+        .ko-filter-bar::-webkit-scrollbar { display: none; }
+        .ko-filter-pill {
+            padding: 6px 16px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            background: #F5F5F5; color: var(--ko-text-sub);
+            border: 1px solid transparent; cursor: pointer; transition: 0.2s;
+        }
+        .ko-filter-pill.active {
+            background: var(--ko-text-main); color: #fff;
+            border-color: var(--ko-text-main);
+        }
+        
+        /* ==================================
+           [高定级 Atelier Chat 专属样式] 
+        ================================== */
+        :root {
+            --at-paper: #FFFFFF;     
+            --at-ink: #111111;       
+            --at-slate: #E4E3DF;     
+            --at-sub: #9E9D99;       
+            --at-blue: #2A5AEC;      
+            --border-fine: #DEDCD5; 
+        }
+
+        #page-chat-room { background: var(--at-paper); display: none; flex-direction: column; z-index: 2000; font-family: "SF Pro Display", -apple-system, sans-serif; }
+        #page-chat-room.visible { display: flex; }
+
+        .at-header {
+            padding: calc(env(safe-area-inset-top) + 20px) 24px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 0.5px solid var(--border-fine);
+            background: var(--at-paper); z-index: 20; flex-shrink: 0;
+        }
+        
+        .header-btn { font-size: 24px; color: var(--at-ink); cursor: pointer; width: 40px; display: flex; align-items: center; }
+        .header-title-box { display: flex; flex-direction: column; align-items: center; flex:1; }
+        .at-name { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; color: var(--at-ink); text-transform: uppercase; }
+        .at-status { font-size: 9px; color: var(--at-sub); font-weight: 600; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+        .online-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:var(--at-ink); margin-right:4px; transition: 0.3s; }
+        .online-dot.typing { background: var(--at-blue); box-shadow: 0 0 8px var(--at-blue); } /* AI思考时亮蓝灯 */
+
+        #at-body {
+            flex: 1; overflow-y: auto; padding: 30px 24px;
+            display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;
+        }
+        #at-body::-webkit-scrollbar { display: none; }
+
+        .time-divider {
+            display: flex; align-items: center; text-align: center;
+            color: var(--at-sub); font-size: 10px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 2px; margin: 10px 0 20px;
+        }
+        .time-divider::before, .time-divider::after { content: ''; flex: 1; border-bottom: 0.5px dotted var(--border-fine); }
+        .time-divider::before { margin-right: 12px; }
+        .time-divider::after { margin-left: 12px; }
+
+        .at-msg { display: flex; align-items: flex-end; width:100%; position: relative; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+        .m-bot { justify-content: flex-start; }
+        .m-bot .avatar {
+            width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+            border: 1px solid var(--border-fine); margin-right: 12px; padding: 2px; background: #fff;
+        }
+        .m-bot .msg-core {
+            background: var(--at-slate); color: var(--at-ink); padding: 12px 18px; 
+            border-radius: 4px 16px 16px 16px; font-size: 15px; line-height: 1.6; max-width: 75%; word-wrap: break-word;
+        }
+
+        .m-me { justify-content: flex-end; }
+        .m-me .msg-core {
+            background: var(--at-ink); color: #FFF; padding: 12px 18px;
+            border-radius: 16px 16px 4px 16px; font-size: 15px; line-height: 1.6; max-width: 75%; word-wrap: break-word;
+        }
+        
+        .m-me .time { position: absolute; right: 0; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
+        .m-bot .time { position: absolute; left: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
+
+        .at-footer {
+            padding: 10px 20px calc(env(safe-area-inset-bottom) + 15px);
+            background: linear-gradient(to top, var(--at-paper) 85%, rgba(255,255,255,0));
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .dock {
+            display: flex; align-items: center; background: #FFFFFF;
+            border: 1px solid var(--border-fine); border-radius: 100px; 
+            padding: 4px 12px; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .btn-plus {
+            width: 34px; height: 34px; border-radius: 50%; background: var(--at-paper);
+            display: flex; justify-content: center; align-items: center; font-size: 20px; color: var(--at-ink); flex-shrink: 0;
+        }
+
+        .dock-input { flex: 1; border: none; background: transparent; outline: none; font-size: 15px; color: var(--at-ink); padding: 0 6px; min-width: 0; }
+        .dock-input::placeholder { color: #BAB8B1; font-weight:400;}
+
+        .btn-emoji { font-size: 22px; color: #BAB8B1; margin-right: 4px; cursor: pointer; display:flex; justify-content:center; align-items:center; padding: 0 4px; flex-shrink: 0; }
+        
+        /* 全新锐利发送键 */
+        .btn-send {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--at-ink); color: #FFF;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.19, 1, 0.22, 1); flex-shrink: 0;
+            margin-left: 2px;
+        }
+        .btn-send:active { transform: scale(0.9); }
+        .btn-send svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: translateX(-1px) translateY(1px); }
+
+        /* Emoji 原生迷你面板 */
+        .emoji-panel {
+            position: absolute; bottom: 100%; left: 16px; right: 16px; background: #fff;
+            border: 1px solid var(--border-fine); border-radius: 16px; padding: 12px;
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            opacity: 0; pointer-events: none; transform: translateY(10px); transition: 0.2s;
+        }
+        .emoji-panel.show { opacity: 1; pointer-events: auto; transform: translateY(-10px); }
+        .emoji-item { font-size: 24px; text-align: center; cursor: pointer; transition: 0.1s; }
+        .emoji-item:active { transform: scale(1.3); }
+
+        /* 全屏留空设置页 */
+        .at-settings-layer {
+            position: fixed; inset: 0; background: var(--at-paper); z-index: 3000;
+            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            display: flex; flex-direction: column;
+        }
+        .at-settings-layer.open { transform: translateY(0); }
+    </style>
+    <!-- 引入 Buttplug 底层蓝牙驱动库 (预留) -->
+    <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
+</head>
+<body>
+
+    <div id="toast">Saved</div>
+    <div id="wallpaper-layer"></div>
+
+    <!-- 主容器 -->
+    <div id="app-root">
+        <div class="scroll-viewport">
+            <div class="top-section">
+                <div class="timestamp-label" id="clock-display">00:00</div>
+                <div class="ios-bubble-wrapper">
+                    <textarea id="edit-mood" class="mood-input" rows="1" spellcheck="false" placeholder="今日心情..."></textarea>
+                </div>
+                
+                <div class="hero-complex">
+                    <div class="send-btn-styled">
+                        <svg class="send-icon-svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                    </div>
+                    <div class="hero-img-box" onclick="openUpload('hero-img')">
+                        <img id="hero-img" class="hero-img" src="https://placehold.co/280x380/CCC/FFF?text=Hero">
+                    </div>
+                </div>
+            </div>
+
+            <div class="capsule-section">
+                <div class="capsule">
+                    <input type="text" id="edit-capsule" placeholder="...">
+                    <div class="capsule-actions">
+                        <svg class="c-icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                        <svg class="c-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <div class="c-btn-black">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="left-col">
+                    <img id="user-avatar" class="avatar" src="https://placehold.co/160x160/DDD/FFF?text=Avatar" onclick="openUpload('user-avatar')">
+                    <div id="display-name" class="username" onclick="openProfileEdit()">User</div>
+                    <div id="display-status" class="status-pill" onclick="openProfileEdit()"># Focus</div>
+                </div>
+
+                <div class="right-grid">
+                    <div class="app-item" id="icon-chat" onclick="openChatApp()">
+                        <svg class="app-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        <div class="app-label" id="label-chat" data-key="app-chat">Chat</div>
+                    </div>
+                    <div class="app-item" id="icon-world" onclick="openPage('page-world')">
+                        <svg class="app-svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        <div class="app-label" id="label-world" data-key="app-world">World</div>
+                    </div>
+                    <div class="app-item" id="icon-api" onclick="openPage('page-api')">
+                        <svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <div class="app-label" id="label-api" data-key="app-api">API</div>
+                    </div>
+                    <div class="app-item" id="icon-forum">
+                        <svg class="app-svg" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <div class="app-label" id="label-forum" data-key="app-forum">Forum</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-bar-container">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span data-txt="search">搜索</span>
+        </div>
+
+        <div class="dock-container">
+            <div class="dock-icon" id="dock-1" onclick="openPage('page-appr')">
+                <svg class="dock-svg" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
+            </div>
+            <div class="dock-icon" id="dock-2">
+                <svg class="dock-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            </div>
+            <div class="dock-icon" id="dock-3" onclick="openPage('page-font')">
+                <svg class="dock-svg" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+            </div>
+            <div class="dock-icon" id="dock-4">
+                <svg class="dock-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 弹窗 === -->
+    <div id="modal-profile" class="modal-mask">
+        <div class="modal-box">
+            <h3 style="margin:0;text-align:center;font-size:16px" data-txt="profile-edit">编辑个人资料</h3>
+            <div class="group-header" style="margin:10px 0 5px 0">名字</div>
+            <input type="text" id="ipt-profile-name" class="ipt-std">
+            <div class="group-header" style="margin:10px 0 5px 0">状态</div>
+            <input type="text" id="ipt-profile-status" class="ipt-std">
+            <button class="btn-std" onclick="saveProfile()" data-txt="btn-save">保存</button>
+            <button class="btn-std btn-sec" onclick="document.getElementById('modal-profile').classList.remove('show')" data-txt="btn-cancel">取消</button>
+        </div>
+    </div>
+
+    <div id="page-appr" class="page-layer">
+        <div class="nav-header">
+            <div class="nav-btn nav-left" onclick="closePage('page-appr')">
+                <svg class="icon-svg-btn" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            <span data-txt="title-appr">外观设置</span>
+        </div>
+        <div class="scroll-content">
+            <div class="group-header" data-txt="grp-bg">全局背景</div>
+             <div class="list-item" onclick="openUpload('wallpaper-layer')">
+                <div style="display:flex;align-items:center;flex:1">
+                    <img id="preview-wallpaper-layer" class="list-img-preview" src="">
+                    <div style="font-weight:600" data-txt="item-wall">壁纸</div>
+                </div>
+                <button class="btn-sec" style="font-size:12px;padding:6px 12px;border-radius:12px;border:none" data-txt="btn-change">更换</button>
+            </div>
+            <div class="group-header" data-txt="grp-home">桌面组件</div>
+            <div class="list-item" onclick="openUpload('hero-img')">
+                 <div style="display:flex;align-items:center;flex:1">
+                    <img id="preview-hero-img" class="list-img-preview" src="">
+                    <div style="font-weight:600" data-txt="item-hero">主页大图</div>
+                </div>
+                <button class="btn-sec" style="font-size:12px;padding:6px 12px;border-radius:12px;border:none" data-txt="btn-change">更换</button>
+            </div>
+            <div class="list-item" onclick="openUpload('user-avatar')">
+                 <div style="display:flex;align-items:center;flex:1">
+                    <img id="preview-user-avatar" class="list-img-preview" src="">
+                    <div style="font-weight:600" data-txt="item-avatar">头像</div>
+                </div>
+                <button class="btn-sec" style="font-size:12px;padding:6px 12px;border-radius:12px;border:none" data-txt="btn-change">更换</button>
+            </div>
+            <div class="group-header" data-txt="grp-icons">应用图标</div>
+            <div id="appr-list-apps"></div>
+            <div class="group-header" data-txt="grp-dock">底部 Dock</div>
+            <div id="appr-list-dock"></div>
+            
+            <!-- 👇 新增的主题导出/导入区块 👇 -->
+            <div style="margin-top:40px; padding-top:20px; border-top:1px dashed #ccc;">
+                <div class="group-header" style="margin-top:0; color:#333; font-weight:700;">主题分享与恢复</div>
+                
+                <div style="font-size:12px; color:#888; margin-bottom:12px;">
+                    * 仅包含壁纸、组件、图标、文案及字体。<br>
+                    * 导入主题包<b>不会</b>影响你的聊天记录和API配置。
+                </div>
+
+                <div style="display:flex; gap:15px;">
+                    <button class="btn-std" style="background:#000; color:#fff;" onclick="exportTheme()">导出主题</button>
+                    <button class="btn-std btn-sec" style="border:1px solid #ddd;" onclick="document.getElementById('file-theme-backup').click()">导入主题</button>
+                </div>
+                <input type="file" id="file-theme-backup" hidden accept=".json" onchange="importTheme(this)">
+            </div>
+
+            <!-- 原来的重置按钮往下挪一点 -->
+            <div style="margin-top:30px; text-align:center;">
+                <span style="color:#999; font-size:12px; text-decoration:underline; cursor:pointer;" onclick="resetDefaults()" data-txt="btn-reset">重置外观</span>
+            </div>
+            <div style="height:40px;"></div>
+            <!-- 👆 新增区块结束 👆 -->
+
+        </div>
+    </div>
+
+    <div id="page-font" class="page-layer">
+        <div class="nav-header">
+            <div class="nav-btn nav-left" onclick="closePage('page-font')">
+                <svg class="icon-svg-btn" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            <span data-txt="title-font">字体管理</span>
+            <div class="nav-btn nav-right" onclick="toggleFontForm()">
+                <svg class="icon-svg-btn" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+        </div>
+        <div class="scroll-content">
+            <div class="group-header" style="margin-top:0">字体大小</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; background:#fff; padding:15px; border-radius:16px;">
+                <span style="font-size:12px">A</span>
+                <input type="range" id="font-size-slider" min="12" max="20" step="1" value="16" style="flex:1" oninput="applyFontSize(this.value)">
+                <span style="font-size:18px">A</span>
+            </div>
+
+            <div id="font-add-form" style="display:none; margin-bottom:20px; background:#fff; padding:15px; border-radius:16px;">
+                <div class="group-header" style="margin-top:0" data-txt="font-add">添加新字体</div>
+                <input type="text" id="font-name-new" class="ipt-std" placeholder="字体名称">
+                <input type="text" id="font-url-new" class="ipt-std" placeholder="URL (.css / .ttf)">
+                <button class="btn-std" onclick="saveFontPreset()" data-txt="btn-save">保存</button>
+            </div>
+            <div class="group-header" style="margin-top:0" data-txt="font-list">我的字体</div>
+            <div id="font-list-container" style="display:block"></div>
+            <div style="margin-top:25px;padding:20px;border:1px solid #eee;text-align:center;border-radius:16px;background:#fff">
+                <div style="font-size:12px;color:#999;margin-bottom:10px;">预览</div>
+                <div style="font-size:22px; line-height:1.5;">The quick brown fox<br>你好世界</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-api" class="page-layer">
+        <div class="nav-header">
+            <div class="nav-btn nav-left" onclick="closePage('page-api')">
+                <svg class="icon-svg-btn" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            <span>API</span>
+        </div>
+        <div class="scroll-content">
+            <div class="group-header" style="margin-top:0" data-txt="api-preset">预设配置</div>
+            <div style="display:flex; gap:10px; margin-bottom:15px">
+                <select id="api-preset-sel" class="ipt-std" style="margin-bottom:0" onchange="loadAPIPreset(this.value)"></select>
+                <button class="btn-std btn-danger" style="width:auto;flex-shrink:0" onclick="deleteAPIPreset()" data-txt="btn-del">删</button>
+            </div>
+            <button class="btn-std btn-sec" onclick="saveAPIPreset()" data-txt="api-save">保存当前配置</button>
+            
+            <div class="group-header" data-txt="api-url">服务器地址 (URL)</div>
+            <input type="text" id="api-url" class="ipt-std" placeholder="https://api.openai.com/v1">
+            <div class="group-header" data-txt="api-key">API 密钥 (Key)</div>
+            <input type="password" id="api-key" class="ipt-std" placeholder="sk-...">
+            
+            <button class="btn-std" style="margin-top:15px" onclick="testAPI()" data-txt="api-conn">连接并获取模型</button>
+            
+            <div class="group-header" data-txt="api-model">模型选择 (已缓存)</div>
+            <select id="api-model" class="ipt-std" onchange="appData.lastApi.model = this.value; saveData();"></select>
+
+            <div class="group-header">温度 / 创造力 (Temperature)</div>
+            <div style="display:flex; align-items:center; gap:10px; background:#fff; padding:10px; border-radius:14px;">
+                <input type="range" id="api-temp" min="0" max="2" step="0.1" value="0.7" style="flex:1" oninput="document.getElementById('temp-val').innerText=this.value; appData.lastApi.temp=this.value; saveData();">
+                <span id="temp-val" style="font-size:14px; font-weight:600; width:30px; text-align:right;">0.7</span>
+            </div>
+
+            <div style="margin-top:40px; padding-top:20px; border-top:1px dashed #ccc;">
+                <div class="group-header" style="margin-top:0; color:#333; font-weight:700;" data-txt="api-backup">数据备份与恢复</div>
+                
+                <div style="font-size:12px; color:#888; margin-bottom:12px;" data-txt="backup-tip">
+                    * 备份包含所有聊天记录、设置和图片。
+                </div>
+
+                <div style="display:flex; gap:15px;">
+                    <button class="btn-std" style="background:#000; color:#fff;" onclick="exportData()" data-txt="btn-export">导出备份</button>
+                    <button class="btn-std btn-sec" style="border:1px solid #ddd;" onclick="document.getElementById('file-backup').click()" data-txt="btn-import">恢复备份</button>
+                </div>
+                
+                <input type="file" id="file-backup" hidden accept=".json" onchange="importData(this)">
+            </div>
+            
+            <div style="height:30px;"></div>
+        </div>
+    </div>
+                
+    <!-- ============================================== -->
+ <!-- ============================================== -->
+<!-- ============================================== -->
+    <!-- 世界书 (WorldBook) 韩式极简层 -->
+    <!-- ============================================== -->
+    <div id="page-world" class="page-layer">
+        <!-- 头部 -->
+        <header class="ko-header">
+            <i class="ri-arrow-left-s-line" style="font-size:28px; color:var(--ko-text-main); margin-right:10px; cursor:pointer;" onclick="closePage('page-world')"></i>
+            <div class="header-title-box" style="flex:1;">
+                <span class="ko-micro-title">World Archive __04</span>
+                <div class="ko-main-title">Index.</div>
+            </div>
+            <i class="ri-search-line" style="font-size:22px; color:var(--ko-text-main);"></i>
+        </header>
+
+        <!-- 增加：分类小药丸容器 -->
+        <div id="ko-wb-filters" class="ko-filter-bar"></div>
+
+        <!-- 词条列表 (JS 动态生成) -->
+        <div class="ko-list" id="ko-index-list"></div>
+
+        <!-- 底部添加按钮 -->
+        <div class="btn-create-pill" onclick="openWbEditor()">
+            <i class="ri-add-line"></i> ADD ENTRY
+        </div>
+
+        <!-- 内部的编辑页面 (滑出) -->
+        <div class="ko-page-layer" id="ko-editor-page">
+            <div class="editor-header">
+                <i class="ri-close-line nav-close" onclick="closeWbEditor()"></i>
+                <div style="font-size:12px; font-weight:700; letter-spacing: 2px; color:var(--ko-text-main);">DOCUMENT</div>
+                <div class="nav-text" onclick="saveWbEntryKo()">Save</div>
+            </div>
+            
+            <div class="editor-form">
+                <div class="form-row">
+                    <input type="text" class="input-title" id="ko-wb-title" placeholder="Untitled Entry" autocomplete="off">
+                </div>
+                
+                <!-- 重点修改：清空了死板的默认分类，只留 General 和新建入口 -->
+                <div class="form-row">
+                     <label class="f-label">Category Class (分类)</label>
+                     <div class="select-row-wrap">
+                         <select class="select-styled" id="ko-wb-cat" onchange="handleCatChange(this)">
+                             <!-- JS 将自动提取你的自定义分类 -->
+                         </select>
+                         <i class="ri-arrow-down-s-line select-icon"></i>
+                     </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="f-label">Index Keywords (触发词 / 留空则全局生效)</label>
+                    <input type="text" class="input-line" id="ko-wb-keys" placeholder="e.g. 赛博空间, 霓虹市" autocomplete="off">
+                </div>
+
+                <div class="form-row" style="margin-top:40px;">
+                     <label class="f-label">Detail Description (详细设定)</label>
+                     <textarea class="textarea-ghost" id="ko-wb-content" placeholder="Start writing definition..."></textarea>
+                </div>
+                
+                <div id="ko-wb-delete-btn" style="display:none; text-align:center; margin-top:20px;">
+                    <span style="color:#ff3b30; font-size:14px; font-weight:600; cursor:pointer;" onclick="deleteWbEntryKo()"><i class="ri-delete-bin-line"></i> Delete Entry</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+ <!-- ============================================== -->
+    <!-- 全新 Ins 风 社交应用 (Chat/Feed) -->
+    <!-- ============================================== -->
+    <div id="app-chat-root" class="page-layer"> 
+        <div class="ins-header">
+            <i class="ri-arrow-left-s-line ins-btn" onclick="closePage('app-chat-root')"></i>
+            <div class="ins-header-title" id="ins-app-title">Chats</div>
+            <i class="ri-add-line ins-btn" onclick="handleInsPlus()"></i>
+        </div>
+
+        <div class="ins-main-view">
+            <!-- 1. 消息页 (Chats) -->
+            <div id="ins-tab-chats" class="ins-page active">
+                <div style="padding: 10px 20px;">
+                    <div style="background:#F2F2F7; padding:10px 15px; border-radius:12px; color:#8E8E93; font-size:14px; display:flex; align-items:center;">
+                        <i class="ri-search-line" style="margin-right:8px; font-size:16px;"></i> Search messages
+                    </div>
+                </div>
+                <div id="ins-chat-list"></div>
+            </div>
+
+<!-- 2. 联系人页 (Contacts) -->
+            <div id="ins-tab-contacts" class="ins-page">
+                <div style="padding: 20px 20px 5px; font-size:24px; font-weight:700; color:#111; letter-spacing: -0.5px;">Favorites</div>
+                <div id="ins-favorites-list" style="display:flex; gap:20px; padding:15px 20px; overflow-x:auto;">
+                    <!-- JS 动态生成的 Favorites 列表 -->
+                </div>
+
+                <div style="padding: 20px 20px 10px; font-size:24px; font-weight:700; color:#111; letter-spacing: -0.5px;">All Contacts</div>
+                <div id="ins-contact-list" style="padding: 0 20px 20px;">
+                    <!-- JS 动态生成的 All Contacts 列表 -->
+                </div>
+            </div>
+
+            <!-- (这中间保留原来 3.动态页 和 4.个人主页 的代码不变) -->
+            <!-- 3. 动态页 (Moments/Feed) -->
+            <div id="ins-tab-feed" class="ins-page">
+                <div id="ins-story-bar" style="display:flex; gap:15px; padding:15px 20px; overflow-x:auto; border-bottom:0.5px solid #eee;"></div>
+                <div id="ins-feed-list"></div>
+            </div>
+
+            <!-- 4. 个人主页 (Me) -->
+            <div id="ins-tab-me" class="ins-page">
+                <div style="padding:30px 20px; text-align:center;">
+                    <div style="position:relative; display:inline-block; margin-bottom:15px;">
+                        <img id="ins-my-avatar" src="https://placehold.co/150/000/fff?text=Me" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:1px solid #eee; cursor:pointer;" onclick="document.getElementById('ins-my-avatar-file').click()">
+                        <div style="position:absolute; bottom:0; right:0; background:#007AFF; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; pointer-events:none;">
+                            <i class="ri-camera-fill" style="font-size:14px;"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="ins-my-avatar-file" hidden accept="image/*" onchange="uploadInsMyAvatar(this)">
+                    <h2 id="ins-my-name" style="font-size:22px; margin-bottom:6px; cursor:pointer;" onclick="editInsMyName()">@Master</h2>
+                    <div id="ins-my-bio" style="color:#8E8E93; font-size:14px; cursor:pointer; padding:0 20px; line-height:1.4;" onclick="editInsMyBio()">Virtual Space Creator</div>
+                </div>
+                <div style="padding: 10px 20px 5px; font-size:13px; font-weight:700; color:#111; letter-spacing:0.5px;">MY GALLERY</div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2px; padding:0 2px;">
+                    <img id="ins-grid-1" src="https://placehold.co/200/eee/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-1').click()">
+                    <input type="file" id="ins-grid-file-1" hidden accept="image/*" onchange="uploadInsGrid(this, 'ins-grid-1')">
+                    <img id="ins-grid-2" src="https://placehold.co/200/e5e5ea/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-2').click()">
+                    <input type="file" id="ins-grid-file-2" hidden accept="image/*" onchange="uploadInsGrid(this, 'ins-grid-2')">
+                    <img id="ins-grid-3" src="https://placehold.co/200/f2f2f7/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-3').click()">
+                    <input type="file" id="ins-grid-file-3" hidden accept="image/*" onchange="uploadInsGrid(this, 'ins-grid-3')">
+                </div>
+            </div>
+        </div>
+
+        <div class="ins-tab-bar">
+            <div class="ins-tab-item active" onclick="switchInsTab('chats')"><i class="ri-chat-1-fill"></i></div>
+            <div class="ins-tab-item" onclick="switchInsTab('contacts')"><i class="ri-contacts-book-2-line"></i></div>
+            <div class="ins-tab-item" onclick="switchInsTab('feed')"><i class="ri-compass-3-line"></i></div>
+            <div class="ins-tab-item" onclick="switchInsTab('me')"><i class="ri-user-line"></i></div>
+        </div>
+    </div>
+
+    <!-- 弹窗 1：创建好友 (Create Character) -->
+    <div id="modal-ins-char" class="ins-sheet-mask">
+        <div class="ins-sheet-body">
+            <div class="ins-sheet-top">
+                <span style="color:#8E8E93; cursor:pointer;" onclick="closeInsModal('modal-ins-char')">Cancel</span>
+                <span>New Character</span>
+                <span style="color:#007AFF; cursor:pointer;" onclick="saveInsCharacter()">Done</span>
+            </div>
+            <div class="ins-sheet-content">
+                <!-- 高级双轨头像上传区 -->
+                <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:20px;">
+                    <img id="ins-char-preview" src="https://placehold.co/150/eee/999?text=+" style="width:90px; height:90px; border-radius:50%; object-fit:cover; margin-bottom:10px; cursor:pointer; border:1px solid #e5e5ea;" onclick="document.getElementById('ins-char-file').click()">
+                    <span style="color:#007AFF; font-size:13px; font-weight:600; cursor:pointer;" onclick="document.getElementById('ins-char-file').click()"><i class="ri-upload-2-line"></i> Local Photo</span>
+                    <input type="file" id="ins-char-file" hidden accept="image/*" onchange="previewInsUpload(this, 'ins-char-preview')">
+                    
+                    <div style="display:flex; align-items:center; width:80%; margin:15px 0;">
+                        <div style="flex:1; height:1px; background:#f2f2f7;"></div>
+                        <span style="font-size:10px; color:#ccc; margin:0 15px; font-weight:700; letter-spacing:1px;">OR URL</span>
+                        <div style="flex:1; height:1px; background:#f2f2f7;"></div>
+                    </div>
+                    
+                    <input type="text" id="ins-char-url" class="ins-input" style="padding:12px; font-size:13px; text-align:center; width:90%; background:#f9f9f9;" placeholder="Paste Image URL here..." oninput="previewInsUrl(this.value, 'ins-char-preview')">
+                </div>
+
+                <div class="ins-input-wrap">
+                    <label class="ins-label">Name (名字)</label>
+                    <input type="text" id="ins-char-name" class="ins-input" placeholder="e.g. 赛博女友">
+                </div>
+                <div class="ins-input-wrap">
+                    <label class="ins-label">Note (备注 / ID)</label>
+                    <input type="text" id="ins-char-note" class="ins-input" placeholder="e.g. @cyber_girl">
+                </div>
+                <div class="ins-input-wrap">
+                    <label class="ins-label">Persona (人设提示词)</label>
+                    <!-- 修改：加宽加高，方便编辑长提示词 -->
+                    <textarea id="ins-char-prompt" class="ins-input" rows="8" placeholder="You are a helpful and charming assistant..."></textarea>
+                </div>
+                <div style="height:30px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗 2：发布动态 (Create Post) -->
+    <div id="modal-ins-post" class="ins-sheet-mask">
+        <div class="ins-sheet-body">
+            <div class="ins-sheet-top">
+                <span style="color:#8E8E93; cursor:pointer;" onclick="closeInsModal('modal-ins-post')">Cancel</span>
+                <span>New Post</span>
+                <span style="color:#007AFF; cursor:pointer;" onclick="saveInsPost()">Share</span>
+            </div>
+            
+            <div class="ins-sheet-content" style="padding: 20px;">
+                <!-- Caption 在最上方 -->
+                <textarea id="ins-post-text" style="width:100%; height:80px; border:none; outline:none; font-size:18px; resize:none; font-family:inherit; margin-bottom:15px;" placeholder="Write a caption..."></textarea>
+                
+                <!-- 宽大的矩形图片上传框 -->
+                <div style="position:relative; width:100%; aspect-ratio:4/3; background:#F2F2F7; border:2px dashed #D1D1D6; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; margin-bottom:25px;" onclick="document.getElementById('ins-post-file').click()">
+                    <i class="ri-image-add-line" style="font-size:36px; color:#8E8E93; margin-bottom:8px;" id="ins-post-img-icon"></i>
+                    <span style="font-size:14px; color:#8E8E93; font-weight:500;" id="ins-post-img-text">Add Photos</span>
+                    <img id="ins-post-img-preview" src="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;">
+                </div>
+                <input type="file" id="ins-post-file" hidden accept="image/*" onchange="previewInsPostImg(this)">
+                
+                <!-- 其他设置项目 -->
+                <div class="ins-input-wrap">
+                    <label class="ins-label"><i class="ri-map-pin-line"></i> Add Location</label>
+                    <input type="text" id="ins-post-loc" class="ins-input" placeholder="e.g. Tokyo, Japan">
+                </div>
+                
+                <!-- 去掉了文字说明，极简风格 -->
+                <label class="ins-label"><i class="ri-eye-line"></i> Visible To</label>
+                <div id="ins-post-visibility" class="ins-picker-scroll">
+                    <!-- 动态生成好友列表 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- ============================================== -->
+    <!-- 高定级 Atelier Chat Room -->
+    <!-- ============================================== -->
+    <div id="page-chat-room" class="page-layer">
+        
+        <header class="at-header">
+            <div class="header-btn" onclick="closePage('page-chat-room')">
+                <i class="ri-arrow-left-s-line" style="font-size:28px;"></i>
+            </div>
+            
+            <div class="header-title-box">
+                <div class="at-name" id="at-room-name">Character</div>
+                <div class="at-status">
+                    <span class="online-dot" id="at-room-dot"></span> <span id="at-room-status">NEURAL SYNC</span>
+                </div>
+            </div>
+            
+            <!-- 点击呼出全屏设置 -->
+            <div class="header-btn" style="justify-content:flex-end;" onclick="document.getElementById('at-settings').classList.add('open')">
+                <i class="ri-settings-4-line" style="font-size: 24px;"></i>
+            </div>
+        </header>
+
+        <!-- 聊天流 -->
+        <div id="at-body"></div>
+
+        <!-- 底栏 -->
+        <footer class="at-footer">
+            <!-- 原生极简 Emoji 键盘 -->
+            <div class="emoji-panel" id="emoji-picker">
+                <div class="emoji-item" onclick="insertEmoji('✨')">✨</div>
+                <div class="emoji-item" onclick="insertEmoji('🖤')">🖤</div>
+                <div class="emoji-item" onclick="insertEmoji('☕')">☕</div>
+                <div class="emoji-item" onclick="insertEmoji('🥀')">🥀</div>
+                <div class="emoji-item" onclick="insertEmoji('💭')">💭</div>
+                <div class="emoji-item" onclick="insertEmoji('🥂')">🥂</div>
+                <div class="emoji-item" onclick="insertEmoji('👀')">👀</div>
+                <div class="emoji-item" onclick="insertEmoji('🤍')">🤍</div>
+                <div class="emoji-item" onclick="insertEmoji('🌙')">🌙</div>
+                <div class="emoji-item" onclick="insertEmoji('🦋')">🦋</div>
+                <div class="emoji-item" onclick="insertEmoji('🎶')">🎶</div>
+                <div class="emoji-item" onclick="insertEmoji('🍸')">🍸</div>
+                <div class="emoji-item" onclick="insertEmoji('🥺')">🥺</div>
+                <div class="emoji-item" onclick="insertEmoji('🫶')">🫶</div>
+                <div class="emoji-item" onclick="insertEmoji('🔥')">🔥</div>
+                <div class="emoji-item" onclick="insertEmoji('🎵')">🎵</div>
+            </div>
+
+            <div class="dock">
+                <div class="btn-plus"><i class="ri-add-line"></i></div>
+                
+                <input type="text" class="dock-input" id="inp-txt" placeholder="Signal to AI..." autocomplete="off">
+                
+                <div class="btn-emoji" onclick="document.getElementById('emoji-picker').classList.toggle('show')">
+                    <i class="ri-emoji-sticker-line"></i>
+                </div>
+                
+                <!-- 高级极简锐利发送键 SVG -->
+                <div class="btn-send" onclick="sendAtelierMsg()">
+                    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 全屏设置页 (先空着) -->
+    <div class="at-settings-layer" id="at-settings">
+        <header class="at-header" style="background:transparent; border:none;">
+            <div class="header-btn" onclick="document.getElementById('at-settings').classList.remove('open')">
+                <i class="ri-close-line" style="font-size:28px;"></i>
+            </div>
+            <div class="header-title-box"><div class="at-name">Settings</div></div>
+            <div class="header-btn"></div>
+        </header>
+        <div style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--at-sub); font-size:14px; letter-spacing:1px; text-transform:uppercase;">
+            Settings UI Under Construction
+        </div>
+    </div>
+
+    <div id="modal-upload" class="modal-mask">
+        <div class="modal-box">
+            <div style="position:absolute;top:15px;right:15px;cursor:pointer" onclick="document.getElementById('modal-upload').classList.remove('show')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            <h3 style="margin:0;text-align:center;font-size:16px" data-txt="modal-title">更换图片</h3>
+            <button class="btn-std" onclick="document.getElementById('file-core').click()" data-txt="btn-local">本地上传</button>
+            <div style="font-size:12px;color:#999;margin-top:10px" data-txt="modal-url">或输入图片链接:</div>
+            <div class="url-input-row">
+                <input type="text" id="url-core" placeholder="https://...">
+                <button class="btn-std" style="width:auto;margin:0;border-radius:10px" onclick="confirmUrlInput()" data-txt="btn-ok">确定</button>
+            </div>
+            <input type="file" id="file-core" hidden accept="image/*">
+        </div>
+    </div>
+
+<script>
+// === 独家定制：Intiface 硬件通感中枢 (作为底层引擎依然保留声明) ===
+const IntifaceLogic = {
+    client: null,
+    toyDevice: null,
+    async connectAndSetup() { /* 已被精简收起待后续UI重构时调用 */ },
+    async triggerVibe(level, timeMS) { /* ... */ }
+};
+
+    const KEY = 'my_phone_data_v1'; 
+    const DB_NAME = 'MyPhoneDB_V10_Pro'; 
+    const STORE_IMAGES = 'images';
+    const STORE_DATA = 'app_data';       
+    const DATA_KEY = 'main_data';
+
+    const idbHelper = {
+        db: null,
+        async init() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_IMAGES)) db.createObjectStore(STORE_IMAGES);
+                    if (!db.objectStoreNames.contains(STORE_DATA)) db.createObjectStore(STORE_DATA);
+                };
+                request.onsuccess = (e) => { this.db = e.target.result; resolve(this.db); };
+                request.onerror = (e) => reject(e);
+            });
+        },
+        async saveImage(id, base64) {
+            if(!this.db) await this.init();
+            return this.tx(STORE_IMAGES, 'readwrite').put(base64, id);
+        },
+        async getImage(id) {
+            if(!this.db) await this.init();
+            return this.getReq(STORE_IMAGES, id);
+        },
+        async saveMainData(data) {
+            if(!this.db) await this.init();
+            const cleanData = JSON.parse(JSON.stringify(data));
+            cleanData.images = {}; 
+            return this.tx(STORE_DATA, 'readwrite').put(cleanData, DATA_KEY);
+        },
+        async loadMainData() {
+            if(!this.db) await this.init();
+            return this.getReq(STORE_DATA, DATA_KEY);
+        },
+        async clear() {
+            if(!this.db) await this.init();
+            const tx = this.db.transaction([STORE_IMAGES, STORE_DATA], 'readwrite');
+            tx.objectStore(STORE_IMAGES).clear();
+            tx.objectStore(STORE_DATA).clear();
+            return new Promise(resolve => tx.oncomplete = resolve);
+        },
+        tx(storeName, mode) { return this.db.transaction(storeName, mode).objectStore(storeName); },
+        getReq(storeName, key) {
+            return new Promise((resolve) => {
+                const req = this.db.transaction(storeName, 'readonly').objectStore(storeName).get(key);
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = () => resolve(null);
+            });
+        }
+    };
+
+    const DEFAULTS = {
+        lang: 'cn', 
+        images: {
+            'wallpaper-layer': 'https://placehold.co/430x932/1a1a1a/FFF?text=Wallpaper',
+            'hero-img': 'https://placehold.co/280x380/CCC/FFF?text=Hero',
+            'user-avatar': 'https://placehold.co/160x160/DDD/FFF?text=Avatar'
+        },
+        customTexts: {},
+        fontPresets: { '系统默认': '', '站酷小薇': 'https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap' },
+        activeFont: '系统默认',
+        fontSize: 16, 
+        apiPresets: {},
+        lastApi: { url: '', key: '', model: '', temp: 0.7 },
+        cachedModels: [],
+        world: [],
+        chatData: { chats: [], contacts: [], messages:[] }, 
+        stickerVault: { "默认":[] } 
+    };
+
+    const LANG_MAP = {
+        'search': { cn: '搜索' },
+        'title-appr': { cn: '外观设置' },
+        'grp-bg': { cn: '全局背景' },
+        'grp-home': { cn: '桌面组件' },
+        'grp-icons': { cn: '应用图标' },
+        'grp-dock': { cn: '底部 Dock' },
+        'item-wall': { cn: '壁纸' },
+        'item-hero': { cn: '主页大图' },
+        'item-avatar': { cn: '头像' },
+        'btn-change': { cn: '更换' },
+        'btn-reset': { cn: '重置外观' },
+        'title-font': { cn: '字体管理' },
+        'font-add': { cn: '添加新字体' },
+        'font-list': { cn: '我的字体' },
+        'title-world': { cn: '世界书' },
+        'modal-title': { cn: '更换图片' },
+        'btn-local': { cn: '本地上传' },
+        'modal-url': { cn: '或输入图片链接:' },
+        'btn-ok': { cn: '确定' },
+        'btn-save': { cn: '保存' },
+        'btn-del': { cn: '删' },
+        'btn-cancel': { cn: '取消' },
+        'api-preset': { cn: '预设配置' },
+        'api-save': { cn: '保存当前配置' },
+        'api-url': { cn: '服务器地址 (URL)' },
+        'api-key': { cn: 'API 密钥 (Key)' },
+        'api-conn': { cn: '连接并获取模型' },
+        'api-model': { cn: '模型选择 (已缓存)' },
+        'wb-edit': { cn: '编辑条目' },
+        'profile-edit': { cn: '编辑个人资料' },
+        'app-chat': { cn: '聊天' },
+        'app-world': { cn: '世界书' },
+        'app-api': { cn: '接口' },
+        'app-forum': { cn: '论坛' },
+        'dock-1': { cn: '外观' },
+        'dock-2': { cn: '相册' },
+        'dock-3': { cn: '字体' },
+        'dock-4': { cn: '时钟' },
+        'edit-mood': { cn: '保持简单。' },
+        'edit-name': { cn: '用户' },
+        'edit-status': { cn: '# 专注' },
+        'api-backup': { cn: '数据备份与恢复' },
+        'btn-export': { cn: '导出备份文件' },
+        'btn-import': { cn: '从文件恢复' },
+        'backup-tip': { cn: '* 备份包含所有聊天记录、设置和图片。' }
+    };
+
+    let appData = null;
+    let currentUploadId = null; 
+
+    async function loadData() {
+        try {
+            await idbHelper.init();
+            const stored = await idbHelper.loadMainData();
+            if (stored) {
+                appData = {
+                    ...DEFAULTS, ...stored,
+                    chatData: { ...DEFAULTS.chatData, ...(stored.chatData || {}) },
+                    lastApi: { ...DEFAULTS.lastApi, ...(stored.lastApi || {}) }
+                };
+                appData.images = { ...DEFAULTS.images }; 
+            } else {
+                appData = JSON.parse(JSON.stringify(DEFAULTS));
+            }
+            await loadAllImagesFromDB();
+        } catch (e) {
+            console.error("Load Error", e);
+            appData = JSON.parse(JSON.stringify(DEFAULTS));
+        }
+    }
+
+    function showToast() {
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 1500);
+    }
+
+    async function saveData() { 
+        try { 
+            await idbHelper.saveMainData(appData);
+        } catch (e) { 
+            console.error("Save Error: " + e.message);
+            alert('⚠️ Data save failed! Please export a backup immediately.');
+        }
+    }
+
+    window.onload = async () => {
+        const fixedH = window.innerHeight;
+        document.getElementById('app-root').style.height = fixedH + 'px';
+        document.getElementById('wallpaper-layer').style.height = fixedH + 'px';
+        
+        await loadData(); 
+
+        startClock();
+        renderDOM(); 
+        setupInputs();
+        setupFileUpload();
+        renderFontList();
+    };
+
+    async function loadAllImagesFromDB() {
+        if(!idbHelper.db) await idbHelper.init();
+        return new Promise((resolve) => {
+            const tx = idbHelper.db.transaction(STORE_IMAGES, 'readonly');
+            const store = tx.objectStore(STORE_IMAGES);
+            const req = store.openCursor();
+            req.onsuccess = (e) => {
+                const cursor = e.target.result;
+                if(cursor) {
+                    appData.images[cursor.key] = cursor.value; 
+                    cursor.continue();
+                } else {
+                    resolve();
+                }
+            };
+            req.onerror = () => resolve(); 
+        });
+    }
+
+    function renderDOM() {
+        document.querySelectorAll('[data-txt]').forEach(el => {
+            const key = el.getAttribute('data-txt');
+            if(LANG_MAP[key]) el.innerText = LANG_MAP[key][appData.lang];
+        });
+
+        const setText = (domId, mapKey) => {
+            const el = document.getElementById(domId);
+            if(el) {
+                const custom = appData.customTexts[domId];
+                const def = LANG_MAP[mapKey][appData.lang];
+                if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.value = custom || def;
+                } else {
+                    el.innerText = custom || def;
+                }
+            }
+        };
+
+        setText('display-name', 'edit-name');
+        setText('display-status', 'edit-status');
+        setText('edit-mood', 'edit-mood');
+        
+        const capEl = document.getElementById('edit-capsule');
+        if(appData.customTexts['edit-capsule']) capEl.value = appData.customTexts['edit-capsule'];
+
+        const labelKeys =[
+            {domId: 'label-chat', mapKey: 'app-chat'},
+            {domId: 'label-world', mapKey: 'app-world'},
+            {domId: 'label-api', mapKey: 'app-api'},
+            {domId: 'label-forum', mapKey: 'app-forum'}
+        ];
+        labelKeys.forEach(item => setText(item.domId, item.mapKey));
+
+        for(let k in appData.images) updateImgDOM(k, appData.images[k]);
+        applyFont(appData.activeFont, false);
+        
+        if(appData.fontSize) applyFontSize(appData.fontSize);
+        
+        document.getElementById('api-url').value = appData.lastApi.url;
+        document.getElementById('api-key').value = appData.lastApi.key;
+        if(appData.lastApi.temp) {
+            document.getElementById('api-temp').value = appData.lastApi.temp;
+            document.getElementById('temp-val').innerText = appData.lastApi.temp;
+        }
+    }
+
+    function updateImgDOM(id, src) {
+        if(!src) return;
+        const previewEl = document.getElementById('preview-' + id);
+        if(previewEl) previewEl.src = src;
+
+        if(id === 'wallpaper-layer') {
+            const el = document.getElementById(id);
+            if(el.style.backgroundImage !== `url("${src}")`) el.style.backgroundImage = `url('${src}')`; 
+        } else {
+            const el = document.getElementById(id);
+            if(el) {
+                if(el.tagName === 'IMG') el.src = src;
+                else {
+                    let img = el.querySelector('img.app-img-cover, img.dock-img-cover');
+                    if(!img) {
+                        img = document.createElement('img');
+                        img.className = id.startsWith('dock') ? 'dock-img-cover' : 'app-img-cover';
+                        el.appendChild(img);
+                    }
+                    img.src = src;
+                    el.classList.add('has-img');
+                }
+            }
+        }
+    }
+
+    function setupInputs() {
+        const bindInput = (id) => {
+            const el = document.getElementById(id);
+            if(el) {
+                const saver = function() {
+                    appData.customTexts[id] = this.value;
+                    saveData();
+                };
+                el.oninput = saver;
+                el.onchange = saver; 
+                el.onblur = saver;   
+            }
+        };
+        bindInput('edit-mood');
+        bindInput('edit-capsule');
+        
+        const urlEl = document.getElementById('api-url');
+        const keyEl = document.getElementById('api-key');
+        const saveApi = () => {
+            appData.lastApi.url = urlEl.value;
+            appData.lastApi.key = keyEl.value;
+            saveData();
+        };
+        [urlEl, keyEl].forEach(el => {
+            el.oninput = saveApi;
+            el.onchange = saveApi;
+            el.onblur = saveApi;
+        });
+    }
+
+    window.openProfileEdit = () => {
+        const getName = () => appData.customTexts['display-name'] || LANG_MAP['edit-name'][appData.lang];
+        const getStatus = () => appData.customTexts['display-status'] || LANG_MAP['edit-status'][appData.lang];
+        document.getElementById('ipt-profile-name').value = getName();
+        document.getElementById('ipt-profile-status').value = getStatus();
+        document.getElementById('modal-profile').classList.add('show');
+    };
+    
+    window.saveProfile = () => {
+        appData.customTexts['display-name'] = document.getElementById('ipt-profile-name').value;
+        appData.customTexts['display-status'] = document.getElementById('ipt-profile-status').value;
+        saveData();
+        renderDOM();
+        document.getElementById('modal-profile').classList.remove('show');
+    };
+
+    function setupFileUpload() {
+        const fileInput = document.getElementById('file-core');
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(file && currentUploadId) {
+                const reader = new FileReader();
+                reader.onload = (ev) => { window.handleImage(ev.target.result); };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = '';
+        });
+    }
+    
+    window.openUpload = (id) => {
+        currentUploadId = id;
+        document.getElementById('url-core').value = ''; 
+        document.getElementById('modal-upload').classList.add('show');
+    };
+    
+    window.confirmUrlInput = () => {
+        const url = document.getElementById('url-core').value;
+        if(url && currentUploadId) window.handleImage(url);
+    };
+
+    window.handleImage = async (src) => {
+        if (currentUploadId) {
+            try { await idbHelper.saveImage(currentUploadId, src); } catch(e) {}
+            appData.images[currentUploadId] = src;
+            updateImgDOM(currentUploadId, src);
+            saveData();
+            document.getElementById('modal-upload').classList.remove('show');
+        }
+    };
+
+    function startClock() {
+        const t = document.getElementById('clock-display');
+        setInterval(() => {
+            const d = new Date();
+            t.innerText = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }, 1000);
+    }
+
+    window.renderApprList = () => {
+        const listApps = document.getElementById('appr-list-apps');
+        const listDock = document.getElementById('appr-list-dock');
+        listApps.innerHTML = ''; listDock.innerHTML = '';
+        
+        const APPS =[
+            {id:'icon-chat', txt:'label-chat', key: 'app-chat'},
+            {id:'icon-world', txt:'label-world', key: 'app-world'},
+            {id:'icon-api', txt:'label-api', key: 'app-api'},
+            {id:'icon-forum', txt:'label-forum', key: 'app-forum'}
+        ];
+        const DOCKS =[
+            {id:'dock-1', txt:'dock-1', key: 'dock-1'},
+            {id:'dock-2', txt:'dock-2', key: 'dock-2'},
+            {id:'dock-3', txt:'dock-3', key: 'dock-3'},
+            {id:'dock-4', txt:'dock-4', key: 'dock-4'},
+        ];
+
+        const createItem = (item) => {
+            let src = appData.images[item.id] || "https://placehold.co/100?text=Icon";
+            const div = document.createElement('div');
+            div.className = 'list-item';
+            
+            let currentName = appData.customTexts[item.txt];
+            let placeholder = LANG_MAP[item.key][appData.lang];
+            
+            let labelHtml = `<input class="list-label-ipt" style="border:none;border-bottom:1px solid #eee;outline:none;width:100%" value="${currentName || ''}" placeholder="${placeholder}" oninput="updateLabel('${item.txt}', this.value)" onchange="updateLabel('${item.txt}', this.value)" onblur="updateLabel('${item.txt}', this.value)">`;
+            
+            div.innerHTML = `
+                <div style="display:flex;align-items:center;flex:1">
+                    <img id="preview-${item.id}" src="${src}" class="list-img-preview">
+                    <div style="flex:1;padding-right:10px">${labelHtml}</div>
+                </div>
+                <button class="btn-sec" style="padding:6px 12px;border:none;border-radius:10px;font-size:12px" onclick="openUpload('${item.id}')">${LANG_MAP['btn-change'][appData.lang]}</button>
+            `;
+            return div;
+        };
+        APPS.forEach(i => listApps.appendChild(createItem(i)));
+        DOCKS.forEach(i => listDock.appendChild(createItem(i)));
+    };
+
+    window.updateLabel = (key, val) => {
+        appData.customTexts[key] = val;
+        saveData();
+        const el = document.getElementById(key); 
+        if(el) el.innerText = val || LANG_MAP[key.replace('label-','app-')][appData.lang]; 
+    };
+
+    window.toggleFontForm = () => {
+        const form = document.getElementById('font-add-form');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    };
+    
+    window.renderFontList = () => {
+        const container = document.getElementById('font-list-container');
+        container.innerHTML = '';
+        Object.keys(appData.fontPresets).forEach(name => {
+            const div = document.createElement('div');
+            const isActive = appData.activeFont === name;
+            div.className = 'list-item';
+            div.style.border = isActive ? '1px solid #000' : 'none';
+            div.innerHTML = `<div style="font-weight:600">${name}</div> ${name !== 'System Default' ? `<button style="color:red;border:none;background:none" onclick="deleteFont('${name}', event)">✕</button>` : ''}`;
+            div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') applyFont(name, true); };
+            container.appendChild(div);
+        });
+    };
+    
+    window.saveFontPreset = () => {
+        const name = document.getElementById('font-name-new').value.trim();
+        const url = document.getElementById('font-url-new').value.trim();
+        if(name && url) {
+            appData.fontPresets[name] = url;
+            appData.activeFont = name; 
+            saveData(); renderFontList(); applyFont(name);
+            document.getElementById('font-add-form').style.display = 'none';
+        }
+    };
+    
+    window.deleteFont = (name, e) => {
+        e.stopPropagation();
+        if(confirm('确定删除该字体吗？')) {
+            delete appData.fontPresets[name];
+            if(appData.activeFont === name) applyFont('系统默认');
+            saveData(); renderFontList();
+        }
+    };
+    
+    window.applyFont = (name, save = true) => {
+        if(save) { 
+            appData.activeFont = name; 
+            saveData(); 
+            renderFontList(); 
+        }
+        const styleTag = document.getElementById('global-font-style');
+        const url = appData.fontPresets[name];
+        if(!url || name === '系统默认') { styleTag.innerHTML = ''; return; }
+        if(url.includes('.css') || url.includes('googleapis')) {
+            styleTag.innerHTML = `@import url('${url}'); body, input, textarea { font-family: 'ZCOOL XiaoWei', serif !important; }`;
+        } else {
+            styleTag.innerHTML = `@font-face { font-family: 'CustomFont'; src: url('${url}'); } body, input, textarea { font-family: 'CustomFont', '${url}', sans-serif !important; }`;
+        }
+    };
+    
+    window.applyFontSize = (size) => {
+        document.documentElement.style.setProperty('--base-font-size', size + 'px');
+        appData.fontSize = size;
+        saveData();
+        const slider = document.getElementById('font-size-slider');
+        if(slider) slider.value = size;
+    };
+
+    window.loadAPIPreset = (name) => {
+        const p = appData.apiPresets[name];
+        if(p) {
+            document.getElementById('api-url').value = p.url;
+            document.getElementById('api-key').value = p.key;
+            appData.lastApi.url = p.url;
+            appData.lastApi.key = p.key;
+
+            const modelSel = document.getElementById('api-model');
+            modelSel.innerHTML = ''; 
+            
+            let listToRender =[];
+            if (p.cachedModels && p.cachedModels.length > 0) {
+                listToRender = p.cachedModels;
+                appData.cachedModels = p.cachedModels; 
+            } else {
+                listToRender = appData.cachedModels ||[];
+            }
+
+            if(listToRender.length === 0) {
+                modelSel.innerHTML = '<option value="">无缓存模型</option>';
+            } else {
+                listToRender.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.text = m;
+                    modelSel.add(opt);
+                });
+            }
+
+            if(p.model) {
+                appData.lastApi.model = p.model; 
+                modelSel.value = p.model;
+                if(modelSel.value !== p.model) {
+                    const opt = document.createElement('option');
+                    opt.value = p.model;
+                    opt.text = p.model + " (已保存)";
+                    modelSel.add(opt);
+                    modelSel.value = p.model;
+                }
+            } else {
+                if(modelSel.options.length > 0) {
+                    modelSel.selectedIndex = 0;
+                    appData.lastApi.model = modelSel.value;
+                } else {
+                    appData.lastApi.model = '';
+                }
+            }
+            saveData();
+        }
+    };
+    
+    window.saveAPIPreset = () => {
+        const name = prompt('请输入预设名称:');
+        if(name) {
+            appData.apiPresets[name] = {
+                url: document.getElementById('api-url').value,
+                key: document.getElementById('api-key').value,
+                model: document.getElementById('api-model').value,
+                cachedModels: appData.cachedModels ||[] 
+            };
+            saveData(); 
+            renderAPIPresets();
+        }
+    };
+
+    window.renderAPIPresets = () => {
+        const sel = document.getElementById('api-preset-sel');
+        const currentVal = sel.value; 
+        
+        sel.innerHTML = '<option value="">选择预设...</option>';
+        Object.keys(appData.apiPresets).forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.text = name;
+            sel.add(opt);
+        });
+        sel.value = currentVal; 
+        
+        const modelSel = document.getElementById('api-model');
+        if(modelSel.options.length === 0 || modelSel.innerHTML.includes('无缓存模型')) {
+            modelSel.innerHTML = '';
+            if(appData.cachedModels && appData.cachedModels.length > 0) {
+                appData.cachedModels.forEach(m => {
+                    modelSel.innerHTML += `<option value="${m}">${m}</option>`;
+                });
+            } else {
+                modelSel.innerHTML = '<option value="">无缓存模型</option>';
+            }
+            if(appData.lastApi && appData.lastApi.model) {
+                 modelSel.value = appData.lastApi.model;
+            }
+        }
+    };
+
+    window.testAPI = async () => {
+        const url = document.getElementById('api-url').value.replace(/\/$/, "");
+        const key = document.getElementById('api-key').value;
+        appData.lastApi = { url, key };
+        saveData();
+        try {
+            const btn = document.querySelector('button[onclick="testAPI()"]');
+            const oldTxt = btn.innerText;
+            btn.innerText = "连接中...";
+            
+            const res = await fetch(`${url}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
+            const d = await res.json();
+            appData.cachedModels = Array.isArray(d.data) ? d.data.map(m=>m.id) : d.map(m=>m.id);
+            saveData(); renderAPIPresets(); alert('连接成功！模型列表已更新。');
+            btn.innerText = oldTxt;
+        } catch(e) { alert('连接失败: ' + e); }
+    };
+
+    // ==========================================
+    // 桌面入口点击事件
+    // ==========================================
+    window.openPage = async (id) => {
+        document.getElementById(id).classList.add('visible');
+        if(id === 'page-appr') renderApprList(); 
+        else if (id === 'page-api') renderAPIPresets();
+        else if (id === 'page-world') renderWbList(); // 补上这句：点开世界书时，自动渲染词条列表
+    };
+
+    window.closePage = (id) => document.getElementById(id).classList.remove('visible');
+    
+    window.resetDefaults = async () => { 
+        if(confirm('确定重置外观设置吗？(聊天记录和数据将保留)')) { 
+            appData.images = { ...DEFAULTS.images }; 
+            appData.customTexts = {};
+            appData.activeFont = '系统默认';
+            appData.fontSize = 16; 
+            
+            const appearanceKeys =[
+                'wallpaper-layer', 'hero-img', 'user-avatar',
+                'icon-chat', 'icon-world', 'icon-api', 'icon-forum',
+                'dock-1', 'dock-2', 'dock-3', 'dock-4'
+            ];
+            
+            if(!idbHelper.db) await idbHelper.init();
+            const tx = idbHelper.db.transaction(STORE_IMAGES, 'readwrite');
+            const store = tx.objectStore(STORE_IMAGES);
+            
+            appearanceKeys.forEach(key => {
+                try { store.delete(key); } catch(e){}
+            });
+
+            await saveData();
+            location.reload(); 
+        }
+    };
+    
+    window.deleteAPIPreset = () => {
+        const val = document.getElementById('api-preset-sel').value;
+        if(val && confirm('确定删除该预设吗？')) { delete appData.apiPresets[val]; saveData(); renderAPIPresets(); }
+    };
+
+    // ==========================================
+// ==========================================
+    // 世界书 (WorldBook) 核心逻辑 (分类打通版)
+    // ==========================================
+    let currentWbIndex = null;
+    let currentWbFilter = 'All'; // 当前选中的小药丸分类
+
+    // 渲染世界书列表 & 小药丸
+    window.renderWbList = () => {
+        const list = document.getElementById('ko-index-list');
+        const filterBar = document.getElementById('ko-wb-filters');
+        list.innerHTML = '';
+        
+        // 1. 动态提取所有已有的分类
+        const cats = new Set(['General']);
+        if(appData.world) {
+            appData.world.forEach(w => {
+                if(w.cat) cats.add(w.cat);
+            });
+        }
+        
+        // 2. 渲染顶部的小药丸 (Filter Pills)
+        filterBar.innerHTML = '';
+        const allPill = document.createElement('div');
+        allPill.className = `ko-filter-pill ${currentWbFilter === 'All' ? 'active' : ''}`;
+        allPill.innerText = 'All';
+        allPill.onclick = () => { currentWbFilter = 'All'; renderWbList(); };
+        filterBar.appendChild(allPill);
+
+        cats.forEach(cat => {
+            const pill = document.createElement('div');
+            pill.className = `ko-filter-pill ${currentWbFilter === cat ? 'active' : ''}`;
+            pill.innerText = cat;
+            pill.onclick = () => { currentWbFilter = cat; renderWbList(); };
+            filterBar.appendChild(pill);
+        });
+
+        if(!appData.world || appData.world.length === 0) {
+            list.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:60px; font-size:14px;">Archive is empty. Tap ADD ENTRY to start.</div>';
+            return;
+        }
+
+        // 3. 渲染下方的词条列表 (根据小药丸过滤)
+        let hasVisibleItems = false;
+
+        appData.world.forEach((item, idx) => {
+            const itemCat = item.cat || 'General';
+            // 如果当前不在 'All' 分类下，且当前条目分类不匹配，则跳过
+            if(currentWbFilter !== 'All' && itemCat !== currentWbFilter) return;
+
+            hasVisibleItems = true;
+            const article = document.createElement('article');
+            article.className = 'ko-item';
+            article.onclick = () => openWbEditor(idx);
+
+            // 修改点：如果没有关键词，显示优雅的 "Global Context" (全局生效)
+            let metaText = item.keys || 'Global Context';
+            if(metaText.length > 30) metaText = metaText.substring(0, 30) + '...';
+
+            article.innerHTML = `
+                <div class="ko-item-top">
+                    <span class="ko-cat-tag">${itemCat}</span>
+                    <i class="ri-more-line" style="color:#d0d0d0"></i>
+                </div>
+                <div class="ko-item-title">${item.title}</div>
+                <div class="ko-item-meta" style="${!item.keys ? 'color:#007AFF; font-weight:500;' : ''}">${metaText}</div>
+            `;
+            list.appendChild(article);
+        });
+
+        if (!hasVisibleItems) {
+            list.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:60px; font-size:14px;">No entries in this category.</div>';
+        }
+    };
+
+    // 打开词条编辑器
+    window.openWbEditor = (idx = null) => {
+        currentWbIndex = idx;
+        const editorPage = document.getElementById('ko-editor-page');
+        const delBtn = document.getElementById('ko-wb-delete-btn');
+        const catSelect = document.getElementById('ko-wb-cat');
+
+        // 动态填充下拉框，去除写死的选项
+        const cats = new Set(['General']);
+        if(appData.world) appData.world.forEach(w => { if(w.cat) cats.add(w.cat); });
+        
+        catSelect.innerHTML = '';
+        cats.forEach(cat => catSelect.add(new Option(cat, cat)));
+        // 增加一个新建分类的专属按钮
+        catSelect.add(new Option('➕ Add New Category...', '__NEW__'));
+
+        if (idx !== null) {
+            const item = appData.world[idx];
+            document.getElementById('ko-wb-title').value = item.title || '';
+            document.getElementById('ko-wb-keys').value = item.keys || '';
+            document.getElementById('ko-wb-content').value = item.content || '';
+            catSelect.value = item.cat || 'General';
+            delBtn.style.display = 'block'; 
+        } else {
+            document.getElementById('ko-wb-title').value = '';
+            document.getElementById('ko-wb-keys').value = '';
+            document.getElementById('ko-wb-content').value = '';
+            catSelect.value = 'General';
+            delBtn.style.display = 'none'; 
+        }
+        
+        editorPage.classList.add('active');
+    };
+
+    // 监听下拉框选择 (实现自定义分类)
+    window.handleCatChange = (sel) => {
+        if(sel.value === '__NEW__') {
+            const newCat = prompt('Enter new category name (输入新分类名称):');
+            if(newCat && newCat.trim() !== '') {
+                const cleanCat = newCat.trim();
+                const opt = new Option(cleanCat, cleanCat);
+                // 把新选项插在“➕ 新建分类”的前面
+                sel.add(opt, sel.options[sel.options.length - 1]);
+                sel.value = cleanCat;
+            } else {
+                // 取消输入时，默认回到 General
+                sel.value = 'General';
+            }
+        }
+    };
+
+    window.closeWbEditor = () => {
+        document.getElementById('ko-editor-page').classList.remove('active');
+    };
+
+    window.saveWbEntryKo = async () => {
+        const title = document.getElementById('ko-wb-title').value.trim();
+        if(!title) { alert('Title cannot be empty (标题不能为空)'); return; }
+
+        const entry = {
+            title: title,
+            cat: document.getElementById('ko-wb-cat').value,
+            keys: document.getElementById('ko-wb-keys').value.trim(),
+            content: document.getElementById('ko-wb-content').value
+        };
+
+        if(!appData.world) appData.world =[];
+
+        if(currentWbIndex !== null) {
+            appData.world[currentWbIndex] = entry; 
+        } else {
+            appData.world.push(entry); 
+        }
+        
+        await saveData(); 
+        renderWbList();   
+        closeWbEditor();  
+        showToast();      
+    };
+
+    window.deleteWbEntryKo = async () => {
+        if(currentWbIndex !== null && confirm('Delete this archive? (永久删除此词条？)')) {
+            appData.world.splice(currentWbIndex, 1);
+            
+            if(appData.chatData && appData.chatData.contacts) {
+                appData.chatData.contacts.forEach(c => {
+                    if(Array.isArray(c.linkedWorld)) {
+                        c.linkedWorld = c.linkedWorld
+                            .filter(i => i !== currentWbIndex)
+                            .map(i => i > currentWbIndex ? i - 1 : i);
+                    }
+                });
+            }
+
+            await saveData();
+            renderWbList();
+            closeWbEditor();
+            showToast();
+        }
+    };
+
+    // === 导出备份功能 ===
+    window.exportData = async () => {
+        const btn = document.querySelector('button[onclick="exportData()"]');
+        const oldTxt = btn.innerText;
+        btn.innerText = "正在打包..."; 
+        
+        try {
+            const exportPayload = JSON.parse(JSON.stringify(appData));
+            
+            if(!idbHelper.db) await idbHelper.init();
+            
+            const allImages = {};
+            const tx = idbHelper.db.transaction('images', 'readonly');
+            const store = tx.objectStore('images');
+            
+            await new Promise((resolve) => {
+                const req = store.openCursor();
+                req.onsuccess = (e) => {
+                    const cursor = e.target.result;
+                    if(cursor) {
+                        allImages[cursor.key] = cursor.value; 
+                        cursor.continue();
+                    } else {
+                        resolve();
+                    }
+                };
+            });
+
+            exportPayload.images = allImages;
+            
+            const dataStr = JSON.stringify(exportPayload);
+            const blob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `MyPhone_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            
+        } catch (e) {
+            alert("Export Failed: " + e.message);
+        } finally {
+            btn.innerText = oldTxt;
+        }
+    };
+
+    // === 导入备份功能 ===
+    window.importData = async (input) => {
+        const file = input.files[0];
+        if(!file) return;
+        
+        if(!confirm("确定要恢复备份吗？当前数据将被覆盖！")) {
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                
+                await idbHelper.init();
+                await idbHelper.clear();
+                
+                if(imported.images) {
+                    const tx = idbHelper.db.transaction('images', 'readwrite');
+                    const store = tx.objectStore('images');
+                    for(let key in imported.images) {
+                        store.put(imported.images[key], key);
+                    }
+                    await new Promise(resolve => tx.oncomplete = resolve);
+                }
+                
+                appData = imported;
+                await idbHelper.saveMainData(appData); 
+                
+                localStorage.setItem(KEY, '{"images":{}}'); 
+                
+                alert("成功！数据已恢复。");
+                location.reload();
+                
+            } catch(err) {
+                alert("导入失败: " + err);
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+
+// ==========================================
+    // 桌面主题 (Theme) 导出与导入逻辑
+    // ==========================================
+    
+    // 定义属于外观的图片Key列表
+    const APPEARANCE_KEYS =[
+        'wallpaper-layer', 'hero-img', 'user-avatar',
+        'icon-chat', 'icon-world', 'icon-api', 'icon-forum',
+        'dock-1', 'dock-2', 'dock-3', 'dock-4'
+    ];
+
+    window.exportTheme = async () => {
+        const btn = document.querySelector('button[onclick="exportTheme()"]');
+        const oldTxt = btn.innerText;
+        btn.innerText = "正在打包主题...";
+
+        try {
+            // 组装纯净的主题包数据
+            const themeData = {
+                isMyPhoneTheme: true, // 特殊标识，防止与全量备份混淆
+                customTexts: appData.customTexts || {},
+                fontPresets: appData.fontPresets || {},
+                activeFont: appData.activeFont || '系统默认',
+                fontSize: appData.fontSize || 16,
+                images: {}
+            };
+
+            if(!idbHelper.db) await idbHelper.init();
+            const tx = idbHelper.db.transaction('images', 'readonly');
+            const store = tx.objectStore('images');
+
+            // 仅提取桌面图标、壁纸等相关图片，绝对不碰聊天发图的缓存
+            await Promise.all(APPEARANCE_KEYS.map(key => {
+                return new Promise((resolve) => {
+                    const req = store.get(key);
+                    req.onsuccess = (e) => {
+                        if (e.target.result) themeData.images[key] = e.target.result;
+                        resolve();
+                    };
+                    req.onerror = () => resolve();
+                });
+            }));
+
+            const dataStr = JSON.stringify(themeData);
+            const blob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `MyPhone_Theme_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+        } catch (e) {
+            alert("主题导出失败: " + e.message);
+        } finally {
+            btn.innerText = oldTxt;
+        }
+    };
+
+    window.importTheme = async (input) => {
+        const file = input.files[0];
+        if(!file) return;
+
+        if(!confirm("确定要导入该主题吗？\n当前的桌面图标、壁纸和文案将被完全替换。\n（你的聊天记录、API设置非常安全，不会受影响）")) {
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+
+                if(!imported.isMyPhoneTheme) {
+                    alert("错误：该文件不是有效的主题包！如果是全量备份，请去[API页面]进行恢复。");
+                    input.value = '';
+                    return;
+                }
+
+                // 1. 覆盖非图片的外观数据
+                appData.customTexts = imported.customTexts || {};
+                appData.fontPresets = imported.fontPresets || { '系统默认': '', '站酷小薇': 'https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap' };
+                appData.activeFont = imported.activeFont || '系统默认';
+                appData.fontSize = imported.fontSize || 16;
+
+                // 2. 处理外观相关的图片数据库读写
+                if(!idbHelper.db) await idbHelper.init();
+                const tx = idbHelper.db.transaction('images', 'readwrite');
+                const store = tx.objectStore('images');
+
+                for (let key of APPEARANCE_KEYS) {
+                    if (imported.images && imported.images[key]) {
+                        // 主题包里有这个图，写入
+                        store.put(imported.images[key], key);
+                        appData.images[key] = imported.images[key];
+                    } else {
+                        // 主题包里没这个图，说明是默认样式，需清空现有的避免残留
+                        try { store.delete(key); } catch(err){}
+                        delete appData.images[key];
+                    }
+                }
+                
+                // 等待数据库写入完成
+                await new Promise(resolve => tx.oncomplete = resolve);
+
+                // 3. 保存更新后的主数据并重载页面
+                await idbHelper.saveMainData(appData);
+                
+                alert("主题导入成功！正在刷新桌面...");
+                location.reload();
+
+            } catch(err) {
+                alert("导入失败: 文件解析错误");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    };
+    
+// ==========================================
+    // Ins 风 社交应用交互逻辑
+    // ==========================================
+    
+    let currentInsTab = 'chats';
+
+    // 1. 初始化数据结构防报错
+    function initInsData() {
+        if(!appData.chatData) appData.chatData = {};
+        if(!appData.chatData.contacts) appData.chatData.contacts =[];
+        if(!appData.chatData.messages) appData.chatData.messages =[];
+        if(!appData.chatData.posts) appData.chatData.posts =[];
+    }
+
+
+    // 3. 点击右上角 + 号
+    window.handleInsPlus = () => {
+        if(currentInsTab === 'chats' || currentInsTab === 'contacts') {
+            document.getElementById('ins-char-name').value = '';
+            document.getElementById('ins-char-note').value = '';
+            document.getElementById('ins-char-prompt').value = '';
+            document.getElementById('ins-char-preview').src = 'https://placehold.co/150/eee/999?text=+';
+            document.getElementById('ins-char-preview').removeAttribute('data-base64');
+            document.getElementById('modal-ins-char').classList.add('show');
+        } 
+        else if(currentInsTab === 'feed') {
+            document.getElementById('ins-post-text').value = '';
+            document.getElementById('ins-post-loc').value = '';
+            
+            // 重置全新的图片上传框
+            const imgPreview = document.getElementById('ins-post-img-preview');
+            imgPreview.src = '';
+            imgPreview.style.display = 'none';
+            imgPreview.removeAttribute('data-base64');
+            document.getElementById('ins-post-img-icon').style.display = 'block';
+            document.getElementById('ins-post-img-text').style.display = 'block';
+
+            renderPostVisibilityPicker();
+            document.getElementById('modal-ins-post').classList.add('show');
+        }
+    };
+
+    window.closeInsModal = (id) => {
+        document.getElementById(id).classList.remove('show');
+    };
+
+
+
+    // 4. 图片本地上传预览逻辑
+window.previewInsPostImg = (input) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('ins-post-img-preview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                img.setAttribute('data-base64', e.target.result);
+                
+                // 隐藏中间的加号和提示文字
+                document.getElementById('ins-post-img-icon').style.display = 'none';
+                document.getElementById('ins-post-img-text').style.display = 'none';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    // 获取图片(根据ID或Base64)
+    function getRealImgSrc(src) {
+        if(!src) return 'https://placehold.co/150/f0f0f0/ccc?text=?';
+        if(src.startsWith('http') || src.startsWith('data:')) return src;
+        return appData.images[src] || 'https://placehold.co/150/f0f0f0/ccc?text=?';
+    }
+
+    // ==========================================
+    // 业务：新建并保存联系人
+    // ==========================================
+
+    // 渲染消息列表 (只有发过消息的才显示，因为目前没有发消息功能，暂做空态过滤)
+    window.renderInsChats = () => {
+        const list = document.getElementById('ins-chat-list');
+        list.innerHTML = '';
+        
+        // 过滤出有聊天记录的联系人ID
+        const activeIds = new Set(appData.chatData.messages.map(m => m.chatId));
+        const activeContacts = appData.chatData.contacts.filter(c => activeIds.has(c.id));
+
+        if(activeContacts.length === 0) {
+            list.innerHTML = `
+                <div style="text-align:center; padding:50px 20px; color:#999;">
+                    <i class="ri-message-3-line" style="font-size:40px; color:#ccc; margin-bottom:10px; display:block;"></i>
+                    No messages yet.<br>Go to Contacts to start a conversation.
+                </div>`;
+            return;
+        }
+
+        activeContacts.forEach(c => {
+            const row = document.createElement('div');
+            row.className = 'ins-row';
+            row.onclick = () => openChatRoom(c.id);
+            row.innerHTML = `
+                <img src="${getRealImgSrc(c.avatar)}" class="ins-avatar">
+                <div class="ins-row-meta">
+                    <div class="ins-name">${c.name}</div>
+                    <div class="ins-sub" style="color:#007AFF">Tap to view history</div>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    };
+
+    // ==========================================
+    // 业务：发布动态与渲染
+    // ==========================================
+    
+    // 生成可见性选择器
+    window.renderPostVisibilityPicker = () => {
+        const picker = document.getElementById('ins-post-visibility');
+        picker.innerHTML = '';
+        if(!appData.chatData.contacts || appData.chatData.contacts.length === 0) {
+            picker.innerHTML = '<div style="color:#ccc; font-size:12px;">No contacts to tag.</div>';
+            return;
+        }
+        
+        appData.chatData.contacts.forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'ins-picker-item selected'; // 默认全选可见
+            item.setAttribute('data-id', c.id);
+            item.onclick = () => item.classList.toggle('selected');
+            item.innerHTML = `
+                <img src="${getRealImgSrc(c.avatar)}">
+                <span>${c.name}</span>
+            `;
+            picker.appendChild(item);
+        });
+    };
+
+    // 保存动态
+    window.saveInsPost = async () => {
+        const text = document.getElementById('ins-post-text').value.trim();
+        const loc = document.getElementById('ins-post-loc').value.trim();
+        const base64 = document.getElementById('ins-post-img-preview').getAttribute('data-base64');
+        
+        if(!text && !base64) { alert("Say something or upload a photo."); return; }
+
+        let imgKey = null;
+        if(base64) {
+            imgKey = 'post_' + Date.now();
+            try { await idbHelper.saveImage(imgKey, base64); } catch(e){}
+            appData.images[imgKey] = base64;
+        }
+
+        // 收集可见/艾特的ID
+        const visibleIds =[];
+        document.querySelectorAll('#ins-post-visibility .selected').forEach(el => {
+            visibleIds.push(el.getAttribute('data-id'));
+        });
+
+        const newPost = {
+            id: 'post_' + Date.now(),
+            authorId: 'me', // 暂定作者为用户自己
+            text: text,
+            image: imgKey,
+            location: loc,
+            visibleTo: visibleIds,
+            timestamp: Date.now()
+        };
+
+        if(!appData.chatData.posts) appData.chatData.posts =[];
+        appData.chatData.posts.unshift(newPost); // 插到最前面
+        
+        await saveData();
+        closeInsModal('modal-ins-post');
+        switchInsTab('feed');
+        showToast();
+    };
+
+
+// ==========================================
+    // 个人主页 (Profile/Me) 设置逻辑
+    // ==========================================
+    window.renderInsProfile = () => {
+        // 渲染基础信息
+        document.getElementById('ins-my-avatar').src = getRealImgSrc(appData.images['user-avatar']) || 'https://placehold.co/150/000/fff?text=Me';
+        document.getElementById('ins-my-name').innerText = appData.customTexts['display-name'] || '@Master';
+        document.getElementById('ins-my-bio').innerText = appData.customTexts['ins-bio'] || 'Virtual Space Creator';
+        
+        // 渲染3个网格图
+        for(let i=1; i<=3; i++) {
+            const key = 'ins-grid-' + i;
+            const el = document.getElementById(key);
+            if(el) {
+                el.src = appData.images[key] || `https://placehold.co/200/eee/999?text=Photo+${i}`;
+            }
+        }
+    };
+
+    window.uploadInsMyAvatar = async (input) => {
+        if(input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64 = e.target.result;
+                document.getElementById('ins-my-avatar').src = base64;
+                try { await idbHelper.saveImage('user-avatar', base64); } catch(err){}
+                appData.images['user-avatar'] = base64;
+                saveData();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.uploadInsGrid = async (input, idKey) => {
+        if(input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64 = e.target.result;
+                document.getElementById(idKey).src = base64;
+                try { await idbHelper.saveImage(idKey, base64); } catch(err){}
+                appData.images[idKey] = base64;
+                saveData();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.editInsMyName = () => {
+        const current = appData.customTexts['display-name'] || '@Master';
+        const val = prompt('Enter your Name or ID:', current);
+        if(val !== null && val.trim() !== '') {
+            appData.customTexts['display-name'] = val.trim();
+            document.getElementById('ins-my-name').innerText = val.trim();
+            saveData();
+        }
+    };
+
+    window.editInsMyBio = () => {
+        const current = appData.customTexts['ins-bio'] || 'Virtual Space Creator';
+        const val = prompt('Enter your Bio / Introduction:', current);
+        if(val !== null) {
+            appData.customTexts['ins-bio'] = val.trim() || 'Virtual Space Creator';
+            document.getElementById('ins-my-bio').innerText = appData.customTexts['ins-bio'];
+            saveData();
+        }
+    };
+
+    // ==========================================
+    // 弹窗辅助与删除逻辑
+    // ==========================================
+    window.previewInsUrl = (url, imgId) => {
+        if(url && (url.startsWith('http') || url.startsWith('data:'))) {
+            const img = document.getElementById(imgId);
+            img.src = url;
+            // 清理本地上传残留，保证 URL 优先
+            img.removeAttribute('data-base64');
+        }
+    };
+
+    window.deleteInsContact = (id, event) => {
+        event.stopPropagation(); // 阻止触发点击事件进入聊天
+        if(confirm('Are you sure you want to delete this character? (This will also delete your chats with them)')) {
+            appData.chatData.contacts = appData.chatData.contacts.filter(c => c.id !== id);
+            // 顺便清除聊天记录
+            appData.chatData.messages = appData.chatData.messages.filter(m => m.chatId !== id);
+            saveData();
+            renderInsContacts();
+            showToast();
+        }
+    };
+
+    window.deleteInsPost = (id, event) => {
+        event.stopPropagation();
+        if(confirm('Delete this post permanently?')) {
+            appData.chatData.posts = appData.chatData.posts.filter(p => p.id !== id);
+            saveData();
+            renderInsFeed();
+            showToast();
+        }
+    };
+
+    // ==========================================
+    // 修改原有的 Tab 和 渲染逻辑
+    // ==========================================
+    window.switchInsTab = (tab) => {
+        initInsData();
+        currentInsTab = tab;
+        
+        const items = document.querySelectorAll('.ins-tab-item');
+        const pages = document.querySelectorAll('.ins-page');
+        
+        items.forEach(el => {
+            el.classList.remove('active');
+            let icon = el.querySelector('i');
+            if(icon.className.includes('-fill')) icon.className = icon.className.replace('-fill', '-line');
+        });
+        
+        const indexMap = {'chats':0, 'contacts':1, 'feed':2, 'me':3};
+        const activeItem = items[indexMap[tab]];
+        activeItem.classList.add('active');
+        let activeIcon = activeItem.querySelector('i');
+        if(activeIcon.className.includes('-line')) activeIcon.className = activeIcon.className.replace('-line', '-fill');
+
+        pages.forEach(p => p.classList.remove('active'));
+        document.getElementById('ins-tab-' + tab).classList.add('active');
+
+        const titles = {'chats':'Chats', 'contacts':'Contacts', 'feed':'Discover', 'me':'Profile'};
+        document.getElementById('ins-app-title').innerText = titles[tab];
+
+        // 挂载数据渲染
+        if(tab === 'contacts') renderInsContacts();
+        if(tab === 'chats') renderInsChats();
+        if(tab === 'feed') renderInsFeed();
+        if(tab === 'me') renderInsProfile(); // 新增：切换到我时，渲染相册与资料
+    };
+
+    // (注意：这里需要覆盖修改你之前的 renderInsContacts 和 renderInsFeed，给它们加上删除按钮)
+    window.renderInsContacts = () => {
+        const favList = document.getElementById('ins-favorites-list');
+        const allList = document.getElementById('ins-contact-list');
+        favList.innerHTML = '';
+        allList.innerHTML = '';
+
+        const contacts = appData.chatData.contacts ||[];
+
+        // --- 1. 渲染 Favorites 列表 ---
+        const favorites = contacts.filter(c => c.isFavorite);
+        favorites.forEach(c => {
+            const fav = document.createElement('div');
+            fav.className = 'fav-item';
+            fav.onclick = () => openChatRoom(c.id);
+            fav.innerHTML = `
+                <img src="${getRealImgSrc(c.avatar)}" class="fav-avatar">
+                <span class="fav-name">${c.name.split(' ')[0]}</span>
+            `;
+            favList.appendChild(fav);
+        });
+
+        // 恒定存在的 "+ Add" 按钮
+        const addBtn = document.createElement('div');
+        addBtn.className = 'fav-item';
+        addBtn.onclick = () => alert("Tip: 点击下方列表中联系人右侧的【星星 ⭐】图标，即可将他们添加到 Favorites！");
+        addBtn.innerHTML = `
+            <div class="fav-add-btn"><i class="ri-add-line"></i></div>
+            <span class="fav-name">Add</span>
+        `;
+        favList.appendChild(addBtn);
+
+        // --- 2. 渲染 All Contacts 列表 ---
+        if(contacts.length === 0) {
+            allList.innerHTML = '<div style="text-align:center; padding:30px; color:#ccc;">No contacts yet. Tap + on top right to create.</div>';
+            return;
+        }
+
+        contacts.forEach(c => {
+            const row = document.createElement('div');
+            row.className = 'contact-card';
+            row.onclick = () => openChatRoom(c.id); 
+            
+            // 星星状态
+            const starClass = c.isFavorite ? 'ri-star-fill' : 'ri-star-line';
+            const starColor = c.isFavorite ? '#FFD700' : '#E5E5EA'; // 亮黄色 或 浅灰色
+
+            row.innerHTML = `
+                <img src="${getRealImgSrc(c.avatar)}">
+                <div class="name-info">
+                    <div class="name">${c.name}</div>
+                </div>
+                <i class="${starClass}" style="color:${starColor}; font-size:24px; padding:8px; cursor:pointer;" onclick="toggleInsFavorite('${c.id}', event)"></i>
+                <i class="ri-more-2-fill" style="color:#ccc; font-size:22px; padding:8px 0 8px 8px; cursor:pointer;" onclick="deleteInsContact('${c.id}', event)"></i>
+            `;
+            allList.appendChild(row);
+        });
+    };
+
+    // 切换喜爱状态的函数
+    window.toggleInsFavorite = (id, event) => {
+        event.stopPropagation(); // 防止触发点击进入聊天的事件
+        const contact = appData.chatData.contacts.find(c => c.id === id);
+        if(contact) {
+            contact.isFavorite = !contact.isFavorite; // 反转状态
+            saveData();
+            renderInsContacts(); // 重新渲染页面
+        }
+    };
+
+    window.saveInsCharacter = async () => {
+        const name = document.getElementById('ins-char-name').value.trim();
+        const note = document.getElementById('ins-char-note').value.trim();
+        const prompt = document.getElementById('ins-char-prompt').value.trim();
+        const base64 = document.getElementById('ins-char-preview').getAttribute('data-base64');
+        const urlInput = document.getElementById('ins-char-url').value.trim();
+
+        if(!name) { alert("Please enter a name."); return; }
+
+        let avatarKey = 'https://api.dicebear.com/7.x/initials/svg?seed=' + name;
+        const uid = 'u_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+        // 逻辑更新：如果有本地文件，走本地存库；如果没有，看看有没有输网址
+        if(base64) {
+            avatarKey = 'avatar_' + uid;
+            try { await idbHelper.saveImage(avatarKey, base64); } catch(e){}
+            appData.images[avatarKey] = base64;
+        } else if (urlInput && urlInput.startsWith('http')) {
+            avatarKey = urlInput;
+        }
+
+        const newContact = { id: uid, name, note, prompt, avatar: avatarKey };
+        appData.chatData.contacts.push(newContact);
+        
+        await saveData();
+        closeInsModal('modal-ins-char');
+        switchInsTab('contacts'); 
+        showToast();
+    };
+
+    window.renderInsFeed = () => {
+        const list = document.getElementById('ins-feed-list');
+        list.innerHTML = '';
+
+        const storyBar = document.getElementById('ins-story-bar');
+        storyBar.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+                <div style="width:60px; height:60px; border-radius:50%; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#ccc; cursor:pointer;" onclick="handleInsPlus()">
+                    <i class="ri-add-line" style="font-size:24px;"></i>
+                </div>
+                <span style="font-size:10px; color:#999;">Your Story</span>
+            </div>
+        `;
+        (appData.chatData.contacts ||[]).slice(0, 5).forEach(c => {
+            storyBar.innerHTML += `
+            <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+                <img src="${getRealImgSrc(c.avatar)}" style="width:60px; height:60px; border-radius:50%; border:2px solid #D92B7A; padding:2px; object-fit:cover;">
+                <span style="font-size:10px; color:#333; max-width:60px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.name}</span>
+            </div>`;
+        });
+
+        if(!appData.chatData.posts || appData.chatData.posts.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:50px; color:#ccc;">No posts yet. Tap + to share.</div>';
+            return;
+        }
+
+        appData.chatData.posts.forEach(p => {
+            const authorName = p.authorId === 'me' ? (appData.customTexts['display-name'] || '@Master') : 'Someone';
+            const authorImg = p.authorId === 'me' ? getRealImgSrc(appData.images['user-avatar']) : 'https://placehold.co/100';
+
+            const locHtml = p.location ? `<div class="ins-post-loc"><i class="ri-map-pin-2-fill"></i> ${p.location}</div>` : '';
+            const imgHtml = p.image ? `<img src="${getRealImgSrc(p.image)}" class="ins-post-img">` : '';
+            
+            const postEl = document.createElement('div');
+            postEl.className = 'ins-post';
+            
+            // 重点：加入头部右侧的三点删除按钮
+            postEl.innerHTML = `
+                <div class="ins-post-header">
+                    <div class="ins-post-author">
+                        <img src="${authorImg}">
+                        <div style="display:flex; flex-direction:column;">
+                            <span>${authorName}</span>
+                            ${locHtml}
+                        </div>
+                    </div>
+                    <i class="ri-more-fill" style="cursor:pointer; color:#999; font-size:20px; padding:5px;" onclick="deleteInsPost('${p.id}', event)"></i>
+                </div>
+                ${imgHtml}
+                <div class="ins-post-actions">
+                    <i class="ri-heart-3-line"></i>
+                    <i class="ri-chat-3-line"></i>
+                    <i class="ri-send-plane-line"></i>
+                </div>
+                ${p.text ? `<div class="ins-post-content"><b style="margin-right:6px;">${authorName}</b>${p.text}</div>` : ''}
+                <div style="padding:8px 15px; font-size:10px; color:#ccc;">${new Date(p.timestamp).toLocaleString()}</div>
+            `;
+            list.appendChild(postEl);
+        });
+    };
+    
+    // 打开此页面时的入口初始化
+    window.openChatApp = () => {
+        openPage('app-chat-root');
+        switchInsTab('chats'); 
+    };
+    
+// ==========================================
+    // 高定版 Atelier 聊天室核心逻辑 & AI 调取
+    // ==========================================
+    let currentChatContact = null;
+
+    // 1. 打开聊天室
+    window.openChatRoom = (contactId) => {
+        currentChatContact = appData.chatData.contacts.find(c => c.id === contactId);
+        if(!currentChatContact) return;
+
+        // 绑定名字和状态
+        document.getElementById('at-room-name').innerText = currentChatContact.name;
+        document.getElementById('at-room-status').innerText = "NEURAL SYNC";
+        document.getElementById('at-room-dot').classList.remove('typing');
+
+        const bdy = document.getElementById('at-body');
+        bdy.innerHTML = ''; // 清空当前视图
+
+        // 渲染时间分割线
+        bdy.innerHTML = `<div class="time-divider">Encryption Secured</div>`;
+
+        // 加载历史消息
+        const history = appData.chatData.messages.filter(m => m.chatId === contactId);
+        history.forEach(msg => {
+            appendMsgToUI(msg.sender, msg.content, msg.timestamp);
+        });
+
+        openPage('page-chat-room');
+        setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 100);
+        document.getElementById('emoji-picker').classList.remove('show');
+    };
+
+    // 2. 往UI添加气泡
+    function appendMsgToUI(sender, text, timestamp) {
+        const bdy = document.getElementById('at-body');
+        const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        let newDiv = document.createElement('div');
+        if(sender === 'me') {
+            newDiv.className = 'at-msg m-me';
+            newDiv.innerHTML = `<div class="msg-core">${text.replace(/\n/g, '<br>')}</div><span class="time">${timeStr}</span>`;
+        } else {
+            newDiv.className = 'at-msg m-bot';
+            newDiv.innerHTML = `<img src="${getRealImgSrc(currentChatContact.avatar)}" class="avatar"><div class="msg-core">${text.replace(/\n/g, '<br>')}</div><span class="time">${timeStr}</span>`;
+        }
+        bdy.appendChild(newDiv);
+        bdy.scrollTop = bdy.scrollHeight;
+    }
+
+    // 3. 插入Emoji
+    window.insertEmoji = (emoji) => {
+        const inp = document.getElementById('inp-txt');
+        inp.value += emoji;
+        inp.focus();
+        document.getElementById('emoji-picker').classList.remove('show');
+    };
+
+    // 支持回车发送
+    document.getElementById('inp-txt').addEventListener("keydown", function(e) {
+        if (e.key === "Enter") sendAtelierMsg();
+    });
+
+    // 4. 发送消息并触发 API
+    window.sendAtelierMsg = async () => {
+        const inp = document.getElementById('inp-txt');
+        const text = inp.value.trim();
+        if(!text) return;
+
+        // 隐藏表情面板、清空输入框
+        document.getElementById('emoji-picker').classList.remove('show');
+        inp.value = '';
+
+        const now = Date.now();
+        // 存入数据库
+        const myMsg = { id: 'm_'+now, chatId: currentChatContact.id, sender: 'me', content: text, timestamp: now };
+        appData.chatData.messages.push(myMsg);
+        saveData();
+
+        // 渲染我的气泡
+        appendMsgToUI('me', text, now);
+
+        // 调用 AI
+        triggerAtelierAI();
+    };
+
+    // 5. 核心 API 调用 (强力防OOC)
+    async function triggerAtelierAI() {
+        if(!appData.lastApi.url || !appData.lastApi.key) {
+            alert("Error: API is not configured. Please go to API settings."); 
+            return;
+        }
+
+        const dot = document.getElementById('at-room-dot');
+        const status = document.getElementById('at-room-status');
+        dot.classList.add('typing');
+        status.innerText = "TYPING...";
+
+        // 提取最近的对话上下文 (控制记忆长度为最后 20 条防超载)
+        const historyMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id).slice(-20);
+        
+        // 组装发给 API 的格式
+        const apiMessages =[];
+        
+        // 【最核心：上帝级防OOC系统提示词】
+        const systemPrompt = `
+You are now deeply engaging in a roleplay. 
+YOUR PERSONA/CHARACTER SETTING:
+${currentChatContact.prompt || "You are a quiet, minimalist, and highly intelligent companion."}
+
+STRICT RULES YOU MUST FOLLOW:
+1. NEVER break character. NEVER admit you are an AI, a language model, or a virtual assistant.
+2. If asked about your nature, respond according to your persona's background.
+3. Keep your tone, vocabulary, and sentence length perfectly aligned with your persona.
+4. Respond directly to the user's latest message without unnecessary meta-talk or pleasantries unless it fits the character.
+5. Embody the character flawlessly.
+        `.trim();
+
+        apiMessages.push({ role: "system", content: systemPrompt });
+
+        // 塞入历史对话
+        historyMsgs.forEach(m => {
+            apiMessages.push({
+                role: m.sender === 'me' ? 'user' : 'assistant',
+                content: m.content
+            });
+        });
+
+        const selectedModel = appData.lastApi.model || "gpt-3.5-turbo";
+        const temp = parseFloat(appData.lastApi.temp) || 0.7;
+
+        try {
+            const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+                body: JSON.stringify({ model: selectedModel, messages: apiMessages, temperature: temp })
+            });
+
+            const data = await res.json();
+            if(data.error) throw new Error(data.error.message);
+            
+            const aiText = data.choices[0].message.content.trim();
+            const aiNow = Date.now();
+
+            // 存入数据库
+            const aiMsg = { id: 'm_'+aiNow, chatId: currentChatContact.id, sender: 'bot', content: aiText, timestamp: aiNow };
+            appData.chatData.messages.push(aiMsg);
+            saveData();
+
+            // 渲染AI气泡
+            appendMsgToUI('bot', aiText, aiNow);
+
+        } catch (e) {
+            alert("Connection Failed: " + e.message);
+        } finally {
+            dot.classList.remove('typing');
+            status.innerText = "NEURAL SYNC";
+        }
+    }
+</script>
+
+</body>
+</html>
