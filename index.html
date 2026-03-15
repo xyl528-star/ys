@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
     <title>My Phone - 虚拟手机</title>
+    <!-- PWA 配置：让网页变身 APP -->
+    
+    <!-- 1. 链接配置文件 -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- 2. iOS 全屏支持 (苹果手机专用) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Atelier">
+    
+    <!-- 3. iOS 图标 -->
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <!-- 4. 移动端视口设置 (禁止缩放，像APP一样固定) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- 5. Android/Chrome 主题色 -->
+    <meta name="theme-color" content="#000000">
     <!-- 引入 Remix Icon 打造高级感图标 -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style id="global-font-style"></style>
@@ -1657,7 +1675,7 @@ const IntifaceLogic = {
         }
     };
     
-    window.applyFont = (name, save = true) => {
+        window.applyFont = (name, save = true) => {
         if(save) { 
             appData.activeFont = name; 
             saveData(); 
@@ -1665,13 +1683,30 @@ const IntifaceLogic = {
         }
         const styleTag = document.getElementById('global-font-style');
         const url = appData.fontPresets[name];
-        if(!url || name === '系统默认') { styleTag.innerHTML = ''; return; }
+        
+        // 1. 如果选的是“系统默认”，清空样式，恢复原样
+        if(!url || name === '系统默认') { 
+            styleTag.innerHTML = ''; 
+            return; 
+        }
+
+        // 2. 【关键修改】这里增加了 #page-chat-room 等选择器，强制覆盖聊天室的默认字体
+        const selector = 'body, input, textarea, button, select, #page-chat-room, .ins-main-view';
+
         if(url.includes('.css') || url.includes('googleapis')) {
-            styleTag.innerHTML = `@import url('${url}'); body, input, textarea { font-family: 'ZCOOL XiaoWei', serif !important; }`;
+            // 情况A: 在线字体 (比如 Google Fonts)
+            // 注意：如果是你自己加的Google字体，名字可能不是 ZCOOL XiaoWei，
+            // 但加上 !important 通常能强制生效
+            styleTag.innerHTML = `@import url('${url}'); ${selector} { font-family: 'ZCOOL XiaoWei', 'CustomFont', serif !important; }`;
         } else {
-            styleTag.innerHTML = `@font-face { font-family: 'CustomFont'; src: url('${url}'); } body, input, textarea { font-family: 'CustomFont', '${url}', sans-serif !important; }`;
+            // 情况B: 直接的字体文件链接 (.ttf / .woff)
+            styleTag.innerHTML = `
+                @font-face { font-family: 'CustomFont'; src: url('${url}'); } 
+                ${selector} { font-family: 'CustomFont', sans-serif !important; }
+            `;
         }
     };
+
     
     window.applyFontSize = (size) => {
         document.documentElement.style.setProperty('--base-font-size', size + 'px');
@@ -1776,23 +1811,41 @@ const IntifaceLogic = {
         }
     };
 
-    window.testAPI = async () => {
+            window.testAPI = async () => {
         const url = document.getElementById('api-url').value.replace(/\/$/, "");
         const key = document.getElementById('api-key').value;
-        appData.lastApi = { url, key };
+        appData.lastApi = { ...appData.lastApi, url, key }; // 保留原有的 model 设置
         saveData();
+        
+        const btn = document.querySelector('button[onclick="testAPI()"]');
+        const oldTxt = btn.innerText;
+        btn.innerText = "连接中...";
+
         try {
-            const btn = document.querySelector('button[onclick="testAPI()"]');
-            const oldTxt = btn.innerText;
-            btn.innerText = "连接中...";
-            
             const res = await fetch(`${url}/models`, { headers: { 'Authorization': `Bearer ${key}` } });
             const d = await res.json();
+            
+            // 1. 获取模型列表
             appData.cachedModels = Array.isArray(d.data) ? d.data.map(m=>m.id) : d.map(m=>m.id);
-            saveData(); renderAPIPresets(); alert('连接成功！模型列表已更新。');
+            
+            // 2. 【关键修改】只有当你从来没选过模型时，才默认帮你选第一个
+            // 如果你之前选过（比如 gemini-pro），这里绝对不会覆盖它！
+            if (!appData.lastApi.model && appData.cachedModels.length > 0) {
+                appData.lastApi.model = appData.cachedModels[0];
+            }
+
+            saveData(); 
+            renderAPIPresets(); // 刷新下拉框
+            
+            alert('连接成功！请在下方下拉框选择你想要使用的模型，系统会自动保存。');
+        } catch(e) { 
+            alert('连接失败: ' + e); 
+        } finally {
             btn.innerText = oldTxt;
-        } catch(e) { alert('连接失败: ' + e); }
+        }
     };
+
+
 
     // ==========================================
     // 桌面入口点击事件
@@ -2762,20 +2815,15 @@ window.previewInsPostImg = (input) => {
         document.getElementById('emoji-picker').classList.remove('show');
     };
 
-    // 支持回车发送
-    document.getElementById('inp-txt').addEventListener("keydown", function(e) {
-        if (e.key === "Enter") sendAtelierMsg();
-    });
-
     // 4. 发送消息并触发 API
-    window.sendAtelierMsg = async () => {
+        // === 新功能：只发送用户气泡，不触发AI ===
+    window.sendOnlyUserMsg = async () => {
         const inp = document.getElementById('inp-txt');
         const text = inp.value.trim();
-        if(!text) return;
+        if(!text) return false; // 如果没字，就不发
 
-        // 隐藏表情面板、清空输入框
         document.getElementById('emoji-picker').classList.remove('show');
-        inp.value = '';
+        inp.value = ''; // 清空输入框
 
         const now = Date.now();
         // 存入数据库
@@ -2783,48 +2831,74 @@ window.previewInsPostImg = (input) => {
         appData.chatData.messages.push(myMsg);
         saveData();
 
-        // 渲染我的气泡
+        // 立即显示在界面上
         appendMsgToUI('me', text, now);
+        return true; // 告诉外面：发送成功了
+    };
 
-        // 调用 AI
+    // === 修改后的按钮逻辑：发送键 = (如果有字先发字) + 呼叫AI ===
+    window.sendAtelierMsg = async () => {
+        // 1. 尝试把输入框里的字发出去
+        await sendOnlyUserMsg();
+        
+        // 2. 【核心】不管刚才有没有发字，点击这个按钮都会强制 AI 开始响应
         triggerAtelierAI();
     };
 
-    // 5. 核心 API 调用 (强力防OOC)
+    // === 修改后的 Enter 键逻辑：只发气泡，AI 闭嘴 ===
+    document.getElementById('inp-txt').addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+            e.preventDefault(); // 阻止换行
+            sendOnlyUserMsg();  // 只调用“只发气泡”的函数
+        }
+    });
+
+    // === 核心 AI 调用逻辑 (已优化速度) ===
+        // === 核心 AI 调用逻辑 (究极进化版：多气泡 + 强力人设) ===
     async function triggerAtelierAI() {
         if(!appData.lastApi.url || !appData.lastApi.key) {
-            alert("Error: API is not configured. Please go to API settings."); 
+            alert("请先去 API 页面配置服务器地址和 Key！"); 
             return;
         }
 
         const dot = document.getElementById('at-room-dot');
         const status = document.getElementById('at-room-status');
+        
+        // 1. 界面变为“对方正在输入...”
         dot.classList.add('typing');
         status.innerText = "TYPING...";
 
-        // 提取最近的对话上下文 (控制记忆长度为最后 20 条防超载)
+        // 2. 准备历史记录
+        // 提取最近 20 条，让 AI 记得住上下文
         const historyMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id).slice(-20);
         
-        // 组装发给 API 的格式
-        const apiMessages =[];
+        const apiMessages = [];
         
-        // 【最核心：上帝级防OOC系统提示词】
+        // 3. 【重点】究极人设提示词 (System Prompt)
+        // 这里规定了：绝对不许说自己是AI、必须分段发送(用 ||| 分隔)
+// 3. 【重点】纯净聊天模式提示词 (禁止动作描写)
+        const persona = currentChatContact.prompt || "A casual friend.";
+        const charName = currentChatContact.name || "Character";
+        
         const systemPrompt = `
-You are now deeply engaging in a roleplay. 
-YOUR PERSONA/CHARACTER SETTING:
-${currentChatContact.prompt || "You are a quiet, minimalist, and highly intelligent companion."}
+[Instruction]
+You are roleplaying as "${charName}" in a instant messaging app (like WhatsApp/WeChat).
+Current Persona: ${persona}
 
-STRICT RULES YOU MUST FOLLOW:
-1. NEVER break character. NEVER admit you are an AI, a language model, or a virtual assistant.
-2. If asked about your nature, respond according to your persona's background.
-3. Keep your tone, vocabulary, and sentence length perfectly aligned with your persona.
-4. Respond directly to the user's latest message without unnecessary meta-talk or pleasantries unless it fits the character.
-5. Embody the character flawlessly.
-        `.trim();
+[RULES]
+1. NO ACTING: Do NOT use asterisks. Do NOT describe actions, expressions, movements, or feelings. Only send real text messages.
+2. FORMAT: Split your reply into multiple short bubbles using "|||".
+   Example: Hey!|||What are you doing?|||I'm bored.
+3. STYLE: Speak naturally, like a real person chatting online. Use short sentences. Use casual language. Use emojis appropriately, not too many.
+4. IDENTITY: You are NOT an AI. You are NOT a language model. You are a REAL PERSON texting. Never break character.
+5. STAY IN CHARACTER: Everything you say must match the persona. Do NOT OOC. Do NOT act out of character.
+6. RESPONSE LENGTH: Keep each message short. Do NOT write long paragraphs.
+7. HUMAN FEEL: Be spontaneous, conversational, and realistic. Don't be too formal or robotic.
+`;
 
         apiMessages.push({ role: "system", content: systemPrompt });
 
-        // 塞入历史对话
+        // 填入历史聊天记录
         historyMsgs.forEach(m => {
             apiMessages.push({
                 role: m.sender === 'me' ? 'user' : 'assistant',
@@ -2832,37 +2906,92 @@ STRICT RULES YOU MUST FOLLOW:
             });
         });
 
-        const selectedModel = appData.lastApi.model || "gpt-3.5-turbo";
-        const temp = parseFloat(appData.lastApi.temp) || 0.7;
+        // 选模型
+        let useModel = appData.lastApi.model;
+        if (!useModel && appData.cachedModels.length > 0) useModel = appData.cachedModels[0];
+        if (!useModel) useModel = "gpt-3.5-turbo";
+
+        const temp = parseFloat(appData.lastApi.temp) || 0.8; //稍微调高一点温度，更活泼
 
         try {
+            // 4. 发送请求给 AI
             const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-                body: JSON.stringify({ model: selectedModel, messages: apiMessages, temperature: temp })
+                body: JSON.stringify({ model: useModel, messages: apiMessages, temperature: temp })
             });
 
             const data = await res.json();
             if(data.error) throw new Error(data.error.message);
             
-            const aiText = data.choices[0].message.content.trim();
-            const aiNow = Date.now();
+            // 5. 【核心】处理多条气泡
+            const rawText = data.choices[0].message.content;
+            
+            // 用 ||| 符号把长文本切成 数组
+            // 比如 "好啊|||几点去？" 变成了 ["好啊", "几点去？"]
+            let parts = rawText.split('|||').map(t => t.trim()).filter(t => t);
 
-            // 存入数据库
-            const aiMsg = { id: 'm_'+aiNow, chatId: currentChatContact.id, sender: 'bot', content: aiText, timestamp: aiNow };
-            appData.chatData.messages.push(aiMsg);
-            saveData();
+            // 如果 AI 忘了加分隔符，就当做一条发出去
+            if(parts.length === 0) parts = [rawText];
 
-            // 渲染AI气泡
-            appendMsgToUI('bot', aiText, aiNow);
+            // 6. 模拟人类发送延迟 (循环发送)
+            for (let i = 0; i < parts.length; i++) {
+                const partText = parts[i];
+                const aiNow = Date.now() + i; // 确保每条 ID 不一样
+
+                // 模拟打字等待时间 (字越多等越久，最少等 500毫秒)
+                // 只有第一条不用等太久，后面的稍微等一下，更有感觉
+                if(i > 0) {
+                    const delayTime = Math.min(partText.length * 50, 2000); 
+                    await new Promise(r => setTimeout(r, delayTime)); 
+                }
+
+                // 存入数据库 (注意：每条都有唯一的 ID: m_时间戳)
+                // 以后做引用回复时，就靠这个 id 来找
+                const aiMsg = { 
+                    id: 'm_' + aiNow, 
+                    chatId: currentChatContact.id, 
+                    sender: 'bot', 
+                    content: partText, 
+                    timestamp: aiNow 
+                };
+                
+                appData.chatData.messages.push(aiMsg);
+                saveData();
+
+                // 显示在界面上
+                appendMsgToUI('bot', partText, aiNow);
+            }
 
         } catch (e) {
-            alert("Connection Failed: " + e.message);
+            console.error(e);
+            // 只有出错时才弹窗，不然太烦
+            // alert("AI 连接出错: " + e.message);
         } finally {
+            // 全部发完后，状态变回 "Online" 或 "Sync"
             dot.classList.remove('typing');
             status.innerText = "NEURAL SYNC";
         }
     }
+    // === 修复：新建角色时的头像预览函数 ===
+    window.previewInsUpload = (input, imgId) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById(imgId);
+                img.src = e.target.result;
+                // 关键：把图片数据存到标签里，保存时才能读取到
+                img.setAttribute('data-base64', e.target.result);
+                
+                // 如果有URL输入框，也顺便清空它，避免冲突
+                const urlInput = document.getElementById('ins-char-url');
+                if(urlInput) urlInput.value = '';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+
 </script>
 
 </body>
