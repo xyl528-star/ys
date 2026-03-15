@@ -26,6 +26,28 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style id="global-font-style"></style>
     <style>
+    body {
+    /* 1. 确保高度是动态全屏，解决挤压问题 */
+    min-height: 100vh;
+    min-height: 100dvh; /* 专门针对移动端的动态高度单位 */
+    
+    /* 2. 让背景铺满，无视安全区 */
+    background-attachment: fixed; 
+    background-size: cover; 
+    
+    /* 3. 让内容避开刘海屏和底部小白条，但背景图依然全屏 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    
+    /* 4. 防止左右滑动 */
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* 额外修复：如果是聊天室页面，确保底部输入框不被小白条遮挡 */
+.input-area {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
         :root {
             --bg-color: #000;
             --text-main: #070707;
