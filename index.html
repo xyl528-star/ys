@@ -590,21 +590,24 @@
         .online-dot.typing { background: var(--at-blue); box-shadow: 0 0 8px var(--at-blue); } /* AI思考时亮蓝灯 */
 
         #at-body {
-            flex: 1; overflow-y: auto; padding: 30px 24px;
-            display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; padding: 15px 16px;
+            display: flex; flex-direction: column; 
+            gap: 18px; /* 核心：18px 刚好容纳下方 16px 的时间戳，多留 2px 视觉缝隙，拒绝浪费空间 */
+            scroll-behavior: smooth;
         }
         #at-body::-webkit-scrollbar { display: none; }
 
         .time-divider {
             display: flex; align-items: center; text-align: center;
             color: var(--at-sub); font-size: 10px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 2px; margin: 10px 0 20px;
+            letter-spacing: 2px; margin: 5px 0 5px; /* 压缩分割线上下高度 */
         }
         .time-divider::before, .time-divider::after { content: ''; flex: 1; border-bottom: 0.5px dotted var(--border-fine); }
         .time-divider::before { margin-right: 12px; }
         .time-divider::after { margin-left: 12px; }
 
-        .at-msg { display: flex; align-items: flex-end; width:100%; position: relative; animation: slideUp 0.3s ease; }
+        /* 删除了坑人的 margin-bottom: 20px，完全靠父级的 18px gap 撑开精准距离 */
+        .at-msg { display: flex; align-items: flex-end; width:100%; position: relative; animation: slideUp 0.3s ease; margin-bottom: 0; }
         @keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 
         .m-bot { justify-content: flex-start; }
@@ -612,18 +615,42 @@
             width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
             border: 1px solid var(--border-fine); margin-right: 12px; padding: 2px; background: #fff;
         }
-        .m-bot .msg-core {
-            background: var(--at-slate); color: var(--at-ink); padding: 12px 18px; 
-            border-radius: 4px 16px 16px 16px; font-size: 15px; line-height: 1.6; max-width: 75%; word-wrap: break-word;
+        .m-me { justify-content: flex-end; }
+        /* 新增：让我的头像也能显示出来 */
+        .m-me .avatar {
+            width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+            border: 1px solid var(--border-fine); margin-left: 12px; padding: 2px; background: #fff;
         }
 
-        .m-me { justify-content: flex-end; }
+        /* --- 气泡核心排版（移到全局，绝对防覆盖） --- */
+        .msg-col { display: flex; flex-direction: column; gap: 8px; max-width: 75%; min-width: 0; }
+        .m-bot .msg-col { align-items: flex-start; }
+        .m-me .msg-col { align-items: flex-end; }
+        .msg-col .msg-core { max-width: 100% !important; width: fit-content; }
+        .msg-module-box { width: 100%; border-radius: 16px; overflow: hidden; background: transparent; flex-shrink: 0; }
+
+        .m-bot .msg-core {
+            background: var(--at-slate); color: var(--at-ink); padding: 8px 14px; 
+            border-radius: 4px 16px 16px 16px; font-size: 14px; line-height: 1.5; 
+            word-break: break-word; white-space: pre-wrap;
+        }
+
         .m-me .msg-core {
-            background: var(--at-ink); color: #FFF; padding: 12px 18px;
-            border-radius: 16px 16px 4px 16px; font-size: 15px; line-height: 1.6; max-width: 75%; word-wrap: break-word;
+            background: var(--at-ink); color: #FFF; padding: 8px 14px;
+            border-radius: 16px 16px 4px 16px; font-size: 14px; line-height: 1.5; 
+            word-break: break-word; white-space: pre-wrap;
         }
         
-        .m-me .time { position: absolute; right: 0; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
+        .m-me .time { position: absolute; right: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
+        .m-bot .time { position: absolute; left: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
+
+        /* 新增：人设面具列表的样式 */
+        .mask-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px 20px; }
+        .mask-scroll::-webkit-scrollbar { display: none; }
+        .mask-item { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 64px; cursor: pointer; flex-shrink: 0; }
+        .mask-item img { width: 56px; height: 56px; border-radius: 18px; object-fit: cover; border: 2px solid transparent; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .mask-item span { font-size: 11px; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+        .mask-add-btn { width: 56px; height: 56px; border-radius: 18px; background: #F2F2F7; display: flex; align-items: center; justify-content: center; color: #8E8E93; font-size: 24px; cursor: pointer; }
         .m-bot .time { position: absolute; left: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
 
         .at-footer {
@@ -675,13 +702,182 @@
         .emoji-item { font-size: 24px; text-align: center; cursor: pointer; transition: 0.1s; }
         .emoji-item:active { transform: scale(1.3); }
 
-        /* 全屏留空设置页 */
+       /* === 聊天室全屏高级设置页 (Settings Sheet) v2.1 === */
         .at-settings-layer {
-            position: fixed; inset: 0; background: var(--at-paper); z-index: 3000;
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #F7F8FA; z-index: 3000;
+            transform: translateY(100%); 
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             display: flex; flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
         }
         .at-settings-layer.open { transform: translateY(0); }
+
+        .sheet-handle-area {
+            padding: calc(env(safe-area-inset-top) + 16px) 24px 16px; 
+            background: #F7F8FA; border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; z-index: 10;
+        }
+        .sheet-close-btn {
+            width: 32px; height: 32px; background: #ecedef; border-radius: 50%;
+            display:flex; justify-content:center; align-items:center; color: #555; cursor:pointer;
+        }
+        .sheet-title { font-size: 15px; font-weight: 700; color: #111; letter-spacing: 0.5px; text-transform:uppercase;}
+        .sheet-save-btn { font-size: 15px; font-weight: 700; color: #007AFF; cursor:pointer; }
+
+        .setting-scroll { flex: 1; overflow-y: auto; padding: 10px 20px 60px; }
+        .setting-scroll::-webkit-scrollbar { display: none; }
+
+        .sec-title {
+            font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; 
+            letter-spacing: 1.5px; margin: 24px 4px 10px; display: flex; align-items: center; gap: 6px;
+        }
+
+        .card-box { background: #FFFFFF; border-radius: 16px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #ECECEC; }
+
+        .identity-row { display: flex; gap: 16px; align-items: flex-start; }
+        .avatar-edit {
+            width: 72px; height: 72px; border-radius: 20px; background: #F2F2F2; 
+            position: relative; overflow: hidden; border: 1px solid #e5e5e5; flex-shrink: 0; cursor: pointer;
+        }
+        .avatar-edit img { width: 100%; height: 100%; object-fit: cover; }
+        .edit-badge {
+            position: absolute; bottom: 0; right: 0; width: 24px; height: 24px;
+            background: rgba(0,0,0,0.6); color: #fff; font-size: 12px;
+            display:flex; align-items:center; justify-content:center; border-radius: 8px 0 0 0; backdrop-filter: blur(4px);
+        }
+        
+        .id-inputs { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width:0; }
+        .input-bare { width: 100%; border: none; background: #F8F8F8; outline:none; padding: 10px 12px; border-radius: 8px; font-size: 14px; color: #111; font-weight: 600; box-sizing: border-box; }
+        .input-bare::placeholder { font-weight: 400; color: #ccc;}
+        .textarea-bare { width: 100%; border: none; background: #F8F8F8; outline:none; padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #333; line-height: 1.6; resize: none; box-sizing: border-box; }
+
+        .item-row { display: flex; flex-wrap:wrap; justify-content: space-between; align-items: center; padding: 12px 4px; border-bottom: 1px solid #f0f0f0; }
+        .item-row:last-child { border-bottom: none; }
+        .row-label { font-size: 14px; font-weight: 600; color: #111; display: flex; align-items: center; gap: 6px;}
+        .row-sub { font-size: 11px; color:#999; display:block; margin-top:4px;}
+
+        .range-wrap { flex: 1; max-width: 55%; justify-content: flex-end; display: flex; align-items: center; gap: 10px;}
+        .mini-slider { -webkit-appearance: none; flex: 1; height: 4px; border-radius: 2px; background: #eee; outline: none; min-width: 50px;}
+        .mini-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #111; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .val-display { font-size: 11px; font-weight: 700; color: #111; min-width: 45px; text-align: right; white-space: nowrap;}
+
+        .select-bare { background: rgba(0,0,0,0.05); border: none; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #111; outline: none; max-width: 150px; }
+        .num-input-group { display: flex; align-items: center; gap: 4px; font-size:12px; font-weight:600; color:#555;}
+        .num-input-group input { width:42px; padding:6px 0; text-align:center;}
+
+        /* 预览区 */
+        .preview-stage {
+            min-height: 140px; background: #EFEFF4; border-radius: 12px; margin-bottom: 16px;
+            position: relative; overflow: hidden; display: flex; flex-direction:column; gap: 10px;
+            justify-content: center; padding: 12px; border: 1px solid rgba(0,0,0,0.05);
+        }
+        .mock-bg-pl { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; display: none; }
+        .mock-msg { display:flex; align-items:flex-end; gap:8px; z-index:1; max-width: 80%; transition: opacity 0.3s; }
+        .mock-msg.mock-me { align-self: flex-end; }
+        .mock-msg.mock-bot { align-self: flex-start; }
+        .mock-avatar { width:32px; height:32px; border-radius:50%; background:#ccc; object-fit:cover; flex-shrink:0; }
+        .mock-bubble { padding: 10px 14px; font-size: 13px; transition: all 0.3s; word-break:break-word; }
+        .mock-bot .mock-bubble { background: #E4E3DF; color: #111111; border-radius: 4px 16px 16px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
+        .mock-me .mock-bubble { background: #111111; color: #FFF; border-radius: 16px 16px 4px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
+        
+        .code-input { width: 100%; background: #2d2d2d; color: #A9B7C6; font-family: 'SF Mono', 'Courier New', monospace; font-size: 12px; padding: 12px; border-radius: 8px; border:none; outline:none; box-sizing: border-box; }
+
+        .tgl-btn { width: 44px; height: 24px; background: #ddd; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; flex-shrink: 0;}
+        .tgl-btn.on { background: #34C759; }
+        .tgl-btn::after { content:''; position: absolute; left: 2px; top: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: 0.3s cubic-bezier(0.5, 1.5, 0.5, 1); box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .tgl-btn.on::after { left: 22px; }
+
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px;}
+        .act-icon-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F9F9F9; padding: 12px 0; border-radius: 10px; cursor: pointer; color: #555; gap: 6px; transition: 0.2s;}
+        .act-icon-btn i { font-size: 20px; }
+        .act-icon-btn span { font-size: 10px; font-weight: 500; }
+        .act-icon-btn:active { background: #eee; transform: scale(0.95); }
+
+        .danger-row { color: #FF3B30 !important; cursor: pointer; }
+
+        /* 记忆总结展示区 (新页面) */
+        #page-summary #set-summary-display-page {
+            width: 100%; height: 250px; background: #F8F8F8; border: 1px solid #eee;
+            border-radius: 8px; font-size: 13px; color: #333; padding: 12px;
+            line-height: 1.6; resize: none; outline: none; box-sizing: border-box;
+        }
+        
+/* 消息长按菜单与多选样式 */
+        .msg-action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;}
+        .msg-action-btn:active { transform: scale(0.9); opacity: 0.7; }
+        .msg-action-icon { width: 50px; height: 50px; border-radius: 14px; background: #F2F2F7; display: flex; justify-content: center; align-items: center; font-size: 22px; color: #111; }
+        .msg-action-text { font-size: 11px; color: #555; font-weight: 500; text-align: center; }
+        
+        .msg-action-btn.danger .msg-action-icon { background: #FFF0F0; color: #FF3B30; }
+        .msg-action-btn.danger .msg-action-text { color: #FF3B30; }
+
+        /* 给每个消息气泡加上过渡动画，为了未来的左右滑动和多选做准备 */
+        .at-msg { transition: transform 0.3s ease; }
+        
+/* --- 引用栏 (输入框上方) --- */
+        #quote-preview-bar { display: none; background: #F2F2F7; padding: 8px 15px; font-size: 12px; color: #555; border-left: 3px solid #007AFF; position: absolute; bottom: 100%; left: 0; right: 0; align-items: center; justify-content: space-between; z-index: 10; box-shadow: 0 -2px 10px rgba(0,0,0,0.02); backdrop-filter: blur(10px); }
+        .quote-close { cursor: pointer; font-size: 16px; color: #999; padding: 0 5px; }
+        
+        /* --- 气泡内的引用样式 --- */
+        .msg-quote-block { background: rgba(0,0,0,0.05); padding: 6px 10px; border-radius: 6px; font-size: 11px; color: rgba(0,0,0,0.6); margin-bottom: 6px; border-left: 2px solid rgba(0,0,0,0.2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .m-me .msg-quote-block { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); border-left-color: rgba(255,255,255,0.5); }
+        
+/* --- 撤回消息样式 --- */
+        .at-msg-recalled { text-align: center; margin: 15px 0; width: 100%; position: relative; transition: transform 0.3s ease; }
+        .msg-recalled-link { color: #007AFF; cursor: pointer; margin-left: 5px; text-decoration: underline; }
+
+        /* --- 多选模式样式 --- */
+        .at-msg { position: relative; transition: transform 0.3s ease; width: 100%; }
+        .multi-select-circle { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 1px solid #C7C7CC; display: none; align-items: center; justify-content: center; cursor: pointer; }
+        .multi-select-circle.checked { background: #007AFF; border-color: #007AFF; }
+        .multi-select-circle.checked::after { content: ''; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg) translateY(-1px); }
+        
+        /* 激活多选模式时的位移 */
+        .multi-select-mode .at-msg, .multi-select-mode .at-msg-recalled { transform: translateX(50px); width: calc(100% - 50px); }
+        .multi-select-mode .multi-select-circle { display: flex; }
+
+        /* 多选底部操作栏 */
+        #multi-action-bar { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 0.5px solid #E5E5EA; display: none; justify-content: space-between; align-items: center; padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 100; box-sizing: border-box; }
+        
+/* ==================================
+   表情包管理中心专属样式
+================================== */
+.sticker-cat-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
+.sticker-cat-list::-webkit-scrollbar { display: none; }
+.sticker-cat-item {
+    padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    background: #F2F2F7; color: #8E8E93; cursor: pointer; white-space: nowrap; transition: 0.2s;
+}
+.sticker-cat-item.active { background: #111; color: #FFF; }
+
+.sticker-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.sticker-item-box {
+    position: relative; background: #F9F9F9; border-radius: 12px; padding: 10px;
+    display: flex; flex-direction: column; align-items: center; border: 1px solid #E5E5EA;
+    min-width: 0; /* 核心修复：防止弹性盒子里的文字把外框撑爆 */
+    overflow: hidden;
+}
+.sticker-item-box img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px; flex-shrink: 0; }
+.sticker-item-desc { 
+    font-size: 10px; color: #555; text-align: center; 
+    width: 100%; box-sizing: border-box;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+.sticker-del-btn {
+    position: absolute; top: -5px; right: -5px; width: 24px; height: 24px;
+    background: #FF3B30; color: #fff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 聊天室发送表情包专属样式 */
+.chat-picker-stk-box { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px; border-radius: 8px; transition: background 0.2s; }
+.chat-picker-stk-box:active { background: #f0f0f0; }
+.chat-picker-stk-img { width: 100%; height: 45px; object-fit: contain; pointer-events: none; }
+.chat-picker-stk-desc { font-size: 10px; color: #888; width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
     </style>
     <!-- 引入 Buttplug 底层蓝牙驱动库 (预留) -->
     <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
@@ -821,6 +1017,33 @@
             <div class="group-header" data-txt="grp-dock">底部 Dock</div>
             <div id="appr-list-dock"></div>
             
+<!-- ================= 新增：独立的全局 CSS 美化系统 ================= -->
+            <div class="group-header" style="margin-top:20px;">全局 CSS 美化 (独立预设)</div>
+            <div style="background:#fff; border-radius:16px; padding:15px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+                <div style="display:flex; gap:10px; margin-bottom:12px;">
+                    <select id="css-preset-sel" class="ipt-std" style="margin-bottom:0; flex:1; padding:10px; font-size:13px;" onchange="loadCSSPresetToEditor()"></select>
+                    <button class="btn-std btn-danger" style="width:auto; padding:10px 14px;" onclick="deleteCSSPreset()"><i class="ri-delete-bin-line"></i></button>
+                </div>
+                <textarea id="appr-global-css" class="textarea-bare" rows="5" placeholder="在此编写 CSS代码..." style="border: 1px solid #eee; background:#fafafa; font-family: monospace;"></textarea>
+                <div style="display:flex; gap:10px; margin-top:12px;">
+                    <button class="btn-std btn-sec" style="flex:1; padding:10px; font-size: 13px;" onclick="applyAndSaveCurrentCSS()">立即应用并覆盖</button>
+                    <button class="btn-std" style="flex:1; padding:10px; font-size: 13px; background:#111; color:#fff;" onclick="saveCSSPresetAs()">存为新 CSS</button>
+                </div>
+            </div>
+
+            <!-- ================= 新增：纯净的本地主题预设 ================= -->
+            <div class="group-header" style="margin-top:20px;">本地主题预设 (壁纸/图标)</div>
+            <div style="background:#fff; border-radius:16px; padding:15px; margin-bottom:30px; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+                <div style="display:flex; gap:10px; margin-bottom:12px;">
+                    <select id="theme-preset-sel" class="ipt-std" style="margin-bottom:0; flex:1; padding:10px; font-size:13px;"></select>
+                    <button class="btn-std btn-danger" style="width:auto; padding:10px 14px;" onclick="deleteThemePreset()"><i class="ri-delete-bin-line"></i></button>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-std btn-sec" style="flex:1; padding:10px; font-size: 13px;" onclick="loadThemePreset()">加载该主题</button>
+                    <button class="btn-std" style="flex:1; padding:10px; font-size: 13px; background:#111; color:#fff;" onclick="saveThemePreset()">存为新主题</button>
+                </div>
+            </div>
+            <!-- ============================================================= -->
             <!-- 👇 新增的主题导出/导入区块 👇 -->
             <div style="margin-top:40px; padding-top:20px; border-top:1px dashed #ccc;">
                 <div class="group-header" style="margin-top:0; color:#333; font-weight:700;">主题分享与恢复</div>
@@ -1053,6 +1276,9 @@
                     <h2 id="ins-my-name" style="font-size:22px; margin-bottom:6px; cursor:pointer;" onclick="editInsMyName()">@Master</h2>
                     <div id="ins-my-bio" style="color:#8E8E93; font-size:14px; cursor:pointer; padding:0 20px; line-height:1.4;" onclick="editInsMyBio()">Virtual Space Creator</div>
                 </div>
+                <!-- 新增：我的面具系统 -->
+                <div style="padding: 10px 20px 5px; font-size:13px; font-weight:700; color:#111; letter-spacing:0.5px;">MY MASKS (人设面具)</div>
+                <div id="ins-mask-list" class="mask-scroll"></div>
                 <div style="padding: 10px 20px 5px; font-size:13px; font-weight:700; color:#111; letter-spacing:0.5px;">MY GALLERY</div>
                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2px; padding:0 2px;">
                     <img id="ins-grid-1" src="https://placehold.co/200/eee/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-1').click()">
@@ -1115,6 +1341,41 @@
         </div>
     </div>
 
+
+<!-- 弹窗 3：创建/编辑人设面具 (My Mask) -->
+    <div id="modal-ins-mask" class="ins-sheet-mask">
+        <div class="ins-sheet-body">
+            <div class="ins-sheet-top">
+                <span style="color:#8E8E93; cursor:pointer;" onclick="closeInsModal('modal-ins-mask')">Cancel</span>
+                <span id="mask-modal-title">New Mask</span>
+                <span style="color:#007AFF; cursor:pointer;" onclick="saveUserMask()">Save</span>
+            </div>
+            <div class="ins-sheet-content">
+                <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:20px;">
+                    <img id="ins-mask-preview" src="https://placehold.co/150/eee/999?text=+" style="width:90px; height:90px; border-radius:24px; object-fit:cover; margin-bottom:10px; cursor:pointer; border:1px solid #e5e5ea;" onclick="document.getElementById('ins-mask-file').click()">
+                    <span style="color:#007AFF; font-size:13px; font-weight:600; cursor:pointer;" onclick="document.getElementById('ins-mask-file').click()"><i class="ri-upload-2-line"></i> Upload Avatar</span>
+                    <input type="file" id="ins-mask-file" hidden accept="image/*" onchange="previewInsUpload(this, 'ins-mask-preview')">
+                </div>
+                <div class="ins-input-wrap">
+                    <label class="ins-label">Real Name (真名/姓名)</label>
+                    <input type="text" id="ins-mask-name" class="ins-input" placeholder="例如：李明 / 总裁">
+                </div>
+                <div class="ins-input-wrap">
+                    <label class="ins-label">Nickname (网名/代号)</label>
+                    <input type="text" id="ins-mask-note" class="ins-input" placeholder="例如：夜影 / Master">
+                </div>
+                <div class="ins-input-wrap">
+                    <label class="ins-label">My Persona (我的人设设定)</label>
+                    <textarea id="ins-mask-prompt" class="ins-input" rows="6" placeholder="描述你在这个面具下的性格、背景、说话方式等，AI会据此配合你..."></textarea>
+                </div>
+                <div id="mask-delete-btn" style="display:none; text-align:center; margin-top:20px; color:#FF3B30; font-weight:600; cursor:pointer;" onclick="deleteUserMask()">
+                    <i class="ri-delete-bin-line"></i> 删除此面具
+                </div>
+                <div style="height:30px;"></div>
+            </div>
+        </div>
+    </div>
+    
     <!-- 弹窗 2：发布动态 (Create Post) -->
     <div id="modal-ins-post" class="ins-sheet-mask">
         <div class="ins-sheet-body">
@@ -1169,7 +1430,7 @@
             </div>
             
             <!-- 点击呼出全屏设置 -->
-            <div class="header-btn" style="justify-content:flex-end;" onclick="document.getElementById('at-settings').classList.add('open')">
+            <div class="header-btn" style="justify-content:flex-end;" onclick="openChatSettings()">
                 <i class="ri-settings-4-line" style="font-size: 24px;"></i>
             </div>
         </header>
@@ -1179,27 +1440,37 @@
 
         <!-- 底栏 -->
         <footer class="at-footer">
-            <!-- 原生极简 Emoji 键盘 -->
-            <div class="emoji-panel" id="emoji-picker">
-                <div class="emoji-item" onclick="insertEmoji('✨')">✨</div>
-                <div class="emoji-item" onclick="insertEmoji('🖤')">🖤</div>
-                <div class="emoji-item" onclick="insertEmoji('☕')">☕</div>
-                <div class="emoji-item" onclick="insertEmoji('🥀')">🥀</div>
-                <div class="emoji-item" onclick="insertEmoji('💭')">💭</div>
-                <div class="emoji-item" onclick="insertEmoji('🥂')">🥂</div>
-                <div class="emoji-item" onclick="insertEmoji('👀')">👀</div>
-                <div class="emoji-item" onclick="insertEmoji('🤍')">🤍</div>
-                <div class="emoji-item" onclick="insertEmoji('🌙')">🌙</div>
-                <div class="emoji-item" onclick="insertEmoji('🦋')">🦋</div>
-                <div class="emoji-item" onclick="insertEmoji('🎶')">🎶</div>
-                <div class="emoji-item" onclick="insertEmoji('🍸')">🍸</div>
-                <div class="emoji-item" onclick="insertEmoji('🥺')">🥺</div>
-                <div class="emoji-item" onclick="insertEmoji('🫶')">🫶</div>
-                <div class="emoji-item" onclick="insertEmoji('🔥')">🔥</div>
-                <div class="emoji-item" onclick="insertEmoji('🎵')">🎵</div>
+        
+<!-- 新增：引用提示条 -->
+            <div id="quote-preview-bar">
+                <div style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="quote-preview-text">Replying to...</div>
+                <i class="ri-close-line quote-close" onclick="cancelQuote()"></i>
+            </div>
+            
+<!-- 新增：多选底部操作栏 -->
+            <div id="multi-action-bar">
+                <span style="color:#007AFF; font-size:16px; cursor:pointer;" onclick="cancelMultiSelect()">取消</span>
+                <span style="font-weight:600; font-size:14px;" id="multi-select-count">已选 0 条</span>
+                <i class="ri-delete-bin-line" style="color:#FF3B30; font-size:22px; cursor:pointer;" onclick="deleteSelectedMsgs()"></i>
+            </div>
+            
+<!-- 多 Tab 动态表情包面板 -->
+            <div class="emoji-panel" id="emoji-picker" style="display:flex; flex-direction:column; gap:10px; height:280px;">
+                <!-- 顶部 Tabs 与 管理入口 -->
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:8px; flex-shrink:0;">
+                    <div id="chat-sticker-tabs" style="display:flex; gap:15px; overflow-x:auto; font-size:13px; font-weight:600; color:#888; align-items:center; white-space:nowrap; padding-bottom:4px;">
+                        <!-- JS 动态渲染 Tab -->
+                    </div>
+                    <button type="button" style="background:#F2F2F7; border:none; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:600; color:#007AFF; cursor:pointer; flex-shrink:0; margin-left:10px;" onclick="openStickerManager()"><i class="ri-settings-4-line"></i> Manage</button>
+                </div>
+                
+                <!-- 表情网格内容区 -->
+                <div id="chat-sticker-grid" style="flex:1; overflow-y:auto; display:grid; grid-template-columns: repeat(4, 1fr); gap: 15px; align-content: start;">
+                    <!-- JS 动态渲染内容 -->
+                </div>
             </div>
 
-            <div class="dock">
+            <form class="dock" onsubmit="event.preventDefault(); sendOnlyUserMsg();">
                 <div class="btn-plus"><i class="ri-add-line"></i></div>
                 
                 <input type="text" class="dock-input" id="inp-txt" placeholder="Signal to AI..." autocomplete="off">
@@ -1212,24 +1483,357 @@
                 <div class="btn-send" onclick="sendAtelierMsg()">
                     <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </div>
-            </div>
+            </form>
         </footer>
     </div>
 
-    <!-- 全屏设置页 (先空着) -->
+<!-- 全屏设置页 (高级设置面板) v2.0 -->
     <div class="at-settings-layer" id="at-settings">
-        <header class="at-header" style="background:transparent; border:none;">
-            <div class="header-btn" onclick="document.getElementById('at-settings').classList.remove('open')">
-                <i class="ri-close-line" style="font-size:28px;"></i>
+        <!-- 顶部导航 -->
+        <div class="sheet-handle-area">
+             <div class="sheet-close-btn" onclick="document.getElementById('at-settings').classList.remove('open')"><i class="ri-close-line"></i></div>
+             <div class="sheet-title">Chat Settings</div>
+             <div class="sheet-save-btn" onclick="saveChatSettings()">Save</div>
+        </div>
+
+        <div class="setting-scroll">
+            
+            <!-- 1. 身份与人设 -->
+            <div class="sec-title"><i class="ri-user-smile-line"></i> Identity Blueprint (角色身份)</div>
+            <div class="card-box">
+                <div class="identity-row">
+                    <div class="avatar-edit" onclick="document.getElementById('set-avatar-file').click()">
+                        <img id="set-char-avatar" src="https://placehold.co/150">
+                        <div class="edit-badge"><i class="ri-camera-fill"></i></div>
+                    </div>
+                    <input type="file" id="set-avatar-file" hidden accept="image/*" onchange="previewSetAvatar(this)">
+                    
+                    <div class="id-inputs">
+                        <input type="text" id="set-char-name" class="input-bare" placeholder="Character Name (名字)">
+                        <input type="text" id="set-char-note" class="input-bare" style="font-weight:400; font-size:12px; color:#888;" placeholder="Note ID (备注/ID)">
+                    </div>
+                </div>
+                <div style="margin-top:16px;">
+                    <textarea id="set-char-prompt" class="textarea-bare" rows="6" placeholder="System Persona Prompts (人设提示词)..."></textarea>
+                </div>
             </div>
-            <div class="header-title-box"><div class="at-name">Settings</div></div>
-            <div class="header-btn"></div>
-        </header>
-        <div style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--at-sub); font-size:14px; letter-spacing:1px; text-transform:uppercase;">
-            Settings UI Under Construction
+<!-- 新增：我的人设面具 (My Persona) -->
+            <div class="sec-title"><i class="ri-ghost-line"></i> My Persona (我的人设面具)</div>
+            <div class="card-box" style="margin-bottom: 16px;">
+                <div class="item-row" style="border:none; padding-bottom:0; padding-top:0;">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <div>
+                            <span class="row-label">Select Mask</span>
+                            <span class="row-sub">在这个聊天室扮演谁</span>
+                        </div>
+                        <select id="set-my-mask" class="select-bare" onchange="updatePreviews()"></select>
+                    </div>
+                </div>
+                <!-- 聊天室专属头像覆盖 -->
+                <div class="item-row" style="border:none; padding-top:16px;">
+                    <div>
+                         <span class="row-label">Avatar Override</span>
+                         <span class="row-sub">本房间特定头像(覆盖面具)</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button class="select-bare" style="padding: 6px 14px; cursor:pointer; color:#FF3B30; background:rgba(255,59,48,0.1);" onclick="clearMyAvatarOverride()">清除</button>
+                        <div class="avatar-edit" style="width:40px; height:40px; border-radius:12px;" onclick="document.getElementById('set-my-avatar-override-file').click()">
+                            <img id="set-my-avatar-override" src="">
+                            <div class="edit-badge" style="width:16px; height:16px; font-size:10px;"><i class="ri-camera-fill"></i></div>
+                        </div>
+                        <input type="file" id="set-my-avatar-override-file" hidden accept="image/*" onchange="previewSetMyAvatarOverride(this)">
+                    </div>
+                </div>
+            </div>
+            <!-- 2. 大脑与记忆 -->
+            <div class="sec-title"><i class="ri-brain-line"></i> Neural & Linker (大脑与记忆)</div>
+            <div class="card-box">
+            <!-- 时间感知 -->
+                <div class="item-row">
+                    <div>
+                        <span class="row-label"><i class="ri-time-line" style="margin-right:4px;"></i>Time Awareness</span>
+                        <span class="row-sub">让AI感知现实当前的时间与日期</span>
+                    </div>
+                    <div class="tgl-btn" id="set-time-tgl" onclick="this.classList.toggle('on')"></div>
+                </div>
+                
+<!-- 动态 HTML 模块 -->
+                <div class="item-row">
+                    <div>
+                        <span class="row-label"><i class="ri-layout-masonry-line" style="margin-right:4px;"></i>Dynamic Modules</span>
+                        <span class="row-sub">允许AI主动生成可视化HTML组件</span>
+                    </div>
+                    <div class="tgl-btn" id="set-html-tgl" onclick="this.classList.toggle('on')"></div>
+                </div>
+                
+                <div class="item-row">
+                    <div>
+                        <span class="row-label">World Lore</span>
+                        <span class="row-sub">关联世界书分类</span>
+                    </div>
+                    <select id="set-worldbook" class="select-bare"></select>
+                </div>
+                <div class="item-row">
+                    <div>
+                        <span class="row-label">Memory Depth</span>
+                        <span class="row-sub">上下文记忆条数</span>
+                    </div>
+                    <div class="range-wrap">
+                        <input type="range" id="set-mem-slider" class="mini-slider" min="4" max="500" value="20" oninput="document.getElementById('set-mem-val').innerText = this.value">
+                        <span class="val-display"><span id="set-mem-val">20</span> 条</span>
+                    </div>
+                </div>
+                 <div class="item-row">
+                    <div>
+                        <span class="row-label">Reply Bubbles</span>
+                        <span class="row-sub">回复消息条数</span>
+                    </div>
+                    <div class="num-input-group">
+                        <input type="number" id="set-reply-min" class="input-bare" value="1">
+                        <span>-</span>
+                        <input type="number" id="set-reply-max" class="input-bare" value="3">
+                        <span>条</span>
+                    </div>
+                </div>
+                <!-- 入口点 -->
+                 <div class="item-row" style="border:none; padding-bottom:0;" onclick="openSummaryPage()">
+                    <div>
+                         <span class="row-label">Long-Term Memory</span>
+                         <span class="row-sub">长时记忆总结</span>
+                    </div>
+                    <i class="ri-arrow-right-s-line" style="font-size:20px; color:#ccc;"></i>
+                </div>
+            </div>
+
+            <!-- 3. 视觉定制与气泡 -->
+            <div class="sec-title"><i class="ri-brush-section-line"></i> Visual Studio (视觉定制)</div>
+            <div class="card-box" style="padding:16px;">
+                <div class="preview-stage" id="preview-stage-bg">
+                    <img id="set-bg-preview" class="mock-bg-pl" src="">
+                    <div class="mock-msg mock-bot" id="mock-bot-msg">
+                        <img id="mock-bot-avatar" class="mock-avatar" src="">
+                        <div class="mock-bubble">你好呀！这是我的气泡样式。</div>
+                    </div>
+                    <div class="mock-msg mock-me" id="mock-me-msg">
+                        <div class="mock-bubble">这是你的气泡。</div>
+                        <img id="mock-me-avatar" class="mock-avatar" src="">
+                    </div>
+                </div>
+                <style id="set-bubble-style"></style>
+<!-- 背景图设置 -->
+                <div class="item-row">
+                    <div>
+                         <span class="row-label"><i class="ri-image-line"></i> Chat Background</span>
+                         <span class="row-sub">聊天背景图</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <!-- 极简图标按钮组 -->
+                        <div onclick="document.getElementById('set-bg-file').click()" style="width:28px; height:28px; border-radius:50%; background:#F2F2F7; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#007AFF;" title="上传背景">
+                            <i class="ri-upload-2-line" style="font-size:14px;"></i>
+                        </div>
+                        <div onclick="clearChatBg()" style="width:28px; height:28px; border-radius:50%; background:#FFF0F0; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#FF3B30;" title="清除背景">
+                            <i class="ri-delete-bin-line" style="font-size:14px;"></i>
+                        </div>
+                        <!-- 分割线 -->
+                        <div style="width:1px; height:14px; background:#E5E5EA; margin:0 2px;"></div>
+                        <!-- 预览开关 -->
+                        <div class="tgl-btn" id="set-bg-tgl" onclick="togglePrevBg(this)"></div>
+                        <input type="file" id="set-bg-file" hidden accept="image/*" onchange="previewSetBg(this)">
+                    </div>
+                </div>
+                <div class="item-row">
+                    <div>
+                         <span class="row-label"><i class="ri-user-unfollow-line"></i> Avatars Display</span>
+                         <span class="row-sub">头像显示</span>
+                    </div>
+                    <select id="set-avatar-visibility" class="select-bare" onchange="applyAvatarVisibilityPreview()"></select>
+                </div>
+                <div style="margin-top:16px;">
+                    <span class="row-label" style="font-size:11px; margin-bottom:5px; display:block;">Custom Bubble CSS (自定义气泡CSS代码)</span>
+                    <textarea id="set-css-input" class="code-input" rows="5" placeholder="/* 只需写大括号里的样式 */&#x0a;background: rgba(255,255,255,0.8);&#x0a;backdrop-filter: blur(10px);" oninput="applyCssPreview()"></textarea>
+                </div>
+            </div>
+
+            <!-- 4. 数据操作 -->
+            <div class="sec-title"><i class="ri-database-2-line"></i> Memory Ops (数据操作)</div>
+            <div class="card-box">
+                <div class="action-grid">
+                    <div class="act-icon-btn" onclick="alert('搜索功能开发中')"><i class="ri-search-2-line"></i><span>Search</span></div>
+                    <div class="act-icon-btn" onclick="exportChatHistory()"><i class="ri-download-cloud-2-line"></i><span>Export</span></div>
+                    <div class="act-icon-btn" onclick="document.getElementById('import-chat-file').click()"><i class="ri-upload-cloud-2-line"></i><span>Import</span></div>
+                    <input type="file" id="import-chat-file" hidden accept=".txt,.json" onchange="importChatHistory(this)">
+                    <div class="act-icon-btn" onclick="clearChatHistory()" style="color:#FF3B30"><i class="ri-eraser-line"></i><span>Clear</span></div>
+                </div>
+            </div>
+
+            <!-- 5. 危险区域 -->
+            <div class="sec-title" style="color:#FF3B30">Danger Zone (危险区域)</div>
+            <div class="card-box" style="border-color: #ffe5e5; background: #fff5f5;">
+                <div class="item-row danger-row" style="border-top:none; padding-top:0;" onclick="alert('拉黑后将不再收到消息')">
+                    <span class="row-label" style="color:inherit"><i class="ri-prohibited-line"></i> 拉黑角色</span>
+                </div>
+                 <div class="item-row danger-row" style="border-top:none; padding-top:0;" onclick="deleteContactFromSettings()">
+                    <span class="row-label" style="color:inherit"><i class="ri-delete-bin-6-line"></i> 删除角色</span>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- 全新：独立的记忆总结页面 -->
+    <div class="at-settings-layer" id="page-summary">
+        <div class="sheet-handle-area">
+             <div class="sheet-close-btn" onclick="closeSummaryPage()"><i class="ri-arrow-left-line"></i></div>
+             <div class="sheet-title">Long-Term Memory</div>
+             <div class="sheet-save-btn" onclick="saveChatSettings(); closeSummaryPage();">Save</div>
+        </div>
+        <div class="setting-scroll">
+            <div class="sec-title"><i class="ri-settings-3-line"></i> Automation (自动总结)</div>
+            <div class="card-box">
+                <div class="item-row" style="border:none; padding-bottom:0; padding-top:0;">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                         <div>
+                             <span class="row-label">Auto Summary</span>
+                             <span class="row-sub">自动总结</span>
+                         </div>
+                         <div class="tgl-btn on" id="set-sum-tgl-page" onclick="this.classList.toggle('on')"></div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin:12px 0;">
+                        <span style="font-size:12px; color:#555; font-weight:600;">每隔</span>
+                        <input type="number" id="set-sum-interval-page" class="input-bare" style="width:70px; padding:6px; text-align:center;" value="30">
+                        <span style="font-size:12px; color:#555; font-weight:600;">条消息总结一次</span>
+                    </div>
+                    <textarea id="set-sum-prompt-page" class="textarea-bare" rows="4" placeholder="总结提示词 (留空则使用默认)..."></textarea>
+                </div>
+            </div>
+            
+            <div class="sec-title"><i class="ri-file-text-line"></i> Memory Archive (记忆存档)</div>
+            <div class="card-box">
+                <textarea id="set-summary-display-page" placeholder="这里是 AI 的长时记忆存储区..."></textarea>
+                <div style="text-align:right; margin-top:10px;">
+                    <button id="manual-summary-btn" style="background:#111; color:#fff; border:none; padding:10px 20px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;" onclick="triggerManualSummary(this)"><i class="ri-magic-line"></i> 手动总结</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- 聊天室：消息长按操作菜单 (居中弹窗版) -->
+    <div id="modal-msg-action" class="modal-mask">
+        <div class="modal-box" style="width: 85%; max-width: 320px; padding: 20px; gap: 0;">
+            <h3 style="margin: 0 0 15px 0; font-size: 14px; color: #888; font-weight: 600;">Message Actions</h3>
+            
+            <!-- 操作按钮网格 -->
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px 10px;" id="msg-action-grid">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn-std btn-sec" style="border-radius: 12px; padding: 12px; font-size: 15px;" onclick="closeMsgActionModal()">取消 (Cancel)</button>
+            </div>
+        </div>
+    </div>
+    
+<!-- 聊天室：编辑消息弹窗 -->
+    <div id="modal-msg-edit" class="modal-mask">
+        <div class="modal-box" style="width: 85%; max-width: 320px; padding: 20px;">
+            <h3 style="margin: 0 0 15px 0; font-size: 14px; color: #888; font-weight: 600;">Edit Message</h3>
+            <textarea id="edit-msg-input" class="textarea-bare" rows="5" style="background:#F2F2F7; border:1px solid #E5E5EA;"></textarea>
+            <div style="display:flex; gap:10px; margin-top: 15px;">
+                <button class="btn-std btn-sec" style="flex:1; padding:10px; border-radius:10px;" onclick="document.getElementById('modal-msg-edit').classList.remove('show')">取消</button>
+                <button class="btn-std" style="flex:1; padding:10px; border-radius:10px;" onclick="saveEditedMsg()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    
+<!-- ==================================
+         全屏：表情包管理中心 (Sticker Manager)
+    ================================== -->
+    <div class="at-settings-layer" id="page-sticker-mgr">
+        <div class="sheet-handle-area">
+             <div class="sheet-close-btn" onclick="document.getElementById('page-sticker-mgr').classList.remove('open')"><i class="ri-close-line"></i></div>
+             <div class="sheet-title">Sticker Vault (表情包库)</div>
+             <div class="sheet-save-btn" style="color:#111;" onclick="openAddStickerModal()"><i class="ri-add-line" style="font-size:20px;"></i></div>
+        </div>
+
+        <div class="setting-scroll">
+            <div class="sec-title">Categories (分类)</div>
+            <div class="sticker-cat-list" id="mgr-cat-list"></div>
+            
+            <div class="card-box" style="margin-bottom: 20px;">
+                <div class="item-row" style="border:none; padding: 0;">
+                    <div style="flex:1;">
+                        <span class="row-label">Category Name</span>
+                        <input type="text" id="mgr-cat-name" class="input-bare" style="margin-top:8px;" placeholder="分类名称..." onblur="saveCurrentCatInfo()">
+                    </div>
+                </div>
+                <div class="item-row" style="border:none; padding-top: 15px;">
+                    <div style="flex:1;">
+                        <span class="row-label">Assigned To (谁可用)</span>
+                        <span class="row-sub">all代表全局通用，或者选择特定角色</span>
+
+<div id="mgr-cat-assign-container" style="margin-top:8px; max-height:100px; overflow-y:auto; background:#F8F8F8; padding:8px; border-radius:8px; font-size:12px;"></div>
+                    </div>
+                </div>
+                <!-- 新增：允许 AI 使用的开关 -->
+                <div class="item-row" style="border:none; padding-top: 15px;">
+                    <div style="flex:1; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span class="row-label">Allow AI Usage</span>
+                            <span class="row-sub">开启后，AI才能读取并主动发送此分类</span>
+                        </div>
+                        <div class="tgl-btn" id="mgr-cat-ai-use" onclick="this.classList.toggle('on'); saveCurrentCatInfo();"></div>
+                    </div>
+                </div>
+                <div style="text-align:right; margin-top:15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <span style="color:#FF3B30; font-size:12px; font-weight:600; cursor:pointer;" onclick="deleteCurrentCat()"><i class="ri-delete-bin-line"></i> 删除此分类</span>
+                </div>
+            </div>
+
+            <div class="sec-title">Stickers (表情列表)</div>
+            <div class="sticker-grid" id="mgr-sticker-grid"></div>
+        </div>
+    </div>
+
+    <!-- 子弹窗：添加新表情 / 分类 / 批量 -->
+    <div id="modal-sticker-add" class="modal-mask">
+        <div class="modal-box" style="width: 90%; max-width: 320px; padding: 20px;">
+            <h3 style="margin: 0 0 15px 0; font-size: 15px;">Add New...</h3>
+            
+            <!-- 新增了 批量导入 tab -->
+            <div style="display:flex; gap:6px; margin-bottom:15px;">
+                <button class="btn-std" style="padding:10px 0; font-size:13px;" id="tab-add-stk" onclick="switchAddStkTab('stk')">单图</button>
+                <button class="btn-std btn-sec" style="padding:10px 0; font-size:13px;" id="tab-add-batch" onclick="switchAddStkTab('batch')">批量</button>
+                <button class="btn-std btn-sec" style="padding:10px 0; font-size:13px;" id="tab-add-cat" onclick="switchAddStkTab('cat')">分类</button>
+            </div>
+
+            <!-- 加表情区域 -->
+            <div id="area-add-stk">
+                <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px;">
+                    <img id="new-stk-preview" src="https://placehold.co/100/f0f0f0/ccc?text=Image" style="width:80px; height:80px; object-fit:contain; background:#f9f9f9; border:1px dashed #ccc; border-radius:8px; cursor:pointer; margin-bottom:10px;" onclick="document.getElementById('new-stk-file').click()">
+                    <span style="color:#007AFF; font-size:12px; font-weight:600; cursor:pointer;" onclick="document.getElementById('new-stk-file').click()">本地图片 (Local)</span>
+                    <input type="file" id="new-stk-file" hidden accept="image/*,image/gif" onchange="previewInsUpload(this, 'new-stk-preview')">
+                    <span style="font-size:10px; color:#ccc; margin:10px 0;">- OR URL -</span>
+                    <input type="text" id="new-stk-url" class="input-bare" style="text-align:center; padding:8px;" placeholder="粘贴网络图片链接..." oninput="previewInsUrl(this.value, 'new-stk-preview')">
+                </div>
+                <textarea id="new-stk-desc" class="textarea-bare" rows="3" placeholder="给AI看的描述。例如：扔出一个炸弹"></textarea>
+            </div>
+
+            <!-- 批量导入区域 (新增) -->
+            <div id="area-add-batch" style="display:none; text-align:left;">
+                <div style="font-size:11px; color:#888; margin-bottom:8px; line-height:1.5;">格式(一行一个)：<br>描述文本:https://图片链接.jpg</div>
+                <textarea id="new-batch-text" class="textarea-bare" rows="7" placeholder="伤心痛哭:https://example.com/cry.gif&#x0a;无奈摊手:https://example.com/sigh.jpg"></textarea>
+            </div>
+
+            <!-- 加分类区域 -->
+            <div id="area-add-cat" style="display:none;">
+                <input type="text" id="new-cat-name" class="input-bare" placeholder="新分类名称，例如：小狗系列">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top: 20px;">
+                <button class="btn-std btn-sec" style="flex:1;" onclick="document.getElementById('modal-sticker-add').classList.remove('show')">取消</button>
+                <button class="btn-std" style="flex:1;" onclick="confirmAddStickerOrCat()">保存</button>
+            </div>
+        </div>
+    </div>
     <div id="modal-upload" class="modal-mask">
         <div class="modal-box">
             <div style="position:absolute;top:15px;right:15px;cursor:pointer" onclick="document.getElementById('modal-upload').classList.remove('show')">
@@ -1321,13 +1925,24 @@ const IntifaceLogic = {
         fontPresets: { '系统默认': '', '站酷小薇': 'https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap' },
         activeFont: '系统默认',
         fontSize: 16, 
+        themePresets: {}, 
+        globalCSS: '',    
+        cssPresets: {},   /* <--- 新增：独立的 CSS 预设库 */
         apiPresets: {},
         lastApi: { url: '', key: '', model: '', temp: 0.7 },
         cachedModels: [],
         world: [],
-        chatData: { chats: [], contacts: [], messages:[] }, 
-        stickerVault: { "默认":[] } 
-    };
+        chatData: { chats:[], contacts: [], messages:[] }, 
+       // 替换这里的 stickerVault
+        stickerVault:[
+            {
+                id: 'cat_default',
+                name: '默认分类',
+                linkedChars: ['all'], // 'all' 代表全局通用，也可以存具体的 char.id
+                stickers:[]
+            }
+        ]
+    }; // <--- 补充这个大括号和分号！
 
     const LANG_MAP = {
         'search': { cn: '搜索' },
@@ -1671,10 +2286,33 @@ const IntifaceLogic = {
             const isActive = appData.activeFont === name;
             div.className = 'list-item';
             div.style.border = isActive ? '1px solid #000' : 'none';
-            div.innerHTML = `<div style="font-weight:600">${name}</div> ${name !== 'System Default' ? `<button style="color:red;border:none;background:none" onclick="deleteFont('${name}', event)">✕</button>` : ''}`;
-            div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') applyFont(name, true); };
+            
+            let btns = '';
+            if(name !== '系统默认') {
+                // 原汁原味的布局，只在右边多加一个蓝色的编辑笔图标
+                btns = `
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <i class="ri-edit-line" style="color:#007AFF; font-size:18px; cursor:pointer;" onclick="editFontPreset('${name}', event)"></i>
+                    <i class="ri-close-line" style="color:#FF3B30; font-size:18px; cursor:pointer; font-weight:bold;" onclick="deleteFont('${name}', event)"></i>
+                </div>`;
+            }
+            
+            div.innerHTML = `<div style="font-weight:600; flex:1;">${name}</div> ${btns}`;
+            div.onclick = (e) => { 
+                if(e.target.tagName === 'I') return; // 点图标时不触发字体应用
+                applyFont(name, true); 
+            };
             container.appendChild(div);
         });
+    };
+
+    // 新增：点击编辑笔，自动展开添加框，并填入当前的名称和 URL 供你查看和修改
+    window.editFontPreset = (name, e) => {
+        e.stopPropagation();
+        document.getElementById('font-name-new').value = name;
+        document.getElementById('font-url-new').value = appData.fontPresets[name] || '';
+        document.getElementById('font-add-form').style.display = 'block';
+        document.getElementById('font-add-form').scrollIntoView({behavior: 'smooth'});
     };
     
     window.saveFontPreset = () => {
@@ -2307,11 +2945,13 @@ const IntifaceLogic = {
     let currentInsTab = 'chats';
 
     // 1. 初始化数据结构防报错
-    function initInsData() {
+function initInsData() {
         if(!appData.chatData) appData.chatData = {};
         if(!appData.chatData.contacts) appData.chatData.contacts =[];
         if(!appData.chatData.messages) appData.chatData.messages =[];
         if(!appData.chatData.posts) appData.chatData.posts =[];
+        // 新增面具数组
+        if(!appData.userMasks) appData.userMasks =[];
     }
 
 
@@ -2790,9 +3430,9 @@ window.previewInsPostImg = (input) => {
         currentChatContact = appData.chatData.contacts.find(c => c.id === contactId);
         if(!currentChatContact) return;
 
-        // 绑定名字和状态
-        document.getElementById('at-room-name').innerText = currentChatContact.name;
-        document.getElementById('at-room-status').innerText = "NEURAL SYNC";
+        // 绑定名字和状态（优先显示备注）
+        document.getElementById('at-room-name').innerText = currentChatContact.note || currentChatContact.name;
+        document.getElementById('at-room-status').innerText = currentChatContact.currentStatus || "在线";
         document.getElementById('at-room-dot').classList.remove('typing');
 
         const bdy = document.getElementById('at-body');
@@ -2804,30 +3444,95 @@ window.previewInsPostImg = (input) => {
         // 加载历史消息
         const history = appData.chatData.messages.filter(m => m.chatId === contactId);
         history.forEach(msg => {
-            appendMsgToUI(msg.sender, msg.content, msg.timestamp);
+            // 修复：加入了 msg.sticker 才能渲染历史表情包！
+            appendMsgToUI(msg.id, msg.sender, msg.content, msg.timestamp, msg.quote, msg.isRecalled, msg.sticker);
         });
 
         openPage('page-chat-room');
-        setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 100);
+        // 👇 新增：每次打开聊天室，刷新当前角色专属的表情面板 👇
+        renderChatStickerPanel(); setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 100);
         document.getElementById('emoji-picker').classList.remove('show');
     };
 
-    // 2. 往UI添加气泡
-    function appendMsgToUI(sender, text, timestamp) {
-        const bdy = document.getElementById('at-body');
-        const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        let newDiv = document.createElement('div');
-        if(sender === 'me') {
-            newDiv.className = 'at-msg m-me';
-            newDiv.innerHTML = `<div class="msg-core">${text.replace(/\n/g, '<br>')}</div><span class="time">${timeStr}</span>`;
+
+
+// 2. 往UI添加气泡 (防爆无包裹独立模块 + 动态脚本激活引擎)
+ // 修改点：加入了 stickerObj 参数
+function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled = false, stickerObj = null) {
+    const bdy = document.getElementById('at-body');
+    const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    let newDiv = document.createElement('div');
+    newDiv.setAttribute('data-id', id); 
+    let checkbox = `<div class="multi-select-circle" onclick="toggleMsgSelect('${id}', this, event)"></div>`;
+
+    if (isRecalled) {
+        newDiv.className = 'at-msg-recalled';
+        if (sender === 'me') {
+            newDiv.innerHTML = `${checkbox}<div class="time-divider">你撤回了一条消息</div>`;
         } else {
-            newDiv.className = 'at-msg m-bot';
-            newDiv.innerHTML = `<img src="${getRealImgSrc(currentChatContact.avatar)}" class="avatar"><div class="msg-core">${text.replace(/\n/g, '<br>')}</div><span class="time">${timeStr}</span>`;
+            let safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+            newDiv.innerHTML = `${checkbox}<div class="time-divider">对方撤回了一条消息 <span class="msg-recalled-link" onclick="alert('【AI 原消息】\\n${safeText}')">查看</span></div>`;
         }
+    } 
+else {
+        newDiv.className = sender === 'me' ? 'at-msg m-me' : 'at-msg m-bot';
+
+        let sandboxes =[];
+        let pureText = text.replace(/<sandbox>([\s\S]*?)<\/sandbox>/gi, (match, htmlContent) => {
+            sandboxes.push(htmlContent);
+            return ''; 
+        }).trim();
+
+        let quoteHtml = quoteText ? `<div class="msg-quote-block">${quoteText}</div>` : '';
+        let textHtml = quoteHtml + pureText.replace(/\n/g, '<br>');
+
+        // 修复 1：把表情包从 msg-core 里拿出来，单独做成一个模块
+        let coreStyle = (pureText || quoteText) ? '' : 'display: none;'; // 如果只有表情包，隐藏文字气泡框
+        let coreBlock = `<div class="msg-core" style="${coreStyle}">${textHtml}</div>`;
+        
+        let stickerBlock = stickerObj ? `<img src="${getRealImgSrc(stickerObj.src)}" style="max-width:140px; border-radius:12px; display:block; margin-top:4px; margin-bottom:4px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : '';
+
+        let moduleBlocks = '';
+        sandboxes.forEach((htmlContent, index) => {
+            let sbId = 'mod_' + id + '_' + index;
+            moduleBlocks += `<div id="${sbId}" class="msg-module-box">${htmlContent}</div>`;
+        });
+
+        // 将 文字气泡 + 表情包 + 动态组件 拼装在一列里
+        let contentCol = `<div class="msg-col">${coreBlock}${stickerBlock}${moduleBlocks}</div>`;
+
+        if(sender === 'me') {
+            let myAvatarSrc = appData.images['user-avatar'];
+            if(currentChatContact.userAvatarOverride) myAvatarSrc = currentChatContact.userAvatarOverride;
+            else if (currentChatContact.userMaskId) {
+                const mask = appData.userMasks.find(m => m.id === currentChatContact.userMaskId);
+                if(mask && mask.avatar) myAvatarSrc = mask.avatar;
+            }
+            newDiv.innerHTML = `${checkbox}${contentCol}<img src="${getRealImgSrc(myAvatarSrc)}" class="avatar"><span class="time">${timeStr}</span>`;
+        } else {
+            newDiv.innerHTML = `${checkbox}<img src="${getRealImgSrc(currentChatContact.avatar)}" class="avatar">${contentCol}<span class="time">${timeStr}</span>`;
+        }
+        
         bdy.appendChild(newDiv);
-        bdy.scrollTop = bdy.scrollHeight;
+
+        if (sandboxes.length > 0) {
+            sandboxes.forEach((_, index) => {
+                let sbContainer = document.getElementById('mod_' + id + '_' + index);
+                if (sbContainer) {
+                    let scripts = sbContainer.querySelectorAll('script');
+                    scripts.forEach(oldScript => {
+                        let newScript = document.createElement('script');
+                        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
+                }
+            });
+        }
     }
+    bdy.scrollTop = bdy.scrollHeight;
+}
 
     // 3. 插入Emoji
     window.insertEmoji = (emoji) => {
@@ -2837,164 +3542,6 @@ window.previewInsPostImg = (input) => {
         document.getElementById('emoji-picker').classList.remove('show');
     };
 
-    // 4. 发送消息并触发 API
-        // === 新功能：只发送用户气泡，不触发AI ===
-    window.sendOnlyUserMsg = async () => {
-        const inp = document.getElementById('inp-txt');
-        const text = inp.value.trim();
-        if(!text) return false; // 如果没字，就不发
-
-        document.getElementById('emoji-picker').classList.remove('show');
-        inp.value = ''; // 清空输入框
-
-        const now = Date.now();
-        // 存入数据库
-        const myMsg = { id: 'm_'+now, chatId: currentChatContact.id, sender: 'me', content: text, timestamp: now };
-        appData.chatData.messages.push(myMsg);
-        saveData();
-
-        // 立即显示在界面上
-        appendMsgToUI('me', text, now);
-        return true; // 告诉外面：发送成功了
-    };
-
-    // === 修改后的按钮逻辑：发送键 = (如果有字先发字) + 呼叫AI ===
-    window.sendAtelierMsg = async () => {
-        // 1. 尝试把输入框里的字发出去
-        await sendOnlyUserMsg();
-        
-        // 2. 【核心】不管刚才有没有发字，点击这个按钮都会强制 AI 开始响应
-        triggerAtelierAI();
-    };
-
-    // === 修改后的 Enter 键逻辑：只发气泡，AI 闭嘴 ===
-    document.getElementById('inp-txt').addEventListener("keydown", function(e) {
-        if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
-            e.preventDefault(); // 阻止换行
-            sendOnlyUserMsg();  // 只调用“只发气泡”的函数
-        }
-    });
-
-    // === 核心 AI 调用逻辑 (已优化速度) ===
-        // === 核心 AI 调用逻辑 (究极进化版：多气泡 + 强力人设) ===
-    async function triggerAtelierAI() {
-        if(!appData.lastApi.url || !appData.lastApi.key) {
-            alert("请先去 API 页面配置服务器地址和 Key！"); 
-            return;
-        }
-
-        const dot = document.getElementById('at-room-dot');
-        const status = document.getElementById('at-room-status');
-        
-        // 1. 界面变为“对方正在输入...”
-        dot.classList.add('typing');
-        status.innerText = "TYPING...";
-
-        // 2. 准备历史记录
-        // 提取最近 20 条，让 AI 记得住上下文
-        const historyMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id).slice(-20);
-        
-        const apiMessages = [];
-        
-        // 3. 【重点】究极人设提示词 (System Prompt)
-        // 这里规定了：绝对不许说自己是AI、必须分段发送(用 ||| 分隔)
-// 3. 【重点】纯净聊天模式提示词 (禁止动作描写)
-        const persona = currentChatContact.prompt || "A casual friend.";
-        const charName = currentChatContact.name || "Character";
-        
-        const systemPrompt = `
-[Instruction]
-You are roleplaying as "${charName}" in a instant messaging app (like WhatsApp/WeChat).
-Current Persona: ${persona}
-
-[RULES]
-1. NO ACTING: Do NOT use asterisks. Do NOT describe actions, expressions, movements, or feelings. Only send real text messages.
-2. FORMAT: Split your reply into multiple short bubbles using "|||".
-   Example: Hey!|||What are you doing?|||I'm bored.
-3. STYLE: Speak naturally, like a real person chatting online. Use short sentences. Use casual language. Use emojis appropriately, not too many.
-4. IDENTITY: You are NOT an AI. You are NOT a language model. You are a REAL PERSON texting. Never break character.
-5. STAY IN CHARACTER: Everything you say must match the persona. Do NOT OOC. Do NOT act out of character.
-6. RESPONSE LENGTH: Keep each message short. Do NOT write long paragraphs.
-7. HUMAN FEEL: Be spontaneous, conversational, and realistic. Don't be too formal or robotic.
-`;
-
-        apiMessages.push({ role: "system", content: systemPrompt });
-
-        // 填入历史聊天记录
-        historyMsgs.forEach(m => {
-            apiMessages.push({
-                role: m.sender === 'me' ? 'user' : 'assistant',
-                content: m.content
-            });
-        });
-
-        // 选模型
-        let useModel = appData.lastApi.model;
-        if (!useModel && appData.cachedModels.length > 0) useModel = appData.cachedModels[0];
-        if (!useModel) useModel = "gpt-3.5-turbo";
-
-        const temp = parseFloat(appData.lastApi.temp) || 0.8; //稍微调高一点温度，更活泼
-
-        try {
-            // 4. 发送请求给 AI
-            const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-                body: JSON.stringify({ model: useModel, messages: apiMessages, temperature: temp })
-            });
-
-            const data = await res.json();
-            if(data.error) throw new Error(data.error.message);
-            
-            // 5. 【核心】处理多条气泡
-            const rawText = data.choices[0].message.content;
-            
-            // 用 ||| 符号把长文本切成 数组
-            // 比如 "好啊|||几点去？" 变成了 ["好啊", "几点去？"]
-            let parts = rawText.split('|||').map(t => t.trim()).filter(t => t);
-
-            // 如果 AI 忘了加分隔符，就当做一条发出去
-            if(parts.length === 0) parts = [rawText];
-
-            // 6. 模拟人类发送延迟 (循环发送)
-            for (let i = 0; i < parts.length; i++) {
-                const partText = parts[i];
-                const aiNow = Date.now() + i; // 确保每条 ID 不一样
-
-                // 模拟打字等待时间 (字越多等越久，最少等 500毫秒)
-                // 只有第一条不用等太久，后面的稍微等一下，更有感觉
-                if(i > 0) {
-                    const delayTime = Math.min(partText.length * 50, 2000); 
-                    await new Promise(r => setTimeout(r, delayTime)); 
-                }
-
-                // 存入数据库 (注意：每条都有唯一的 ID: m_时间戳)
-                // 以后做引用回复时，就靠这个 id 来找
-                const aiMsg = { 
-                    id: 'm_' + aiNow, 
-                    chatId: currentChatContact.id, 
-                    sender: 'bot', 
-                    content: partText, 
-                    timestamp: aiNow 
-                };
-                
-                appData.chatData.messages.push(aiMsg);
-                saveData();
-
-                // 显示在界面上
-                appendMsgToUI('bot', partText, aiNow);
-            }
-
-        } catch (e) {
-            console.error(e);
-            // 只有出错时才弹窗，不然太烦
-            // alert("AI 连接出错: " + e.message);
-        } finally {
-            // 全部发完后，状态变回 "Online" 或 "Sync"
-            dot.classList.remove('typing');
-            status.innerText = "NEURAL SYNC";
-        }
-    }
     // === 修复：新建角色时的头像预览函数 ===
     window.previewInsUpload = (input, imgId) => {
         if (input.files && input.files[0]) {
@@ -3013,7 +3560,1676 @@ Current Persona: ${persona}
         }
     };
 
+// ==========================================
+// 聊天室高级设置页 (Settings Sheet) 核心逻辑 v2.1
+// ==========================================
 
+// 1. 打开主设置页
+window.openChatSettings = () => {
+    if(!currentChatContact) return;
+    
+    document.getElementById('set-char-name').value = currentChatContact.name || '';
+    document.getElementById('set-char-note').value = currentChatContact.note || '';
+    document.getElementById('set-char-prompt').value = currentChatContact.prompt || '';
+    
+    // 强制清理可能残留的暂存，并重新加载真实图片
+    document.getElementById('set-char-avatar').removeAttribute('data-base64');
+    document.getElementById('set-bg-preview').removeAttribute('data-base64');
+    document.getElementById('set-bg-preview').removeAttribute('data-clear');
+    
+    document.getElementById('set-char-avatar').src = getRealImgSrc(currentChatContact.avatar);
+    
+    document.getElementById('set-mem-slider').value = currentChatContact.memDepth || 20;
+    document.getElementById('set-mem-val').innerText = currentChatContact.memDepth || 20;
+    document.getElementById('set-reply-min').value = currentChatContact.minReply || 1;
+    document.getElementById('set-reply-max').value = currentChatContact.maxReply || 3;
+    
+    const wbSelect = document.getElementById('set-worldbook');
+    wbSelect.innerHTML = '<option value="">-- 不关联 --</option>';
+    const cats = new Set();
+    if(appData.world) appData.world.forEach(w => { if(w.cat) cats.add(w.cat); });
+    cats.forEach(cat => wbSelect.add(new Option(cat, cat)));
+    wbSelect.value = currentChatContact.worldbookCat || '';
+    
+    const timeTgl = document.getElementById('set-time-tgl');
+    if(currentChatContact.timeAwareness) timeTgl.classList.add('on'); else timeTgl.classList.remove('on');
+
+    // 👇 这里是刚刚新增的：读取 HTML 动态模块的开关状态 👇
+    const htmlTgl = document.getElementById('set-html-tgl');
+    if(currentChatContact.htmlModules) htmlTgl.classList.add('on'); else htmlTgl.classList.remove('on');
+    // 👆 新增结束 👆
+    
+    document.getElementById('set-css-input').value = currentChatContact.customCss || '';
+    
+    const avSelect = document.getElementById('set-avatar-visibility');
+    avSelect.innerHTML = `
+        <option value="both">显示双方</option>
+        <option value="hide-bot">隐藏对方</option>
+        <option value="hide-me">隐藏自己</option>
+        <option value="hide-both">隐藏全部</option>
+    `;
+    avSelect.value = currentChatContact.avatarVisibility || 'both';
+    
+    const bgTgl = document.getElementById('set-bg-tgl');
+    const bgImgId = 'chat_bg_' + currentChatContact.id;
+    document.getElementById('set-bg-preview').src = appData.images[bgImgId] || '';
+    if (appData.images[bgImgId]) bgTgl.classList.add('on'); else bgTgl.classList.remove('on');
+    
+    updatePreviews();
+    document.getElementById('at-settings').classList.add('open');
+};
+
+// 2. 独立的总结页面控制
+window.openSummaryPage = () => {
+    if(!currentChatContact) return;
+    const sumTgl = document.getElementById('set-sum-tgl-page');
+    if(currentChatContact.autoSummary !== false) sumTgl.classList.add('on'); else sumTgl.classList.remove('on');
+    document.getElementById('set-sum-interval-page').value = currentChatContact.sumInterval || 30;
+    document.getElementById('set-sum-prompt-page').value = currentChatContact.sumPrompt || '';
+    document.getElementById('set-summary-display-page').value = currentChatContact.longTermMemory || '';
+    document.getElementById('page-summary').classList.add('open');
+};
+window.closeSummaryPage = () => {
+    currentChatContact.autoSummary = document.getElementById('set-sum-tgl-page').classList.contains('on');
+    currentChatContact.sumInterval = document.getElementById('set-sum-interval-page').value;
+    currentChatContact.sumPrompt = document.getElementById('set-sum-prompt-page').value;
+    document.getElementById('page-summary').classList.remove('open');
+};
+
+// 3. 保存所有设置
+// 3. 保存所有设置
+window.saveChatSettings = async () => {
+    if(!currentChatContact) return;
+
+    currentChatContact.name = document.getElementById('set-char-name').value.trim();
+    currentChatContact.note = document.getElementById('set-char-note').value.trim();
+    currentChatContact.prompt = document.getElementById('set-char-prompt').value.trim();
+    currentChatContact.worldbookCat = document.getElementById('set-worldbook').value;
+    currentChatContact.timeAwareness = document.getElementById('set-time-tgl').classList.contains('on');
+    
+    // 👇 这里是刚刚新增的：保存 HTML 动态模块的开关状态 👇
+    currentChatContact.htmlModules = document.getElementById('set-html-tgl').classList.contains('on');
+    // 👆 新增结束 👆
+
+    currentChatContact.memDepth = document.getElementById('set-mem-slider').value;
+    currentChatContact.minReply = document.getElementById('set-reply-min').value;
+    currentChatContact.maxReply = document.getElementById('set-reply-max').value;
+    currentChatContact.customCss = document.getElementById('set-css-input').value.trim();
+    currentChatContact.avatarVisibility = document.getElementById('set-avatar-visibility').value;
+    
+    // --- 修复：头像实时保存 ---
+    const newAvaBase64 = document.getElementById('set-char-avatar').getAttribute('data-base64');
+    if(newAvaBase64) {
+        const key = 'avatar_' + currentChatContact.id;
+        try { await idbHelper.saveImage(key, newAvaBase64); } catch(e){}
+        appData.images[key] = newAvaBase64;
+        currentChatContact.avatar = key;
+        document.getElementById('set-char-avatar').removeAttribute('data-base64');
+    }
+
+    // --- 修复：背景清除与保存逻辑 ---
+    const bgKey = 'chat_bg_' + currentChatContact.id;
+    if(document.getElementById('set-bg-preview').getAttribute('data-clear') === 'true') {
+        // 执行清除背景
+        delete appData.images[bgKey];
+        try { idbHelper.db.transaction('images', 'readwrite').objectStore('images').delete(bgKey); } catch(e){}
+        currentChatContact.showBg = false;
+        document.getElementById('set-bg-preview').removeAttribute('data-clear');
+    } else {
+        // 执行保存新背景
+        const newBgBase64 = document.getElementById('set-bg-preview').getAttribute('data-base64');
+        if(newBgBase64) {
+            try { await idbHelper.saveImage(bgKey, newBgBase64); } catch(e){}
+            appData.images[bgKey] = newBgBase64;
+            document.getElementById('set-bg-preview').removeAttribute('data-base64');
+        }
+        currentChatContact.showBg = !!appData.images[bgKey];
+    }
+
+    await saveData();
+    
+    // 更新外部界面（优先显示备注）
+    document.getElementById('at-room-name').innerText = currentChatContact.note || currentChatContact.name;
+    renderInsContacts(); 
+    applyChatRoomVisuals();
+
+    document.getElementById('at-settings').classList.remove('open');
+    showToast();
+};
+
+// 4. 预览与上传交互
+function updatePreviews() {
+    const tempAva = document.getElementById('set-char-avatar').getAttribute('data-base64');
+    document.getElementById('mock-bot-avatar').src = tempAva || getRealImgSrc(currentChatContact.avatar);
+    
+    // === 新增：精准计算“我方”头像的优先级 ===
+    let myAvatarSrc = appData.images['user-avatar']; // 兜底：最低优先级，全局主页头像
+    
+    // 获取当前界面上的状态（包括还没保存的修改）
+    const overrideEl = document.getElementById('set-my-avatar-override');
+    const tempOverride = overrideEl.getAttribute('data-base64');
+    const isCleared = overrideEl.getAttribute('data-clear') === 'true';
+    const selectedMaskId = document.getElementById('set-my-mask').value;
+
+    if (tempOverride) {
+        // 优先级 1：刚刚上传还没点击保存的“房间专属头像”
+        myAvatarSrc = tempOverride;
+    } else if (!isCleared && currentChatContact && currentChatContact.userAvatarOverride) {
+        // 优先级 2：之前已经保存过的“房间专属头像”
+        myAvatarSrc = currentChatContact.userAvatarOverride;
+    } else if (selectedMaskId && appData.userMasks) {
+        // 优先级 3：当前下拉框选中的“人设面具头像”
+        const mask = appData.userMasks.find(m => m.id === selectedMaskId);
+        if (mask && mask.avatar) {
+            myAvatarSrc = mask.avatar;
+        }
+    }
+    
+    // 渲染到预览气泡上
+    document.getElementById('mock-me-avatar').src = getRealImgSrc(myAvatarSrc);
+    // =======================================
+
+    togglePrevBg(document.getElementById('set-bg-tgl'), true); 
+    applyCssPreview();
+    applyAvatarVisibilityPreview();
+}
+
+window.previewSetAvatar = (input) => {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const src = e.target.result;
+            document.getElementById('set-char-avatar').src = src; // 修复：立即显示在设置大图标上
+            document.getElementById('set-char-avatar').setAttribute('data-base64', src);
+            updatePreviews(); // 立即同步到预览气泡头像
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+window.previewSetBg = (input) => {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('set-bg-preview').src = e.target.result;
+            document.getElementById('set-bg-preview').setAttribute('data-base64', e.target.result);
+            document.getElementById('set-bg-preview').removeAttribute('data-clear'); // 取消清除标记
+            const tgl = document.getElementById('set-bg-tgl');
+            if(!tgl.classList.contains('on')) tgl.classList.add('on');
+            updatePreviews();
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+// 新增：清除背景图按钮逻辑
+window.clearChatBg = () => {
+    document.getElementById('set-bg-preview').src = '';
+    document.getElementById('set-bg-preview').removeAttribute('data-base64');
+    document.getElementById('set-bg-preview').setAttribute('data-clear', 'true'); // 打上清除标记，保存时生效
+    const tgl = document.getElementById('set-bg-tgl');
+    tgl.classList.remove('on');
+    updatePreviews();
+};
+
+window.togglePrevBg = (btn, skipToggle = false) => {
+    if(!skipToggle) btn.classList.toggle('on');
+    const img = document.getElementById('set-bg-preview');
+    img.style.display = btn.classList.contains('on') ? 'block' : 'none';
+};
+
+window.applyCssPreview = () => {
+    const cssText = document.getElementById('set-css-input').value;
+    // 使用带 ID 的高权重选择器，强制覆盖默认的蓝白色！
+    document.getElementById('set-bubble-style').innerHTML = `
+        #preview-stage-bg .mock-msg .mock-bubble { 
+            ${cssText} 
+        }
+    `;
+};
+
+window.applyAvatarVisibilityPreview = () => {
+    const vis = document.getElementById('set-avatar-visibility').value;
+    
+    // 修复：只隐藏 mock-avatar 头像，保留文本气泡
+    document.getElementById('mock-bot-avatar').style.display = (vis === 'hide-bot' || vis === 'hide-both') ? 'none' : 'block';
+    document.getElementById('mock-me-avatar').style.display = (vis === 'hide-me' || vis === 'hide-both') ? 'none' : 'block';
+};
+
+// 5. 应用视觉到真实聊天室
+window.applyChatRoomVisuals = () => {
+    if(!currentChatContact) return;
+    let styleTag = document.getElementById('chat-custom-visuals');
+    if(!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'chat-custom-visuals';
+        document.head.appendChild(styleTag);
+    }
+    
+    let css = '';
+    const bgUrl = getRealImgSrc('chat_bg_' + currentChatContact.id);
+    if(currentChatContact.showBg && bgUrl && !bgUrl.includes('placehold.co')) {
+        css += `#at-body { background-image: url('${bgUrl}'); background-size: cover; background-position: center; background-attachment: fixed; }`;
+    } else {
+        css += `#at-body { background-image: none; }`;
+    }
+    
+    // 修复：使用带 ID 的高权重选择器应用真实聊天室气泡样式
+    if(currentChatContact.customCss) {
+        css += `#at-body .at-msg .msg-core { ${currentChatContact.customCss} }`;
+    }
+    
+    const vis = currentChatContact.avatarVisibility;
+    if(vis === 'hide-bot') css += `.m-bot .avatar { display:none !important; } .m-bot .time { left:0 !important; }`;
+    if(vis === 'hide-me') css += `.m-me .avatar { display:none !important; }`;
+    if(vis === 'hide-both') css += `.at-msg .avatar { display:none !important; } .m-bot .time { left:0 !important; }`;
+    
+    styleTag.innerHTML = css;
+};
+
+const originalOpenChatRoom = window.openChatRoom;
+window.openChatRoom = (contactId) => {
+    originalOpenChatRoom(contactId);
+    applyChatRoomVisuals(); 
+};
+
+// 6. 数据及危险区操作
+window.clearChatHistory = () => {
+    if(confirm('确定要清空与该角色的所有聊天记录吗？清空后不可恢复！')) {
+        appData.chatData.messages = appData.chatData.messages.filter(m => m.chatId !== currentChatContact.id);
+        saveData();
+        document.getElementById('at-body').innerHTML = `<div class="time-divider">Chat history cleared</div>`;
+        alert('聊天记录已清空。');
+    }
+};
+window.exportChatHistory = () => {
+    const history = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id);
+    if(history.length === 0) { alert('没有可以导出的记录。'); return; }
+    let text = `【与 ${currentChatContact.name} 的聊天记录】\n\n`;
+    history.forEach(m => {
+        const time = new Date(m.timestamp).toLocaleString();
+        const role = m.sender === 'me' ? (appData.customTexts['display-name'] || 'User') : currentChatContact.name;
+        text += `[${time}] ${role}：\n${m.content}\n\n`;
+    });
+    const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ChatHistory_${currentChatContact.name}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+};
+window.importChatHistory = (input) => {
+    if(!input.files[0]) return;
+    alert("导入功能正在开发中！");
+    input.value = '';
+};
+window.deleteContactFromSettings = () => {
+    if(confirm('警告：此操作将彻底删除该角色及所有聊天记录，确定吗？')) {
+        const id = currentChatContact.id;
+        appData.chatData.contacts = appData.chatData.contacts.filter(c => c.id !== id);
+        appData.chatData.messages = appData.chatData.messages.filter(m => m.chatId !== id);
+        saveData();
+        document.getElementById('at-settings').classList.remove('open');
+        closePage('page-chat-room');
+        renderInsContacts();
+        alert('角色已删除。');
+    }
+};
+
+// 7. 记忆总结核心逻辑
+async function triggerManualSummary(btn) {
+    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先去 API 页面配置服务器地址和 Key！"); return; }
+    
+    const history = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id);
+    if(history.length < 5) { alert("聊天记录太少，无法进行有意义的总结。"); return; }
+
+    btn.innerText = '总结中...';
+    btn.disabled = true;
+
+    const defaultPrompt = `As ${currentChatContact.name}, based on the chat log, reflect on your memories with the user. Summarize in the first person using bullet points:\n- Key events that happened.\n- Your personality traits you've shown.\n- The evolution of your relationship with the user.`;
+    const sumPrompt = document.getElementById('set-sum-prompt-page').value.trim() || defaultPrompt;
+    
+    let historyText = "";
+    history.forEach(m => historyText += `${m.sender === 'me' ? (appData.customTexts['display-name'] || 'User') : currentChatContact.name}: ${m.content}\n`);
+    
+    try {
+        const model = appData.lastApi.model || (appData.cachedModels.length > 0 ? appData.cachedModels[0] : "gpt-3.5-turbo");
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[ {role:"system", content: sumPrompt}, {role:"user", content: historyText} ], temperature: 0.3 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        const summary = data.choices[0].message.content;
+        currentChatContact.longTermMemory = summary;
+        document.getElementById('set-summary-display-page').value = summary;
+        await saveData();
+        alert("记忆总结已更新！");
+    } catch (e) {
+        alert("总结失败: " + e.message);
+    } finally {
+        btn.innerHTML = '<i class="ri-magic-line"></i> 手动总结';
+        btn.disabled = false;
+    }
+}
+
+// ==========================================
+// 8. 全新纯净版：对话发送与大模型调用系统
+// (彻底废弃极易冲突的 fetch 拦截器)
+// ==========================================
+
+
+
+// 纯粹地将用户文本挂载到聊天流并存库
+// 修改后的代码
+// ⚠️ 【非常重要】拦截并修改发消息逻辑，让存入的数据带上 quote！
+// 请用这段代码 覆盖 掉你原来的 sendOnlyUserMsg 函数：
+window.sendOnlyUserMsg = async () => {
+    const inp = document.getElementById('inp-txt');
+    const text = inp.value.trim();
+    if(!text) return false;
+
+    document.getElementById('emoji-picker').classList.remove('show');
+    inp.value = '';
+
+    // 处理引用内容
+    let quoteTextToSave = null;
+    if(currentQuoteMsg) {
+        const author = currentQuoteMsg.sender === 'me' ? (appData.customTexts['display-name'] || '我') : currentChatContact.name;
+        quoteTextToSave = `${author}: ${currentQuoteMsg.content}`;
+    }
+
+    const now = Date.now();
+    // 把 quoteTextToSave 存进数据库
+    const myMsg = { id: 'm_'+now, chatId: currentChatContact.id, sender: 'me', content: text, timestamp: now, quote: quoteTextToSave };
+    appData.chatData.messages.push(myMsg);
+    saveData();
+
+    // 显示在界面上
+    appendMsgToUI(myMsg.id, 'me', text, now, quoteTextToSave);
+    
+    // 发送完清空引用状态
+    cancelQuote();
+
+    const bdy = document.getElementById('at-body');
+    setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 50);
+    return true;
+};
+
+// --- 编辑功能 ---
+window.editTargetMsg = () => {
+    if(!currentActionMsgId) return;
+    const msgData = appData.chatData.messages.find(m => m.id === currentActionMsgId);
+    if(msgData) {
+        let textToEdit = msgData.content;
+        // 还原表情包时，直接使用中文描述，直观好改！
+        if (msgData.sticker && msgData.sticker.desc) {
+            textToEdit = textToEdit + (textToEdit ? ' ' : '') + `[表情:${msgData.sticker.desc}]`;
+        }
+        document.getElementById('edit-msg-input').value = textToEdit;
+        document.getElementById('modal-msg-edit').classList.add('show');
+    }
+    closeMsgActionModal();
+};
+
+
+// 点击右下角发送键时执行：发字(如果有) -> 召唤AI
+window.sendAtelierMsg = async () => {
+    await sendOnlyUserMsg(); // 如果输入框有字，先发出去
+    triggerAtelierAI();      // 强制呼叫 AI 响应
+};
+// ==================== 面具系统逻辑 ====================
+let currentEditingMaskId = null;
+
+// 渲染面具列表 (个人主页)
+window.renderUserMasks = () => {
+    const list = document.getElementById('ins-mask-list');
+    if(!list) return;
+    list.innerHTML = '';
+    
+    appData.userMasks.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'mask-item';
+        div.onclick = () => openMaskEditor(m.id);
+        div.innerHTML = `<img src="${getRealImgSrc(m.avatar)}"><span>${m.name}</span>`;
+        list.appendChild(div);
+    });
+
+    const addBtn = document.createElement('div');
+    addBtn.className = 'mask-item';
+    addBtn.onclick = () => openMaskEditor(null);
+    addBtn.innerHTML = `<div class="mask-add-btn"><i class="ri-add-line"></i></div><span>New Mask</span>`;
+    list.appendChild(addBtn);
+};
+
+window.openMaskEditor = (id) => {
+    currentEditingMaskId = id;
+    const delBtn = document.getElementById('mask-delete-btn');
+    if(id) {
+        const mask = appData.userMasks.find(m => m.id === id);
+        document.getElementById('mask-modal-title').innerText = 'Edit Mask';
+        document.getElementById('ins-mask-name').value = mask.name || '';
+        document.getElementById('ins-mask-note').value = mask.note || '';
+        document.getElementById('ins-mask-prompt').value = mask.prompt || '';
+        document.getElementById('ins-mask-preview').src = getRealImgSrc(mask.avatar);
+        delBtn.style.display = 'block';
+    } else {
+        document.getElementById('mask-modal-title').innerText = 'New Mask';
+        document.getElementById('ins-mask-name').value = '';
+        document.getElementById('ins-mask-note').value = '';
+        document.getElementById('ins-mask-prompt').value = '';
+        document.getElementById('ins-mask-preview').src = 'https://placehold.co/150/eee/999?text=+';
+        delBtn.style.display = 'none';
+    }
+    document.getElementById('ins-mask-preview').removeAttribute('data-base64');
+    document.getElementById('modal-ins-mask').classList.add('show');
+};
+
+window.saveUserMask = async () => {
+    const name = document.getElementById('ins-mask-name').value.trim();
+    if(!name) { alert("Please enter a name."); return; }
+
+    let mask = currentEditingMaskId ? appData.userMasks.find(m => m.id === currentEditingMaskId) : {};
+    if(!currentEditingMaskId) {
+        mask.id = 'mask_' + Date.now();
+        appData.userMasks.push(mask);
+    }
+    mask.name = name;
+    mask.note = document.getElementById('ins-mask-note').value.trim();
+    mask.prompt = document.getElementById('ins-mask-prompt').value.trim();
+
+    const base64 = document.getElementById('ins-mask-preview').getAttribute('data-base64');
+    if(base64) {
+        const key = mask.id + '_avatar';
+        try { await idbHelper.saveImage(key, base64); } catch(e){}
+        appData.images[key] = base64;
+        mask.avatar = key;
+    } else if (!mask.avatar) {
+        mask.avatar = 'https://api.dicebear.com/7.x/initials/svg?seed=' + name;
+    }
+
+    await saveData();
+    closeInsModal('modal-ins-mask');
+    renderUserMasks();
+    showToast();
+};
+
+window.deleteUserMask = async () => {
+    if(confirm('确定删除此面具吗？绑定了此面具的聊天室将恢复默认身份。')) {
+        appData.userMasks = appData.userMasks.filter(m => m.id !== currentEditingMaskId);
+        await saveData();
+        closeInsModal('modal-ins-mask');
+        renderUserMasks();
+        showToast();
+    }
+};
+
+// 确保切换到“我”页面时渲染面具
+const originalRenderInsProfile = window.renderInsProfile;
+window.renderInsProfile = () => {
+    originalRenderInsProfile();
+    renderUserMasks();
+};
+
+// ==================== 覆盖聊天设置里的加载和保存逻辑 ====================
+// 拦截原有的 openChatSettings 和 saveChatSettings 追加面具功能
+const oldOpenChatSettings = window.openChatSettings;
+window.openChatSettings = () => {
+    oldOpenChatSettings(); // 调用之前的UI加载
+    
+    // 加载面具下拉框
+    const maskSelect = document.getElementById('set-my-mask');
+    maskSelect.innerHTML = '<option value="">-- 默认身份 (无面具) --</option>';
+    if(appData.userMasks) {
+        appData.userMasks.forEach(m => maskSelect.add(new Option(m.name, m.id)));
+    }
+    maskSelect.value = currentChatContact.userMaskId || '';
+
+    // 加载专属头像覆盖
+    const overrideAva = document.getElementById('set-my-avatar-override');
+    overrideAva.src = getRealImgSrc(currentChatContact.userAvatarOverride || 'https://placehold.co/100/f0f0f0/ccc?text=无');
+    overrideAva.removeAttribute('data-base64');
+    overrideAva.removeAttribute('data-clear');
+};
+
+const oldSaveChatSettings = window.saveChatSettings;
+window.saveChatSettings = async () => {
+    currentChatContact.userMaskId = document.getElementById('set-my-mask').value;
+    
+    // 处理头像覆盖
+    const overrideEl = document.getElementById('set-my-avatar-override');
+    const overrideKey = 'chat_my_ava_' + currentChatContact.id;
+    if(overrideEl.getAttribute('data-clear') === 'true') {
+        currentChatContact.userAvatarOverride = null;
+    } else {
+        const base64 = overrideEl.getAttribute('data-base64');
+        if(base64) {
+            try { await idbHelper.saveImage(overrideKey, base64); } catch(e){}
+            appData.images[overrideKey] = base64;
+            currentChatContact.userAvatarOverride = overrideKey;
+        }
+    }
+    
+    oldSaveChatSettings(); // 继续保存其它数据
+};
+
+window.previewSetMyAvatarOverride = (input) => {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.getElementById('set-my-avatar-override');
+            img.src = e.target.result;
+            img.setAttribute('data-base64', e.target.result);
+            img.removeAttribute('data-clear');
+            updatePreviews(); // <--- 新增：上传覆盖头像后立刻刷新预览
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+window.clearMyAvatarOverride = () => {
+    const img = document.getElementById('set-my-avatar-override');
+    img.src = 'https://placehold.co/100/f0f0f0/ccc?text=无';
+    img.removeAttribute('data-base64');
+    img.setAttribute('data-clear', 'true');
+    updatePreviews(); // <--- 新增：点击清除后立刻刷新预览，它会自动回退到面具头像或全局头像
+};
+// 独立纯净的 AI 请求引擎，处理上下文注入与角色扮演
+// 独立纯净的 AI 请求引擎：极致活人感 + 强制多气泡切割 + 唯一消息ID + AI自主引用/撤回
+window.triggerAtelierAI = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) {
+        alert("请先去 API 页面配置服务器地址和 Key！"); 
+        return;
+    }
+
+    const dot = document.getElementById('at-room-dot');
+    const status = document.getElementById('at-room-status');
+    dot.classList.add('typing');
+    status.innerText = "对方正在输入中...";
+
+    // 1. 裁剪历史记录
+    const memDepth = parseInt(currentChatContact.memDepth) || 20;
+    const historyMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id).slice(-memDepth);
+    
+    const apiMessages =[];
+    
+    const persona = currentChatContact.prompt || "A casual friend.";
+    const charName = currentChatContact.name || "Character";
+    const minReply = currentChatContact.minReply || 1;
+    const maxReply = currentChatContact.maxReply || 3;
+    
+// 【魔法指令升级：强网聊感 + 行为驱动引擎】
+    let systemPrompt = `[Roleplay Instruction]
+You are "${charName}" chatting with the user on a mobile messenger (like WeChat or iMessage). 
+Your Persona: ${persona}
+
+[CRITICAL RULES FOR "HUMAN LIKENESS" - STRICTLY ENFORCED]
+1. ZERO AI VIBE: You are a REAL person texting on a phone. NEVER act like an AI assistant. NEVER apologize excessively, NEVER be overly polite, and NEVER use phrases like "As an AI" or "How can I help you".
+2. TEXTING STYLE (CRITICAL): Speak casually. Use extreme brevity. NO long essays! People texting on phones write short, fragmented sentences. Occasionally use conversational fillers (hmm, haha, lol) or even slight typos to be natural.
+3. MESSAGE SPLITTING: You MUST simulate rapid-fire texting by splitting your reply into ${minReply} to ${maxReply} short bubbles using "|||". Each bubble should be just 1-2 short sentences. 
+   Good Example: "Wait really? ||| That's crazy lol ||| tell me more!"
+   Bad Example (DO NOT DO THIS): "Wait really? That's crazy lol tell me more! |||"
+   CRITICAL: NEVER use line breaks (\n) inside a sentence!
+   Good Example: "Wait really? ||| That's crazy lol ||| tell me more!"
+   Bad Example (DO NOT DO THIS): "Wait really? That's crazy lol tell me more! |||"
+4. NO ROLEPLAY ACTIONS: NEVER use asterisks for actions like *smiles* or *sighs*. Just text naturally.[ADVANCED INTERACTIONS (BE PROACTIVE!)]
+- QUOTING: If the user asked multiple questions, or you want to tease them about a specific thing they said, USE THE QUOTE TAG: <quote>exact words from user</quote> your reply.
+- RECALLING (UNSENDING): If you want to simulate sending an impulsive message, a typo, or a secret you immediately regret, USE THE RECALL TAG: <recall>the embarrassing text</recall>. The user will only see that you unsent a message, creating curiosity/drama! Use this proactively to make the chat feel alive!`;
+
+
+// 在 systemPrompt 后面紧接着插入这段：
+    // --- 注入 AI 可以发送的表情包 ---
+    // --- 注入 AI 可以发送的表情包 (仅开启了 aiCanUse 的分类才会给AI看) ---
+    let availableStickers =[];
+    appData.stickerVault.forEach(cat => {
+        if((cat.linkedChars.includes('all') || cat.linkedChars.includes(currentChatContact.id)) && cat.aiCanUse) {
+            cat.stickers.forEach(s => availableStickers.push(`- ${s.desc}`));
+        }
+    });
+    
+    if(availableStickers.length > 0) {
+        systemPrompt += `\n[EMOTION STICKERS]
+You can send a sticker to express emotion. To do this, simply include[表情:Description] in your message!
+Valid Sticker Descriptions you own:
+${availableStickers.join('\n')}
+
+CRITICAL RULE: Do NOT invent fake descriptions. ONLY use the exact descriptions listed above. 
+Example of a good reply: "Hahaha that is crazy [表情:大笑]"`;
+    }
+
+    // 动态状态指令
+    systemPrompt += `\n[DYNAMIC STATUS]
+Update your profile status based on your current action, location, or mood to make it feel alive!
+Use exact format: <status>Short action/mood</status>
+Examples: <status>Eating dinner</status>, <status>Jealous...</status>, <status>Cooking</status>, <status>Just woke up</status>.
+Insert this tag ANYWHERE in your response when your state changes.`;
+   
+    // --- 【增强版：高级动态 HTML 模块魔法指令】 ---
+    if(currentChatContact.htmlModules) {
+        systemPrompt += `
+
+[DYNAMIC HTML MODULES (PROACTIVE VISUALS)]
+You have the power to create interactive visual UI widgets! BE HIGHLY PROACTIVE!
+Don't just send text. Whenever it makes sense in the conversation to "send a photo", "share a link", "show a ticket", "send a file", or "play a mini-game", you MUST generate a raw HTML/CSS/JS module to simulate sending rich media.
+* RULE 1: Wrap the entire HTML EXACTLY inside <sandbox> and </sandbox> tags.
+* RULE 2: Keep it mobile-friendly (max width 280px), use modern UI (rounded corners, soft shadows).
+* RULE 3: You can use <script> for clicks or animations.
+* Example Scenario: You want to show a photo of what you are eating:
+  <sandbox>
+  <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:sans-serif;">
+     <img src="https://placehold.co/280x200/ff9999/fff?text=Yummy+Food" style="width:100%; display:block;">
+     <div style="padding:12px;"><b style="color:#333;">Look at this! 🍰</b><p style="margin:4px 0 0; font-size:12px; color:#666;">Just got this from the new cafe.</p></div>
+  </div>
+  </sandbox>`;
+    }
+    
+    // 注入时间感知
+    if(currentChatContact.timeAwareness) {
+        const now = new Date();
+        const timeStr = now.toLocaleString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+        systemPrompt += `\n[Environment]\nCurrent time: ${timeStr}. Let this influence your greeting or topic subtly.\n`;
+    }
+
+    // 注入世界书与长时记忆
+    if(currentChatContact.worldbookCat && appData.world) {
+        const lore = appData.world.filter(w => w.cat === currentChatContact.worldbookCat).map(w => `- ${w.title}: ${w.content}`).join('\n');
+        if(lore) systemPrompt += `\n[World Lore Context]\n${lore}\n`;
+    }
+    if(currentChatContact.longTermMemory) {
+        systemPrompt += `\n[Long-Term Memory Summary]\n${currentChatContact.longTermMemory}\n`;
+    }
+
+    // --- 注入“我”的面具人设 ---
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(currentChatContact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === currentChatContact.userMaskId);
+        if(mask) {
+            myName = mask.name;
+            if(mask.note) myName += ` (${mask.note})`;
+            if(mask.prompt) myPersona = mask.prompt;
+        }
+    }
+    systemPrompt += `\n[User Info]\nThe person you are talking to is named: ${myName}.\n`;
+    if(myPersona) systemPrompt += `Their Background/Persona: ${myPersona}\n(You MUST adapt your response to their persona.)\n`;
+
+    apiMessages.push({ role: "system", content: systemPrompt });
+    historyMsgs.forEach(m => {
+        let contentStr = m.content || "";
+        if (m.sticker) {
+            // 修复：换成后台系统音格式，防止 AI 照着格式复读
+            contentStr = `*(User sent a visual sticker: "${m.sticker.desc}")*\n${contentStr}`;
+        }
+        apiMessages.push({ role: m.sender === 'me' ? 'user' : 'assistant', content: contentStr });
+    });
+
+    let useModel = appData.lastApi.model || (appData.cachedModels.length > 0 ? appData.cachedModels[0] : "gpt-3.5-turbo");
+    const temp = parseFloat(appData.lastApi.temp) || 0.8;
+
+    try {
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ 
+                model: useModel, 
+                messages: apiMessages, 
+                temperature: temp 
+            })
+        });
+
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+const rawText = data.choices[0].message.content;
+        
+        // 【终极断句修复器】
+        // 1. 保护 HTML 模块不被切碎（先把 sandbox 提取出来）
+        let sandboxes = [];
+        let safeText = rawText.replace(/<sandbox>([\s\S]*?)<\/sandbox>/gi, (match) => {
+            sandboxes.push(match);
+            return `__SBOX_${sandboxes.length - 1}__`;
+        });
+
+        // 2. 核心：将所有的 ||| 和 换行符 \n 都统一变成内部切割符 ✂️
+        // 这样只要 AI 敢换行，就会被强行拆成两个单独的聊天气泡！
+        safeText = safeText.replace(/\|\|\|/g, '✂️').replace(/\n+/g, '✂️');
+
+        // 3. 把 HTML 模块完好无损地放回文本里
+        sandboxes.forEach((box, idx) => {
+            safeText = safeText.replace(`__SBOX_${idx}__`, box);
+        });
+
+        // 4. 正式按 ✂️ 切割成气泡数组
+        let parts = safeText.split('✂️').map(t => t.trim()).filter(t => t.length > 0);
+        
+        if(parts.length > maxReply) parts = parts.slice(0, maxReply);
+
+        for (let i = 0; i < parts.length; i++) {
+            let partText = parts[i];
+            const aiNow = Date.now() + i; 
+
+            // 【黑科技解码器：解析 AI 的隐秘指令】
+            // 【黑科技解码器：解析 AI 的隐秘指令】
+            let quoteTextToSave = null;
+            let isRecalledToSave = false;
+            let stickerToSave = null; // 新增
+
+            // 1. 解析简单的 [表情:描述] 指令
+            partText = partText.replace(/\[表情:\s*(.+?)\]/gi, (match, sDesc) => {
+                sDesc = sDesc.trim();
+                if (!stickerToSave) { // 只要找到第一个合法的表情包，就存下来
+                    appData.stickerVault.forEach(c => {
+                        const s = c.stickers.find(x => x.desc === sDesc);
+                        if(s) stickerToSave = { id: s.id, src: s.src, desc: s.desc };
+                    });
+                }
+                return ''; // 挖掉标签
+            }).trim();
+
+            // 兜底清理垃圾标签
+            partText = partText.replace(/\[(sticker|表情):.*?\]/gi, '').trim();
+            partText = partText.replace(/<sticker>.*?<\/sticker>/gi, '').trim();
+
+            // 2. 解析动态状态 <status> (新增)
+            partText = partText.replace(/<status>(.*?)<\/status>/is, (match, st) => {
+                const newStatus = st.trim();
+                if(newStatus) {
+                    currentChatContact.currentStatus = newStatus; // 存入联系人数据
+                    document.getElementById('at-room-status').innerText = newStatus; // 更新UI
+                }
+                return ''; // 从文本挖去
+            });
+
+            // 1. 如果 AI 触发了撤回指令
+            const recallMatch = partText.match(/<recall>(.*?)<\/recall>/is);
+            if (recallMatch) {
+                isRecalledToSave = true;
+                partText = recallMatch[1].trim(); // 把里面的真实文本扒出来当秘密记录
+            } else {
+                // 2. 如果 AI 没撤回，检查它有没有触发引用指令
+                const quoteMatch = partText.match(/<quote>(.*?)<\/quote>/is);
+                if (quoteMatch) {
+                    quoteTextToSave = quoteMatch[1].trim();
+                    partText = partText.replace(quoteMatch[0], '').trim(); // 把标签删掉，剩下的当正文
+                }
+            }
+
+// 【核心修复：防空气泡判定】
+            // 如果不仅没正文，而且也没表情包、没引用、没撤回，那才是真正的空气泡！
+            if (partText === '' && !stickerToSave && !quoteTextToSave && !isRecalledToSave) {
+                continue; 
+            }
+
+            if(i > 0) {
+                const delayTime = Math.min(partText.length * 60, 2500); 
+                await new Promise(r => setTimeout(r, delayTime)); 
+            }
+
+            // 存入数据库 (带上解析好的 quote 和 isRecalled 属性)
+            const aiMsg = { 
+                id: 'm_' + aiNow, 
+                chatId: currentChatContact.id, 
+                sender: 'bot', 
+                content: partText, 
+                timestamp: aiNow,
+                quote: quoteTextToSave,
+                isRecalled: isRecalledToSave,
+                sticker: stickerToSave // <--- 新增
+            };
+            appData.chatData.messages.push(aiMsg);
+            saveData();
+            
+            // 直接扔给渲染器 (加上 stickerToSave)
+            appendMsgToUI(aiMsg.id, 'bot', partText, aiNow, quoteTextToSave, isRecalledToSave, stickerToSave);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("AI 请求出错: " + e.message); 
+    } finally {
+        dot.classList.remove('typing');
+        status.innerText = currentChatContact.currentStatus || "在线";
+    }
+};
+// ==========================================
+// 9. 聊天室交互：长按、菜单、复制与删除 (Phase 1)
+// ==========================================
+
+let pressTimer = null;
+let isDragging = false;
+let currentActionMsgId = null; // 当前正在操作的消息ID
+
+// 1. 监听聊天室的长按事件
+// 1. 监听聊天室的长按事件 (修复版：支持 HTML 模块长按)
+document.addEventListener("DOMContentLoaded", () => {
+    const chatBody = document.getElementById('at-body');
+    if(!chatBody) return;
+
+    chatBody.addEventListener('touchstart', (e) => {
+        // 修改点：不再只找 .msg-core，而是找整个消息容器 .at-msg
+        // 这样无论你按在 文字气泡 上，还是按在 HTML模块 上，都能触发菜单
+        const msgDiv = e.target.closest('.at-msg');
+        
+        // 如果点的是撤回提示，不触发
+        if(!msgDiv || msgDiv.classList.contains('at-msg-recalled')) return; 
+        
+        isDragging = false;
+        const msgId = msgDiv.getAttribute('data-id');
+        
+        // 设定 500ms 为长按
+        pressTimer = window.setTimeout(() => {
+            if(!isDragging) {
+                // 触发震动反馈 (如果有)
+                try { if(navigator.vibrate) navigator.vibrate(50); } catch(e){}
+                openMsgActionModal(msgId);
+            }
+        }, 500); 
+    });
+
+    chatBody.addEventListener('touchmove', () => { 
+        isDragging = true; 
+        clearTimeout(pressTimer); 
+    });
+
+    chatBody.addEventListener('touchend', () => { 
+        clearTimeout(pressTimer); 
+    });
+    
+    // 兼容电脑端鼠标长按 (右键)
+    chatBody.addEventListener('contextmenu', (e) => {
+        const msgDiv = e.target.closest('.at-msg');
+        if(msgDiv) {
+            e.preventDefault(); // 阻止浏览器默认右键菜单
+            const msgId = msgDiv.getAttribute('data-id');
+            openMsgActionModal(msgId);
+        }
+    });
+});
+
+
+// 2. 打开操作菜单 (居中版)
+window.openMsgActionModal = (msgId) => {
+    currentActionMsgId = msgId;
+    const msgData = appData.chatData.messages.find(m => m.id === msgId);
+    if(!msgData) return;
+
+    const grid = document.getElementById('msg-action-grid');
+    grid.innerHTML = ''; 
+
+    const isMe = msgData.sender === 'me';
+    const createBtn = (icon, text, action, isDanger = false) => {
+        return `<div class="msg-action-btn ${isDanger ? 'danger' : ''}" onclick="${action}"><div class="msg-action-icon"><i class="${icon}"></i></div><div class="msg-action-text">${text}</div></div>`;
+    };
+
+    let html = createBtn('ri-file-copy-line', '复制<br>Copy', 'copyTargetMsg()');
+    html += createBtn('ri-reply-line', '引用<br>Quote', 'quoteTargetMsg()');
+    
+    // 只要没被撤回的消息，无论谁发的，你作为“上帝”都可以随意编辑！
+    if(!msgData.isRecalled) {
+        html += createBtn('ri-edit-2-line', '编辑<br>Edit', 'editTargetMsg()');
+    }
+    
+    if(isMe) {
+        if(!msgData.isRecalled) html += createBtn('ri-arrow-go-back-line', '撤回<br>Recall', 'recallTargetMsg(true)');
+    } else {
+        const aiMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id && m.sender === 'bot');
+        const isLastAi = aiMsgs.length > 0 && aiMsgs[aiMsgs.length - 1].id === msgId;
+        if(isLastAi && !msgData.isRecalled) html += createBtn('ri-refresh-line', '重回<br>Regen', 'regenLastAiMsg()');
+        else if(!msgData.isRecalled) html += createBtn('ri-eye-off-line', 'AI撤回<br>Simulate', 'recallTargetMsg(false)');
+    }
+
+    html += createBtn('ri-list-check-2', '多选<br>Select', 'toggleMultiSelect()');
+    html += createBtn('ri-delete-bin-line', '删除<br>Delete', 'deleteTargetMsg()', true);
+
+    grid.innerHTML = html;
+    document.getElementById('modal-msg-action').classList.add('show');
+};
+
+window.closeMsgActionModal = () => {
+    document.getElementById('modal-msg-action').classList.remove('show');
+    // 修复：不要在这里清空 currentActionMsgId，否则会导致编辑保存时丢失目标！
+};
+
+window.saveEditedMsg = () => {
+    let newText = document.getElementById('edit-msg-input').value.trim();
+    if(!currentActionMsgId) return;
+    
+    const msgData = appData.chatData.messages.find(m => m.id === currentActionMsgId);
+    if(msgData) {
+        // 重新通过“中文描述”解析文本框里的表情包指令
+        let newSticker = null;
+        newText = newText.replace(/\[表情:\s*(.+?)\]/gi, (match, sDesc) => {
+            sDesc = sDesc.trim();
+            if (!newSticker) {
+                appData.stickerVault.forEach(c => {
+                    const s = c.stickers.find(x => x.desc === sDesc);
+                    if(s) newSticker = { id: s.id, src: s.src, desc: s.desc };
+                });
+            }
+            return '';
+        }).trim();
+
+        if (!newText && !newSticker && !msgData.quote) {
+            alert("消息不能为空！(Message cannot be empty)"); return;
+        }
+
+        // 保存新的内容和可能变化了的表情包
+        msgData.content = newText;
+        msgData.sticker = newSticker;
+        saveData(); 
+        
+        // 通过无缝重新加载聊天室的方式，完美重绘文字、表情和气泡框
+        const oldScroll = document.getElementById('at-body').scrollTop;
+        openChatRoom(currentChatContact.id);
+        setTimeout(() => document.getElementById('at-body').scrollTop = oldScroll, 50);
+    }
+    
+    document.getElementById('modal-msg-edit').classList.remove('show');
+    showToast("已修改 (Edited)");
+};
+
+// 3. 实现功能：复制
+window.copyTargetMsg = () => {
+    if(!currentActionMsgId) return;
+    const msgData = appData.chatData.messages.find(m => m.id === currentActionMsgId);
+    if(msgData) {
+        navigator.clipboard.writeText(msgData.content).then(() => {
+            closeMsgActionModal();
+            showToast('已复制 (Copied)');
+        });
+    }
+};
+
+// 4. 实现功能：删除单条
+window.deleteTargetMsg = () => {
+    if(!currentActionMsgId) return;
+    if(confirm('确定要删除这条消息吗？(Delete this message?)')) {
+        // 1. 从内存数据库中删掉
+        appData.chatData.messages = appData.chatData.messages.filter(m => m.id !== currentActionMsgId);
+        saveData();
+        
+        // 2. 从界面上物理移除，带点动画过渡
+        const msgDiv = document.querySelector(`.at-msg[data-id="${currentActionMsgId}"]`);
+        if(msgDiv) {
+            msgDiv.style.opacity = '0';
+            msgDiv.style.transform = 'scale(0.9)';
+            setTimeout(() => msgDiv.remove(), 200);
+        }
+        
+        closeMsgActionModal();
+    }
+};
+
+// ==========================================
+// Phase 2: 引用 (Quote) 与 编辑 (Edit)
+// ==========================================
+let currentQuoteMsg = null; // 当前正在引用的消息记录
+
+// --- 引用功能 ---
+window.quoteTargetMsg = () => {
+    if(!currentActionMsgId) return;
+    const msgData = appData.chatData.messages.find(m => m.id === currentActionMsgId);
+    if(msgData) {
+        currentQuoteMsg = msgData;
+        const author = msgData.sender === 'me' ? (appData.customTexts['display-name'] || '我') : currentChatContact.name;
+        document.getElementById('quote-preview-text').innerText = `${author}: ${msgData.content}`;
+        document.getElementById('quote-preview-bar').style.display = 'flex';
+        document.getElementById('inp-txt').focus();
+    }
+    closeMsgActionModal();
+};
+
+window.cancelQuote = () => {
+    currentQuoteMsg = null;
+    document.getElementById('quote-preview-bar').style.display = 'none';
+};
+
+
+// 5. 实现功能：重回 (Regenerate Whole AI Round)
+window.regenLastAiMsg = () => {
+    if(!currentActionMsgId) return;
+    
+    // 获取当前聊天的所有消息
+    const roomMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id);
+    if (roomMsgs.length === 0) return;
+    
+    // 核心逻辑：从最后一条开始往前找，找出所有连续的 AI 消息（即最新的一轮）
+    let idsToDelete =[];
+    for (let i = roomMsgs.length - 1; i >= 0; i--) {
+        if (roomMsgs[i].sender === 'bot') {
+            idsToDelete.push(roomMsgs[i].id);
+        } else {
+            break; // 碰到我发的消息就停止，说明这一轮结束了
+        }
+    }
+    
+    if (idsToDelete.length > 0) {
+        // 1. 从数据库中批量删除这一轮的 AI 消息
+        appData.chatData.messages = appData.chatData.messages.filter(m => !idsToDelete.includes(m.id));
+        saveData();
+        
+        // 2. 从界面上物理移除这些气泡
+        idsToDelete.forEach(id => {
+            const div = document.querySelector(`[data-id="${id}"]`);
+            if(div) div.remove();
+        });
+        
+        // 3. 关闭菜单
+        closeMsgActionModal();
+        
+        // 4. 重新召唤 AI 思考并生成新回复
+        triggerAtelierAI();
+    }
+};
+
+
+// ==========================================
+// 独家定制：表情包管理中心 (Sticker Vault)
+// ==========================================
+let currentMgrCatId = null;
+let addStkMode = 'stk'; // 'stk' 或 'cat'
+
+// 1. 在表情键盘处添加入口（这里我们为了方便，把它绑在一个新的函数里，稍后我们在 UI 上加按钮）
+
+
+// 2. 渲染管理中心
+window.renderStickerManager = () => {
+    const catListEl = document.getElementById('mgr-cat-list');
+    const gridEl = document.getElementById('mgr-sticker-grid');
+    
+    
+    catListEl.innerHTML = '';
+    appData.stickerVault.forEach(cat => {
+        const div = document.createElement('div');
+        div.className = `sticker-cat-item ${cat.id === currentMgrCatId ? 'active' : ''}`;
+        div.innerText = cat.name;
+        div.onclick = () => { currentMgrCatId = cat.id; renderStickerManager(); };
+        catListEl.appendChild(div);
+    });
+
+    const currentCat = appData.stickerVault.find(c => c.id === currentMgrCatId);
+    if(!currentCat) return;
+
+    document.getElementById('mgr-cat-name').value = currentCat.name;
+    
+const assignContainer = document.getElementById('mgr-cat-assign-container');
+    
+    // 生成多选复选框
+    let html = `<label style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><input type="checkbox" value="all" ${currentCat.linkedChars.includes('all') ? 'checked' : ''} onchange="saveCurrentCatInfo()"> 🌐 全局通用 (所有角色都可以用)</label>`;
+    
+    if(appData.chatData.contacts) {
+        appData.chatData.contacts.forEach(c => {
+            const isChecked = currentCat.linkedChars.includes(c.id) ? 'checked' : '';
+            html += `<label style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><input type="checkbox" value="${c.id}" ${isChecked} onchange="saveCurrentCatInfo()"> 👤 ${c.name}</label>`;
+        });
+    }
+    assignContainer.innerHTML = html;
+    // 设置 AI 可用开关
+    const aiTgl = document.getElementById('mgr-cat-ai-use');
+    if (currentCat.aiCanUse) aiTgl.classList.add('on');
+    else aiTgl.classList.remove('on');
+
+    gridEl.innerHTML = '';
+    if(!currentCat.stickers || currentCat.stickers.length === 0) {
+        gridEl.innerHTML = '<div style="grid-column: span 3; text-align:center; color:#ccc; font-size:12px; padding:20px 0;">此分类下还没表情，点击右上角 + 号添加</div>';
+        return;
+    }
+    currentCat.stickers.forEach(stk => {
+        const box = document.createElement('div');
+        box.className = 'sticker-item-box';
+        box.innerHTML = `
+            <div class="sticker-del-btn" onclick="deleteSticker('${stk.id}')"><i class="ri-close-line"></i></div>
+            <img src="${getRealImgSrc(stk.src)}">
+            <div class="sticker-item-desc" title="${stk.desc}">${stk.desc || '无描述'}</div>
+        `;
+        gridEl.appendChild(box);
+    });
+};
+
+window.saveCurrentCatInfo = async () => {
+    const currentCat = appData.stickerVault.find(c => c.id === currentMgrCatId);
+    if(currentCat) {
+        currentCat.name = document.getElementById('mgr-cat-name').value.trim() || '未命名分类';
+        
+        // 抓取所有勾选的复选框
+        const checkedBoxes = document.querySelectorAll('#mgr-cat-assign-container input[type="checkbox"]:checked');
+        currentCat.linkedChars = Array.from(checkedBoxes).map(cb => cb.value);
+        if(currentCat.linkedChars.length === 0) currentCat.linkedChars = ['all']; // 兜底防止全空
+        
+        currentCat.aiCanUse = document.getElementById('mgr-cat-ai-use').classList.contains('on');
+        await saveData();
+        renderStickerManager();
+    }
+};
+
+window.deleteCurrentCat = async () => {
+    if(appData.stickerVault.length <= 1) { alert('至少保留一个分类哦！'); return; }
+    if(confirm('确定要删除整个分类及里面的所有表情吗？')) {
+        appData.stickerVault = appData.stickerVault.filter(c => c.id !== currentMgrCatId);
+        currentMgrCatId = appData.stickerVault[0].id;
+        await saveData();
+        renderStickerManager();
+    }
+};
+
+window.deleteSticker = async (stkId) => {
+    if(confirm('删除这个表情？')) {
+        const currentCat = appData.stickerVault.find(c => c.id === currentMgrCatId);
+        if(currentCat) {
+            currentCat.stickers = currentCat.stickers.filter(s => s.id !== stkId);
+            await saveData();
+            renderStickerManager();
+        }
+    }
+};
+
+window.openAddStickerModal = () => {
+    document.getElementById('new-stk-preview').src = 'https://placehold.co/100/f0f0f0/ccc?text=Image';
+    document.getElementById('new-stk-preview').removeAttribute('data-base64');
+    document.getElementById('new-stk-url').value = '';
+    document.getElementById('new-stk-desc').value = '';
+    document.getElementById('new-batch-text').value = '';
+    document.getElementById('new-cat-name').value = '';
+    switchAddStkTab('stk');
+    document.getElementById('modal-sticker-add').classList.add('show');
+};
+
+window.switchAddStkTab = (mode) => {
+    addStkMode = mode;
+    document.getElementById('area-add-stk').style.display = mode === 'stk' ? 'block' : 'none';
+    document.getElementById('area-add-batch').style.display = mode === 'batch' ? 'block' : 'none';
+    document.getElementById('area-add-cat').style.display = mode === 'cat' ? 'block' : 'none';
+    
+    document.getElementById('tab-add-stk').className = mode === 'stk' ? 'btn-std' : 'btn-std btn-sec';
+    document.getElementById('tab-add-batch').className = mode === 'batch' ? 'btn-std' : 'btn-std btn-sec';
+    document.getElementById('tab-add-cat').className = mode === 'cat' ? 'btn-std' : 'btn-std btn-sec';
+};
+
+window.confirmAddStickerOrCat = async () => {
+    const currentCat = appData.stickerVault.find(c => c.id === currentMgrCatId);
+
+    if(addStkMode === 'cat') {
+        const name = document.getElementById('new-cat-name').value.trim();
+        if(!name) { alert('输入个名字吧'); return; }
+        // 默认新建分类：AI 默认不可用
+        const newCat = { id: 'cat_' + Date.now(), name: name, linkedChars:['all'], stickers:[], aiCanUse: false };
+        appData.stickerVault.push(newCat);
+        currentMgrCatId = newCat.id; 
+    } 
+    else if (addStkMode === 'batch') {
+        if(!currentCat) return;
+        const text = document.getElementById('new-batch-text').value.trim();
+        const lines = text.split('\n');
+        let addedCount = 0;
+        
+        lines.forEach(line => {
+            // 兼容中文冒号和英文冒号
+            const firstColonIdx = line.search(/[:：]/);
+            if (firstColonIdx !== -1) {
+                const desc = line.substring(0, firstColonIdx).trim();
+                const url = line.substring(firstColonIdx + 1).trim();
+                if (desc && url) {
+                    currentCat.stickers.push({
+                        id: 'stk_' + Date.now() + Math.floor(Math.random()*1000),
+                        src: url,
+                        desc: desc
+                    });
+                    addedCount++;
+                }
+            }
+        });
+        
+        if(addedCount === 0) {
+            alert('没有识别到有效格式。请严格按照 "描述文本:网址" 的格式，一行一个输入。');
+            return;
+        }
+    } 
+    else {
+        if(!currentCat) return;
+        const desc = document.getElementById('new-stk-desc').value.trim();
+        const base64 = document.getElementById('new-stk-preview').getAttribute('data-base64');
+        const urlVal = document.getElementById('new-stk-url').value.trim();
+        
+        if(!desc) { alert('请给表情写一段文字描述！'); return; }
+        if(!base64 && !urlVal) { alert('请上传图片或输入链接'); return; }
+
+        let finalSrc = urlVal;
+        const stkId = 'stk_' + Date.now();
+        if(base64) {
+            finalSrc = 'img_' + stkId;
+            try { await idbHelper.saveImage(finalSrc, base64); } catch(e){}
+            appData.images[finalSrc] = base64;
+        }
+        currentCat.stickers.push({ id: stkId, src: finalSrc, desc: desc });
+    }
+
+    await saveData();
+    document.getElementById('modal-sticker-add').classList.remove('show');
+    renderStickerManager();
+    showToast();
+};
+
+// 5. 聊天室：渲染表情面板 Tab 和 内容
+// 1. 在表情键盘处添加入口
+window.openStickerManager = () => {
+    // 【关键修复：清除旧版本冲突数据，强制格式化为数组】
+    if(!appData.stickerVault || !Array.isArray(appData.stickerVault) || appData.stickerVault.length === 0) {
+        appData.stickerVault =[{ id: 'cat_default', name: '默认分类', linkedChars: ['all'], stickers:[] }];
+        saveData(); // 将修复后的数据存入你的浏览器
+    }
+    currentMgrCatId = appData.stickerVault[0].id;
+    renderStickerManager();
+    document.getElementById('page-sticker-mgr').classList.add('open');
+    document.getElementById('emoji-picker').classList.remove('show'); // 关闭原生emoji
+};
+
+
+// 5. 聊天室：渲染表情面板 Tab 和 内容
+window.renderChatStickerPanel = () => {
+    const tabsEl = document.getElementById('chat-sticker-tabs');
+    tabsEl.innerHTML = '';
+
+    // 【关键修复：进聊天室时也进行一次数据安全检查】
+    if(!appData.stickerVault || !Array.isArray(appData.stickerVault)) {
+        appData.stickerVault =[{ id: 'cat_default', name: '默认分类', linkedChars: ['all'], stickers:[] }];
+        saveData();
+    }
+
+    // 默认的 Emoji Tab
+    const emojiTab = document.createElement('span');
+    emojiTab.innerHTML = '😀 Emoji';
+    emojiTab.style.cursor = 'pointer';
+    emojiTab.style.color = '#111'; // 默认高亮
+    emojiTab.onclick = (e) => { 
+        Array.from(tabsEl.children).forEach(el => el.style.color = '#888');
+        e.target.style.color = '#111';
+        renderChatStickerGrid('emoji'); 
+    };
+    tabsEl.appendChild(emojiTab);
+
+    // 动态渲染当前角色有权限的分类 Tab
+    const validCats = appData.stickerVault;
+    validCats.forEach((cat) => {
+        const tab = document.createElement('span');
+        tab.innerText = cat.name;
+        tab.style.cursor = 'pointer';
+        tab.onclick = (e) => { 
+            Array.from(tabsEl.children).forEach(el => el.style.color = '#888');
+            e.target.style.color = '#111';
+            renderChatStickerGrid('cat', cat.id); 
+        };
+        tabsEl.appendChild(tab);
+    });
+
+    // 初始化时加载 Emoji
+    renderChatStickerGrid('emoji');
+};
+
+window.renderChatStickerGrid = (type, catId = null) => {
+    const gridEl = document.getElementById('chat-sticker-grid');
+    gridEl.innerHTML = '';
+    
+    if(type === 'emoji') {
+        const emojis =['✨','🖤','☕','🥀','💭','🥂','👀','🤍','🌙','🦋','🎶','🍸','🥺','🫶','🔥','🎵'];
+        emojis.forEach(em => {
+            const div = document.createElement('div');
+            div.className = 'emoji-item';
+            div.innerText = em;
+            div.onclick = () => insertEmoji(em);
+            gridEl.appendChild(div);
+        });
+    } else {
+        const cat = appData.stickerVault.find(c => c.id === catId);
+        if(cat && cat.stickers) {
+            cat.stickers.forEach(stk => {
+                const box = document.createElement('div');
+                box.className = 'chat-picker-stk-box';
+                box.onclick = () => sendStickerMsg(stk.id); // 点击发送
+                
+                box.innerHTML = `
+                    <img src="${getRealImgSrc(stk.src)}" class="chat-picker-stk-img">
+                    <div class="chat-picker-stk-desc" title="${stk.desc}">${stk.desc || '无描述'}</div>
+                `;
+                gridEl.appendChild(box);
+            });
+        }
+    }
+}; 
+
+// 6. 聊天室：发送表情包消息
+window.sendStickerMsg = async (stkId) => {
+    document.getElementById('emoji-picker').classList.remove('show');
+    
+    // 找出这个表情包的详细信息
+    let foundStk = null;
+    appData.stickerVault.forEach(c => {
+        const s = c.stickers.find(x => x.id === stkId);
+        if(s) foundStk = s;
+    });
+    if(!foundStk) return;
+
+    // 存入数据库
+    const now = Date.now();
+    const myMsg = { 
+        id: 'm_' + now, 
+        chatId: currentChatContact.id, 
+        sender: 'me', 
+        content: "", // 纯表情包不需要文字
+        timestamp: now, 
+        quote: null,
+        sticker: { id: foundStk.id, src: foundStk.src, desc: foundStk.desc } // 核心数据(加上id用于后续编辑)
+    };
+    
+    appData.chatData.messages.push(myMsg);
+    saveData();
+    
+    // 渲染到界面
+    appendMsgToUI(myMsg.id, 'me', "", now, null, false, myMsg.sticker);
+    
+    const bdy = document.getElementById('at-body');
+    setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 50);
+    
+};
+// ==========================================
+// Phase 3 & 4: 撤回 (Recall) 与 多选 (Multi-select)
+// ==========================================
+
+// --- 撤回功能 ---
+window.recallTargetMsg = (isMe) => {
+    if(!currentActionMsgId) return;
+    const msgData = appData.chatData.messages.find(m => m.id === currentActionMsgId);
+    if(msgData) {
+        msgData.isRecalled = true; // 标记为已撤回
+        saveData();
+        
+        // 动态替换界面DOM（不重新刷新整个页面，体验更丝滑）
+        const oldDiv = document.querySelector(`.at-msg[data-id="${currentActionMsgId}"]`);
+        if(oldDiv) {
+            let newDiv = document.createElement('div');
+            newDiv.className = 'at-msg-recalled';
+            newDiv.setAttribute('data-id', currentActionMsgId);
+            let checkbox = `<div class="multi-select-circle" onclick="toggleMsgSelect('${currentActionMsgId}', this, event)"></div>`;
+            
+            if(isMe) {
+                newDiv.innerHTML = `${checkbox}<div class="time-divider">你撤回了一条消息</div>`;
+            } else {
+                let safeText = msgData.content.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+                newDiv.innerHTML = `${checkbox}<div class="time-divider">对方撤回了一条消息 <span class="msg-recalled-link" onclick="alert('【AI 原消息】\\n${safeText}')">查看</span></div>`;
+            }
+            oldDiv.parentNode.replaceChild(newDiv, oldDiv);
+        }
+    }
+    closeMsgActionModal();
+};
+
+// --- 多选功能 ---
+let isMultiSelectMode = false;
+let selectedMsgs = new Set();
+
+window.toggleMultiSelect = () => {
+    closeMsgActionModal();
+    isMultiSelectMode = true;
+    selectedMsgs.clear();
+    
+    // 隐藏原生输入框，展示多选操作栏
+    document.querySelector('.at-footer .dock').style.display = 'none';
+    document.getElementById('multi-action-bar').style.display = 'flex';
+    document.getElementById('at-body').classList.add('multi-select-mode');
+    document.getElementById('multi-select-count').innerText = `已选 0 条`;
+};
+
+window.cancelMultiSelect = () => {
+    isMultiSelectMode = false;
+    document.getElementById('at-body').classList.remove('multi-select-mode');
+    document.getElementById('multi-action-bar').style.display = 'none';
+    document.querySelector('.at-footer .dock').style.display = 'flex';
+    
+    // 清除所有的打钩状态
+    document.querySelectorAll('.multi-select-circle.checked').forEach(el => el.classList.remove('checked'));
+};
+
+window.toggleMsgSelect = (id, el, event) => {
+    if(event) event.stopPropagation();
+    if(selectedMsgs.has(id)) {
+        selectedMsgs.delete(id);
+        el.classList.remove('checked');
+    } else {
+        selectedMsgs.add(id);
+        el.classList.add('checked');
+    }
+    document.getElementById('multi-select-count').innerText = `已选 ${selectedMsgs.size} 条`;
+};
+
+// 拦截点击事件：在多选模式下，点击整个气泡也能选中
+document.addEventListener("DOMContentLoaded", () => {
+    const chatBody = document.getElementById('at-body');
+    if(chatBody) {
+        chatBody.addEventListener('click', (e) => {
+            if(isMultiSelectMode) {
+                e.preventDefault();
+                e.stopPropagation();
+                const msgDiv = e.target.closest('.at-msg') || e.target.closest('.at-msg-recalled');
+                if(msgDiv) {
+                    const id = msgDiv.getAttribute('data-id');
+                    const circle = msgDiv.querySelector('.multi-select-circle');
+                    if(circle) toggleMsgSelect(id, circle, null);
+                }
+            }
+        }, true);
+    }
+});
+
+// 批量删除
+window.deleteSelectedMsgs = () => {
+    if(selectedMsgs.size === 0) return;
+    if(confirm(`确定删除这 ${selectedMsgs.size} 条消息吗？`)) {
+        appData.chatData.messages = appData.chatData.messages.filter(m => !selectedMsgs.has(m.id));
+        saveData();
+        
+        // 物理移除选中的气泡
+        selectedMsgs.forEach(id => {
+            const div = document.querySelector(`[data-id="${id}"]`);
+            if(div) div.remove();
+        });
+        
+        cancelMultiSelect();
+        showToast('已批量删除');
+    }
+};
+
+// ==========================================
+// 独立功能 1：全局高级 CSS 美化系统
+// ==========================================
+window.applyGlobalCSS = () => {
+    let styleTag = document.getElementById('global-custom-css-tag');
+    if(!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'global-custom-css-tag';
+        document.head.appendChild(styleTag);
+    }
+    styleTag.innerHTML = appData.globalCSS || '';
+};
+
+window.renderCSSPresets = () => {
+    const sel = document.getElementById('css-preset-sel');
+    if (!sel) return;
+    const currentVal = sel.value;
+    sel.innerHTML = '<option value="">-- 选择或新建 CSS 预设 --</option>';
+    if(appData.cssPresets) {
+        Object.keys(appData.cssPresets).forEach(name => sel.add(new Option(name, name)));
+    }
+    if(currentVal && appData.cssPresets && appData.cssPresets[currentVal]) sel.value = currentVal;
+};
+
+window.loadCSSPresetToEditor = () => {
+    const sel = document.getElementById('css-preset-sel');
+    const name = sel.value;
+    if(name && appData.cssPresets[name]) {
+        document.getElementById('appr-global-css').value = appData.cssPresets[name];
+        applyAndSaveCurrentCSS(); // 切换下拉框时自动应用
+    } else {
+        document.getElementById('appr-global-css').value = appData.globalCSS || '';
+    }
+};
+
+window.applyAndSaveCurrentCSS = () => {
+    const cssText = document.getElementById('appr-global-css').value;
+    appData.globalCSS = cssText;
+    
+    // 如果当前选了某个预设，顺便把这个预设的内容更新掉
+    const selName = document.getElementById('css-preset-sel').value;
+    if(selName && appData.cssPresets) {
+        appData.cssPresets[selName] = cssText;
+    }
+    
+    saveData();
+    applyGlobalCSS();
+    showToast("CSS 渲染已应用");
+};
+
+window.saveCSSPresetAs = () => {
+    const name = prompt("请输入新的 CSS 预设名称：");
+    if(!name || !name.trim()) return;
+    const cssText = document.getElementById('appr-global-css').value;
+    
+    if(!appData.cssPresets) appData.cssPresets = {};
+    appData.cssPresets[name.trim()] = cssText;
+    appData.globalCSS = cssText;
+    
+    saveData();
+    renderCSSPresets();
+    document.getElementById('css-preset-sel').value = name.trim();
+    applyGlobalCSS();
+    showToast("CSS 预设已保存！");
+};
+
+window.deleteCSSPreset = async () => {
+    const sel = document.getElementById('css-preset-sel');
+    const name = sel.value;
+    if(!name || !appData.cssPresets[name]) { alert("请先选择要删除的 CSS 预设！"); return; }
+    
+    if(confirm(`确定要永久删除 CSS 预设 "${name}" 吗？`)) {
+        delete appData.cssPresets[name];
+        sel.value = "";
+        await saveData();
+        renderCSSPresets();
+        showToast("CSS 预设已删除");
+    }
+};
+
+// ==========================================
+// 独立功能 2：纯净本地主题系统 (仅包含壁纸/图标/字体等，绝不碰CSS)
+// ==========================================
+window.renderThemePresets = () => {
+    const sel = document.getElementById('theme-preset-sel');
+    if (!sel) return;
+    const currentVal = sel.value;
+    sel.innerHTML = '<option value="">-- 选择主题预设 --</option>';
+    if(appData.themePresets) {
+        Object.keys(appData.themePresets).forEach(name => sel.add(new Option(name, name)));
+    }
+    if(currentVal && appData.themePresets && appData.themePresets[currentVal]) sel.value = currentVal;
+};
+
+window.saveThemePreset = async () => {
+    const name = prompt("请输入新主题名称：\n(仅保存壁纸、组件、图标和字体，不含CSS)");
+    if(!name || !name.trim()) return;
+
+    if(!appData.themePresets) appData.themePresets = {};
+
+    const presetData = {
+        customTexts: JSON.parse(JSON.stringify(appData.customTexts || {})),
+        activeFont: appData.activeFont,
+        fontSize: appData.fontSize,
+        images: {}
+    };
+
+    const THEME_KEYS =[
+        'wallpaper-layer', 'hero-img', 'user-avatar',
+        'icon-chat', 'icon-world', 'icon-api', 'icon-forum',
+        'dock-1', 'dock-2', 'dock-3', 'dock-4'
+    ];
+    
+    THEME_KEYS.forEach(key => {
+        if (appData.images[key]) presetData.images[key] = appData.images[key];
+    });
+
+    appData.themePresets[name.trim()] = presetData;
+    await saveData();
+    renderThemePresets();
+    showToast("主题已保存！");
+};
+
+window.loadThemePreset = async () => {
+    const sel = document.getElementById('theme-preset-sel');
+    const name = sel.value;
+    if(!name || !appData.themePresets[name]) { alert("请先在左侧选择一个主题！"); return; }
+    if(!confirm(`加载主题 "${name}"？\n当前桌面的壁纸和图标将被替换。`)) return;
+
+    const preset = appData.themePresets[name];
+    appData.customTexts = preset.customTexts || {};
+    appData.activeFont = preset.activeFont || '系统默认';
+    appData.fontSize = preset.fontSize || 16;
+
+    const THEME_KEYS =[
+        'wallpaper-layer', 'hero-img', 'user-avatar',
+        'icon-chat', 'icon-world', 'icon-api', 'icon-forum',
+        'dock-1', 'dock-2', 'dock-3', 'dock-4'
+    ];
+
+    if(!idbHelper.db) await idbHelper.init();
+    const tx = idbHelper.db.transaction('images', 'readwrite');
+    const store = tx.objectStore('images');
+
+    for (let key of THEME_KEYS) {
+        if (preset.images && preset.images[key]) {
+            store.put(preset.images[key], key);
+            appData.images[key] = preset.images[key];
+        } else {
+            try { store.delete(key); } catch(err){}
+            delete appData.images[key];
+        }
+    }
+
+    await new Promise(resolve => tx.oncomplete = resolve);
+    await saveData();
+    
+    alert("主题加载成功！正在刷新...");
+    location.reload();
+};
+
+window.deleteThemePreset = async () => {
+    const sel = document.getElementById('theme-preset-sel');
+    const name = sel.value;
+    if(!name || !appData.themePresets[name]) { alert("请先选择要删除的主题！"); return; }
+    
+    if(confirm(`永久删除主题 "${name}" 吗？`)) {
+        delete appData.themePresets[name];
+        await saveData();
+        renderThemePresets();
+        showToast("主题已删除");
+    }
+};
+
+// 拦截初始加载和打开页面，确保双系统都能正常工作
+const originalRenderDOM = window.renderDOM;
+window.renderDOM = () => {
+    originalRenderDOM();
+    applyGlobalCSS();
+    const globalCssEl = document.getElementById('appr-global-css');
+    if(globalCssEl) globalCssEl.value = appData.globalCSS || '';
+};
+
+const originalOpenPage = window.openPage;
+window.openPage = async (id) => {
+    originalOpenPage(id);
+    if(id === 'page-appr') {
+        renderCSSPresets();
+        renderThemePresets();
+    }
+};
 </script>
 
 </body>
