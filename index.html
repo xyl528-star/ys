@@ -22,32 +22,13 @@
     
     <!-- 5. Android/Chrome 主题色 -->
     <meta name="theme-color" content="#000000">
-    <!-- 引入 Remix Icon 打造高级感图标 -->
+<!-- 引入 Remix Icon 打造高级感图标 -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- 👇 新增：状态卡片专属英文字体和中文手写体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     <style id="global-font-style"></style>
     <style>
-    body {
-    /* 1. 确保高度是动态全屏，解决挤压问题 */
-    min-height: 100vh;
-    min-height: 100dvh; /* 专门针对移动端的动态高度单位 */
-    
-    /* 2. 让背景铺满，无视安全区 */
-    background-attachment: fixed; 
-    background-size: cover; 
-    
-    /* 3. 让内容避开刘海屏和底部小白条，但背景图依然全屏 */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    
-    /* 4. 防止左右滑动 */
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-
-/* 额外修复：如果是聊天室页面，确保底部输入框不被小白条遮挡 */
-.input-area {
-    padding-bottom: calc(10px + env(safe-area-inset-bottom));
-}
         :root {
             --bg-color: #000;
             --text-main: #070707;
@@ -57,8 +38,14 @@
         }
 
         /* 1. 基础设置 - 锁死滚动 */
+        html {
+            background-color: #fff; /* 避免键盘收起时露出黑色背景 */
+        }
         html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0; padding: 0; 
+            width: 100%; 
+            height: 100%;
+            height: 100dvh; /* 专门针对移动端的动态高度单位，完美适配键盘弹出 */
             overflow: hidden; 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
             font-size: var(--base-font-size); 
@@ -67,6 +54,17 @@
             position: fixed; 
             inset: 0;
             touch-action: none;
+            box-sizing: border-box;
+        }
+        
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* 额外修复：如果是聊天室页面，确保底部输入框不被小白条遮挡 */
+        .input-area {
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
         }
 
         /* 2. 壁纸 */
@@ -98,7 +96,7 @@
             padding-bottom: 0; 
         }
 
-        .top-section { padding: 40px 24px 5px; flex-shrink: 0; }
+        .top-section { padding: 2px 24px 2px; flex-shrink: 0; }
         
         .timestamp-label {
             text-align: center; font-size: 14px; 
@@ -152,7 +150,7 @@
         }
         .hero-img { width: 100%; height: 100%; object-fit: cover; }
 
-        .capsule-section { padding: 0 24px; margin-bottom: 25px; flex-shrink: 0; }
+        .capsule-section { padding: 0 24px; margin-bottom: 10px; flex-shrink: 0; }
         .capsule {
             height: 54px; border-radius: 27px;
             background: rgba(255,255,255,0.7); backdrop-filter: blur(20px);
@@ -174,7 +172,7 @@
         }
 
         .content-body {
-            display: flex; padding: 0 24px; align-items: flex-start; margin-top: 5px; 
+            display: flex; padding: 0 24px; align-items: flex-start; margin-top: 0; 
         }
         .left-col {
             width: 38%; display: flex; flex-direction: column; align-items: center; padding-top: 10px;
@@ -220,7 +218,7 @@
         /* === 搜索栏 (完美间隔) === */
         .search-bar-container {
             position: absolute; 
-            bottom: calc(100px + var(--safe-bottom)); 
+            bottom: calc(110px + var(--safe-bottom)); 
             left: 50%; transform: translateX(-50%);
             width: 80px; height: 28px;
             background: rgba(255,255,255,0.25); backdrop-filter: blur(15px);
@@ -589,12 +587,13 @@
         .online-dot { display:inline-block; width:4px; height:4px; border-radius:50%; background:var(--at-ink); margin-right:4px; transition: 0.3s; }
         .online-dot.typing { background: var(--at-blue); box-shadow: 0 0 8px var(--at-blue); } /* AI思考时亮蓝灯 */
 
-        #at-body {
-            flex: 1; overflow-y: auto; padding: 15px 16px;
+                                                #at-body {
+            flex: 1; overflow-y: auto; padding: 10px 12px;
             display: flex; flex-direction: column; 
-            gap: 18px; /* 核心：18px 刚好容纳下方 16px 的时间戳，多留 2px 视觉缝隙，拒绝浪费空间 */
-            scroll-behavior: smooth;
+            gap: 6px; /* 极致紧凑：上下气泡只隔 6px */
         }
+
+
         #at-body::-webkit-scrollbar { display: none; }
 
         .time-divider {
@@ -606,8 +605,14 @@
         .time-divider::before { margin-right: 12px; }
         .time-divider::after { margin-left: 12px; }
 
-        /* 删除了坑人的 margin-bottom: 20px，完全靠父级的 18px gap 撑开精准距离 */
-        .at-msg { display: flex; align-items: flex-end; width:100%; position: relative; animation: slideUp 0.3s ease; margin-bottom: 0; }
+                 .at-msg { 
+            display: flex; align-items: flex-end; width:100%; 
+            position: relative; animation: slideUp 0.3s ease; 
+            margin-bottom: 0; 
+            padding-bottom: 0; /* 彻底去掉底部安全区，不再浪费空间 */
+        }
+
+
         @keyframes slideUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 
         .m-bot { justify-content: flex-start; }
@@ -623,26 +628,42 @@
         }
 
         /* --- 气泡核心排版（移到全局，绝对防覆盖） --- */
-        .msg-col { display: flex; flex-direction: column; gap: 8px; max-width: 75%; min-width: 0; }
+                .msg-col { display: flex; flex-direction: column; gap: 8px; max-width: 65%; min-width: 0; }
+
         .m-bot .msg-col { align-items: flex-start; }
         .m-me .msg-col { align-items: flex-end; }
         .msg-col .msg-core { max-width: 100% !important; width: fit-content; }
         .msg-module-box { width: 100%; border-radius: 16px; overflow: hidden; background: transparent; flex-shrink: 0; }
 
-        .m-bot .msg-core {
-            background: var(--at-slate); color: var(--at-ink); padding: 8px 14px; 
-            border-radius: 4px 16px 16px 16px; font-size: 14px; line-height: 1.5; 
+                        .m-bot .msg-core {
+            background: var(--at-slate); color: var(--at-ink); 
+            padding: 6px 10px; /* 极致紧凑内边距 */
+            border-radius: 4px 14px 14px 14px; font-size: 14px; line-height: 1.35; 
             word-break: break-word; white-space: pre-wrap;
         }
 
         .m-me .msg-core {
-            background: var(--at-ink); color: #FFF; padding: 8px 14px;
-            border-radius: 16px 16px 4px 16px; font-size: 14px; line-height: 1.5; 
+            background: var(--at-ink); color: #FFF; 
+            padding: 6px 10px; /* 极致紧凑内边距 */
+            border-radius: 14px 14px 4px 14px; font-size: 14px; line-height: 1.35; 
             word-break: break-word; white-space: pre-wrap;
         }
+
+
         
-        .m-me .time { position: absolute; right: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
-        .m-bot .time { position: absolute; left: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
+        /* 时间戳变成普通元素，放在气泡旁边 */
+        .time {
+            font-size: 9px; color: var(--at-sub); font-weight: 600;
+            white-space: nowrap; flex-shrink: 0;
+            margin-bottom: 2px; /* 和气泡底部对齐 */
+        }
+        /* 我发的消息：时间戳在气泡左边 */
+        .m-me .time { margin-right: 8px; }
+        /* AI发的消息：时间戳在气泡右边 */
+        .m-bot .time { margin-left: 8px; }
+
+
+
 
         /* 新增：人设面具列表的样式 */
         .mask-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 10px 20px 20px; }
@@ -651,8 +672,7 @@
         .mask-item img { width: 56px; height: 56px; border-radius: 18px; object-fit: cover; border: 2px solid transparent; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .mask-item span { font-size: 11px; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
         .mask-add-btn { width: 56px; height: 56px; border-radius: 18px; background: #F2F2F7; display: flex; align-items: center; justify-content: center; color: #8E8E93; font-size: 24px; cursor: pointer; }
-        .m-bot .time { position: absolute; left: 44px; bottom:-16px; font-size: 9px; color:var(--at-sub); font-weight:600;}
-
+        
         .at-footer {
             padding: 10px 20px calc(env(safe-area-inset-bottom) + 15px);
             background: linear-gradient(to top, var(--at-paper) 85%, rgba(255,255,255,0));
@@ -699,8 +719,42 @@
             opacity: 0; pointer-events: none; transform: translateY(10px); transition: 0.2s;
         }
         .emoji-panel.show { opacity: 1; pointer-events: auto; transform: translateY(-10px); }
-        .emoji-item { font-size: 24px; text-align: center; cursor: pointer; transition: 0.1s; }
+                /* Emoji 格子 */
+        .emoji-item { 
+            font-size: 24px; text-align: center; cursor: pointer; transition: 0.1s; 
+            /* 👇 新增：禁止长按弹出系统菜单 */
+            -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; 
+        }
         .emoji-item:active { transform: scale(1.3); }
+
+        /* 图片表情格子 */
+        .chat-picker-stk-box { 
+            display: flex; flex-direction: column; align-items: center; gap: 4px; 
+            cursor: pointer; padding: 4px; border-radius: 8px; transition: background 0.2s; 
+            /* 👇 新增：禁止长按弹出系统菜单 */
+            -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+        }
+        .chat-picker-stk-box:active { background: #f0f0f0; }
+
+
+/* === QQ 贴表情特效 === */
+.peeled-sticker {
+    position: absolute;
+    z-index: 10; /* 浮在文字上面 */
+    pointer-events: none; /* 让点击穿透，不影响点气泡 */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); /* 加点阴影更有立体感 */
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn {
+    from { transform: scale(0) rotate(0deg); }
+    to { transform: scale(1) rotate(var(--rot)); }
+}
+/* 拖拽时的幽灵替身 */
+#drag-ghost {
+    position: fixed; top: 0; left: 0; z-index: 9999;
+    pointer-events: none; opacity: 0.8; transform: translate(-50%, -50%) scale(1.2);
+    display: none;
+}
 
        /* === 聊天室全屏高级设置页 (Settings Sheet) v2.1 === */
         .at-settings-layer {
@@ -878,6 +932,107 @@
 .chat-picker-stk-box:active { background: #f0f0f0; }
 .chat-picker-stk-img { width: 100%; height: 45px; object-fit: contain; pointer-events: none; }
 .chat-picker-stk-desc { font-size: 10px; color: #888; width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+
+/* 自定义多选下拉框 */
+.custom-multi-select { position: relative; width: 100%; max-width: 150px; }
+.cms-header { background: rgba(0,0,0,0.05); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #111; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.cms-header span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+.cms-dropdown { position: absolute; top: 110%; right: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 160px; max-height: 200px; overflow-y: auto; display: none; z-index: 100; flex-direction: column; padding: 8px; }
+.cms-dropdown.show { display: flex; }
+.cms-option { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px; cursor: pointer; color: #333; }
+
+/* ==================================================
+   [读心面具卡片 专属样式] 
+   ================================================== */
+.mind-modal-mask {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none; transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    backdrop-filter: blur(15px);
+    perspective: 1500px;
+}
+.mind-modal-mask.show { opacity: 1; pointer-events: auto; }
+
+.mind-Scene {
+    width: 300px; height: 500px; position: relative; cursor: pointer;
+    transform: translateY(50px); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.mind-modal-mask.show .mind-Scene { transform: translateY(0); }
+
+.mind-Card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1); border-radius: 20px;
+}
+.mind-Scene.flipped .mind-Card { transform: rotateY(-180deg); }
+
+.mind-Card__face {
+    position: absolute; inset: 0; border-radius: 20px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden;
+}
+
+/* --- 正面：扫描面板 --- */
+.mind-Card__face--front {
+    background: linear-gradient(145deg, #ffffff 0%, #f0f4fd 100%); z-index: 2; transform: rotateY(0deg);
+    padding: 20px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.8);
+    display: flex; flex-direction: column;
+}
+.mind-front-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.mind-sys-title { font-size: 10px; font-weight: 600; color: #a1abc0; letter-spacing: 2px; text-transform: uppercase; font-family: 'Outfit', sans-serif;}
+.mind-live-dot { width: 8px; height: 8px; background-color: #6de2a1; border-radius: 50%; box-shadow: 0 0 10px rgba(109,226,161,0.8); animation: pulse 1.5s infinite;}
+@keyframes pulse { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
+
+.mind-avatar-zone { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+.mind-avatar-frame { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); padding: 4px; }
+.mind-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-sizing: border-box;}
+.mind-name { font-size: 18px; font-weight: 600; color: #2d3436; font-family: 'Outfit', sans-serif;}
+.mind-location { font-size: 11px; color: #b2bec3; display: flex; align-items: center; gap:4px; margin-top: 5px;}
+
+.mind-ootd-list { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+.mind-item-pill {
+    background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.03); border-radius: 12px;
+    padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+.mind-icon-box { width: 28px; height: 28px; border-radius: 8px; background: #fff; display: flex; justify-content: center; align-items: center; font-size: 14px; flex-shrink:0; }
+.mind-item-details { display: flex; flex-direction: column; }
+.mind-label { font-size: 9px; color: #a1abc0; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; font-family: 'Outfit', sans-serif;}
+.mind-value { font-size: 12px; color: #2d3436; font-weight: 500; line-height: 1.3;}
+
+.mind-action-card { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);}
+.mind-flip-arrow { margin-top: auto; text-align: center; color: #dfe6e9; font-size: 10px; letter-spacing: 1px; animation: bounceX 2s infinite; font-family: 'Outfit', sans-serif;}
+@keyframes bounceX { 0%,100% {transform: translateY(0);} 50% {transform: translateY(-4px);} }
+
+/* --- 背面：潜意识手札 --- */
+.mind-Card__face--back {
+    background-color: #fef8eb; 
+    background-image: linear-gradient(rgba(200,190,160,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(200,190,160,0.2) 1px, transparent 1px);
+    background-size: 20px 20px; transform: rotateY(180deg); z-index: 1; padding: 25px; box-sizing: border-box; display: flex; flex-direction: column;
+}
+.mind-note-header { border-bottom: 1.5px solid #2b2b2b; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-end; }
+.mind-date { font-family: 'Outfit', monospace; color: #555; font-size: 11px; font-weight: bold;}
+.mind-mood-emoji { font-size: 22px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+
+.mind-handwriting-area { font-family: 'Zhi Mang Xing', cursive; font-size: 24px; color: #2c3e50; margin-top: 20px; line-height: 1.5; flex-grow: 1; }
+.mind-strikethrough { text-decoration: line-through; text-decoration-color: #e76f51; text-decoration-thickness: 2.5px; color: #999; }
+.mind-highlight { position: relative; z-index: 1; }
+.mind-highlight::before { content: ''; position: absolute; bottom: 3px; left: -2px; right: -2px; height: 12px; background: rgba(255, 154, 158, 0.4); z-index: -1; transform: rotate(-1deg); }
+
+.mind-vibe-meter { border-top: 1px dashed #ccc; padding-top: 15px; margin-bottom: 15px; }
+.mind-vibe-title { font-size: 10px; color: #777; margin-bottom: 6px; font-family: 'Outfit', sans-serif;}
+.mind-progress-bar { width: 100%; height: 5px; background:#e0dbd3; border-radius:3px; overflow: hidden;}
+.mind-progress-val { width: 0%; height: 100%; background: #2c3e50; border-radius:3px; transition: width 1s ease-out;}
+.mind-heartbeat-zone { display: flex; align-items: center; justify-content: center; gap: 8px;}
+.mind-big-heart { font-size: 20px; color: #ff5e62; animation: beatFast 0.4s infinite alternate; }
+.mind-memo-text { font-family: 'Outfit'; font-size: 10px; color:#a1a1a1; font-style: italic;}
+
+/* 扫描时的遮罩层 */
+.mind-loading-overlay {
+    position: absolute; inset:0; background: rgba(255,255,255,0.8); z-index: 10;
+    display: flex; flex-direction:column; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px); transition: 0.3s;
+}
+.mind-scan-line { width: 80%; height: 2px; background: #007AFF; box-shadow: 0 0 10px #007AFF; animation: scanAnim 1s ease-in-out infinite alternate; margin-top: 20px;}
+@keyframes scanAnim { from { transform: translateY(-30px); } to { transform: translateY(30px); } }
     </style>
     <!-- 引入 Buttplug 底层蓝牙驱动库 (预留) -->
     <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
@@ -1571,7 +1726,13 @@
                         <span class="row-label">World Lore</span>
                         <span class="row-sub">关联世界书分类</span>
                     </div>
-                    <select id="set-worldbook" class="select-bare"></select>
+                    <div class="custom-multi-select" id="set-worldbook-wrapper">
+    <div class="cms-header" onclick="this.nextElementSibling.classList.toggle('show')">
+        <span id="set-worldbook-label">-- 不关联 --</span>
+        <i class="ri-arrow-down-s-line"></i>
+    </div>
+    <div class="cms-dropdown" id="set-worldbook-dropdown" onmouseleave="this.classList.remove('show')"></div>
+</div>
                 </div>
                 <div class="item-row">
                     <div>
@@ -1731,6 +1892,83 @@
         </div>
     </div>
     
+<!-- ================================================== -->
+    <!-- 读心面具卡片 弹窗 -->
+    <!-- ================================================== -->
+    <div id="modal-mind-probe" class="mind-modal-mask" onclick="closeMindProbe(event)">
+        <div class="mind-Scene" id="mind-scene" onclick="this.classList.toggle('flipped'); event.stopPropagation();">
+            <div class="mind-Card">
+                
+                <!-- 扫描等待层 -->
+                <div id="mind-loading" class="mind-loading-overlay">
+                    <i class="ri-radar-line" style="font-size: 40px; color:#007AFF; animation: pulse 1s infinite;"></i>
+                    <div style="font-family:'Outfit'; font-size:12px; color:#555; margin-top:10px; font-weight:600; letter-spacing:1px;">SCANNING MIND...</div>
+                    <div class="mind-scan-line"></div>
+                </div>
+
+                <!-- 正面：表象 -->
+                <div class="mind-Card__face mind-Card__face--front">
+                    <div class="mind-front-header">
+                        <span class="mind-sys-title">Observation Log</span>
+                        <div class="mind-live-dot"></div>
+                    </div>
+                    <div class="mind-avatar-zone">
+                        <div class="mind-avatar-frame">
+                            <img id="mind-avatar" src="" class="mind-avatar">
+                        </div>
+                        <div class="mind-name" id="mind-name">Loading...</div>
+                        <div class="mind-location" id="mind-location">📍 正在定位...</div>
+                    </div>
+                    <div class="mind-ootd-list">
+                        <div class="mind-item-pill">
+                            <div class="mind-icon-box" id="mind-exp-icon">😶</div>
+                            <div class="mind-item-details">
+                                <span class="mind-label">Expression (神情)</span>
+                                <span class="mind-value" id="mind-exp-text">...</span>
+                            </div>
+                        </div>
+                        <div class="mind-item-pill">
+                            <div class="mind-icon-box" id="mind-cloth-icon">👔</div>
+                            <div class="mind-item-details">
+                                <span class="mind-label">Outfit (着装)</span>
+                                <span class="mind-value" id="mind-cloth-text">...</span>
+                            </div>
+                        </div>
+                        <div class="mind-item-pill mind-action-card">
+                            <div class="mind-icon-box" id="mind-act-icon">🏃</div>
+                            <div class="mind-item-details">
+                                <span class="mind-label">Action (动作)</span>
+                                <span class="mind-value" id="mind-act-text">...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mind-flip-arrow">TAP TO PROBE MIND  ▲</div>
+                </div>
+
+                <!-- 背面：内心 -->
+                <div class="mind-Card__face mind-Card__face--back">
+                    <div class="mind-note-header">
+                        <span class="mind-date" id="mind-date">Friday 15:40</span>
+                        <span class="mind-mood-emoji" id="mind-mood-emoji">💭</span>
+                    </div>
+                    <div class="mind-handwriting-area" id="mind-inner-voice">
+                        <!-- AI 动态生成内容 -->
+                    </div>
+                    <div class="mind-vibe-meter">
+                        <div class="mind-vibe-title" id="mind-stat-title">心率 / BPM</div>
+                        <div class="mind-progress-bar">
+                            <div class="mind-progress-val" id="mind-stat-bar" style="width: 0%; background:#e76f51"></div>
+                        </div>
+                    </div>
+                    <div class="mind-heartbeat-zone">
+                        <span class="mind-memo-text">Neural Sync Active</span>
+                        <span class="mind-big-heart">♥</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 <!-- 聊天室：编辑消息弹窗 -->
     <div id="modal-msg-edit" class="modal-mask">
         <div class="modal-box" style="width: 85%; max-width: 320px; padding: 20px;">
@@ -1889,8 +2127,9 @@ const IntifaceLogic = {
         },
         async saveMainData(data) {
             if(!this.db) await this.init();
-            const cleanData = JSON.parse(JSON.stringify(data));
-            cleanData.images = {}; 
+            // 性能优化：使用解构赋值排除 images，避免 JSON.stringify 巨大的图片数据导致卡顿
+            const { images, ...rest } = data;
+            const cleanData = { ...rest, images: {} };
             return this.tx(STORE_DATA, 'readwrite').put(cleanData, DATA_KEY);
         },
         async loadMainData() {
@@ -2031,11 +2270,114 @@ const IntifaceLogic = {
         }
     }
 
-    window.onload = async () => {
-        const fixedH = window.innerHeight;
-        document.getElementById('app-root').style.height = fixedH + 'px';
-        document.getElementById('wallpaper-layer').style.height = fixedH + 'px';
+// ==========================================
+// 🚀 QQ 贴表情核心引擎 (Drag & Drop)
+// ==========================================
+// ==========================================
+// 🚀 QQ 贴表情核心引擎 (Drag & Drop) 优化版
+// ==========================================
+let dragTimer = null;
+let dragItem = null;
+let ghostEl = null;
+
+function initStickerDragSystem() {
+    ghostEl = document.createElement('div');
+    ghostEl.id = 'drag-ghost';
+    document.body.appendChild(ghostEl);
+
+    document.addEventListener('touchmove', (e) => {
+        if (dragItem) {
+            e.preventDefault(); 
+            const touch = e.touches[0];
+            ghostEl.style.left = touch.clientX + 'px';
+            ghostEl.style.top = touch.clientY + 'px';
+        }
+    }, { passive: false });
+
+    document.addEventListener('touchend', async (e) => {
+        if (dragItem) {
+            const touch = e.changedTouches[0];
+            ghostEl.style.display = 'none';
+            
+            let targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+
+            const msgBubble = targetEl ? targetEl.closest('.at-msg') : null;
+
+            if (msgBubble) {
+                const msgId = msgBubble.getAttribute('data-id');
+                const rect = msgBubble.getBoundingClientRect();
+                const relX = touch.clientX - rect.left;
+                const relY = touch.clientY - rect.top;
+                
+                await saveStickerToMsg(msgId, dragItem.content, dragItem.type, relX, relY);
+            }
+            dragItem = null;
+        }
+    });
+}
+
+// 优化：直接修改 DOM，不刷新页面，解决乱跳问题！
+async function saveStickerToMsg(msgId, content, type, x, y) {
+    const msg = appData.chatData.messages.find(m => m.id === msgId);
+    if (msg) {
+        if (!msg.peeledStickers) msg.peeledStickers = [];
+        const rotation = Math.floor(Math.random() * 40) - 20;
         
+        msg.peeledStickers.push({ content, type, x, y, r: rotation });
+        await saveData();
+        
+        // 直接在当前气泡上画出贴纸，丝滑无感！
+        const msgBubble = document.querySelector(`.at-msg[data-id="${msgId}"]`);
+        if (msgBubble) {
+            let sContent = type === 'emoji' ? `<div style="font-size:32px;">${content}</div>` : `<img src="${getRealImgSrc(content)}" style="width:50px;">`;
+            let stickerDiv = document.createElement('div');
+            stickerDiv.className = 'peeled-sticker';
+            stickerDiv.style.left = x + 'px';
+            stickerDiv.style.top = y + 'px';
+            stickerDiv.style.setProperty('--rot', rotation + 'deg');
+            stickerDiv.innerHTML = sContent;
+            
+            // 修复：立即绑定交互事件，无需刷新即可旋转/翻转
+            const newIdx = msg.peeledStickers.length - 1;
+            stickerDiv.setAttribute('onclick', `rotateSticker('${msgId}', ${newIdx}, event)`);
+            stickerDiv.setAttribute('ondblclick', `flipSticker('${msgId}', ${newIdx}, event)`);
+            stickerDiv.style.pointerEvents = 'auto';
+            stickerDiv.style.cursor = 'pointer';
+
+            msgBubble.appendChild(stickerDiv);
+        }
+        
+        try { if(navigator.vibrate) navigator.vibrate(50); } catch(e){}
+    }
+}
+
+function bindLongPress(element, content, type) {
+    element.addEventListener('touchstart', (e) => {
+        dragTimer = setTimeout(() => {
+            dragItem = { content, type };
+            
+            // 优化：拿起来的瞬间，自动收起表情面板，让你能贴到底部！
+            document.getElementById('emoji-picker').classList.remove('show');
+            
+            const touch = e.touches[0];
+            ghostEl.style.display = 'block';
+            ghostEl.style.left = touch.clientX + 'px';
+            ghostEl.style.top = touch.clientY + 'px';
+            
+            if (type === 'emoji') {
+                ghostEl.innerHTML = `<div style="font-size:40px;">${content}</div>`;
+            } else {
+                ghostEl.innerHTML = `<img src="${getRealImgSrc(content)}" style="width:60px;">`;
+            }
+            try { if(navigator.vibrate) navigator.vibrate(20); } catch(e){}
+        }, 300); 
+    });
+
+    element.addEventListener('touchend', () => clearTimeout(dragTimer));
+    element.addEventListener('touchmove', () => { if (!dragItem) clearTimeout(dragTimer); });
+}
+
+        window.onload = async () => {
         await loadData(); 
 
         startClock();
@@ -2043,7 +2385,11 @@ const IntifaceLogic = {
         setupInputs();
         setupFileUpload();
         renderFontList();
+        
+        // 👇 加上这一句，拖拽功能就激活了！
+        initStickerDragSystem(); 
     };
+
 
     async function loadAllImagesFromDB() {
         if(!idbHelper.db) await idbHelper.init();
@@ -2138,16 +2484,20 @@ const IntifaceLogic = {
     }
 
     function setupInputs() {
+        let inputTimeout = null;
         const bindInput = (id) => {
             const el = document.getElementById(id);
             if(el) {
                 const saver = function() {
                     appData.customTexts[id] = this.value;
-                    saveData();
+                    // 防抖处理：打字时延迟保存，避免严重卡顿
+                    if(inputTimeout) clearTimeout(inputTimeout);
+                    inputTimeout = setTimeout(saveData, 500);
                 };
                 el.oninput = saver;
-                el.onchange = saver; 
-                el.onblur = saver;   
+                // 失去焦点或明确变更时立即保存，确保数据安全
+                el.onchange = function() { appData.customTexts[id] = this.value; saveData(); }; 
+                el.onblur = function() { appData.customTexts[id] = this.value; saveData(); };   
             }
         };
         bindInput('edit-mood');
@@ -2155,15 +2505,24 @@ const IntifaceLogic = {
         
         const urlEl = document.getElementById('api-url');
         const keyEl = document.getElementById('api-key');
-        const saveApi = () => {
+        
+        const saveApiDebounced = () => {
+            appData.lastApi.url = urlEl.value;
+            appData.lastApi.key = keyEl.value;
+            if(inputTimeout) clearTimeout(inputTimeout);
+            inputTimeout = setTimeout(saveData, 500);
+        };
+        
+        const saveApiImmediate = () => {
             appData.lastApi.url = urlEl.value;
             appData.lastApi.key = keyEl.value;
             saveData();
         };
+
         [urlEl, keyEl].forEach(el => {
-            el.oninput = saveApi;
-            el.onchange = saveApi;
-            el.onblur = saveApi;
+            el.oninput = saveApiDebounced;
+            el.onchange = saveApiImmediate;
+            el.onblur = saveApiImmediate;
         });
     }
 
@@ -3426,17 +3785,21 @@ window.previewInsPostImg = (input) => {
     let currentChatContact = null;
 
     // 1. 打开聊天室
+        // 1. 打开聊天室 (无感丝滑版)
     window.openChatRoom = (contactId) => {
         currentChatContact = appData.chatData.contacts.find(c => c.id === contactId);
         if(!currentChatContact) return;
 
-        // 绑定名字和状态（优先显示备注）
+        // 绑定名字和状态
         document.getElementById('at-room-name').innerText = currentChatContact.note || currentChatContact.name;
         document.getElementById('at-room-status').innerText = currentChatContact.currentStatus || "在线";
         document.getElementById('at-room-dot').classList.remove('typing');
 
         const bdy = document.getElementById('at-body');
-        bdy.innerHTML = ''; // 清空当前视图
+        
+        // 【关键技巧】先隐藏内容，防止看到滚动过程
+        bdy.style.opacity = '0'; 
+        bdy.innerHTML = ''; 
 
         // 渲染时间分割线
         bdy.innerHTML = `<div class="time-divider">Encryption Secured</div>`;
@@ -3444,41 +3807,89 @@ window.previewInsPostImg = (input) => {
         // 加载历史消息
         const history = appData.chatData.messages.filter(m => m.chatId === contactId);
         history.forEach(msg => {
-            // 修复：加入了 msg.sticker 才能渲染历史表情包！
             appendMsgToUI(msg.id, msg.sender, msg.content, msg.timestamp, msg.quote, msg.isRecalled, msg.sticker);
         });
 
         openPage('page-chat-room');
-        // 👇 新增：每次打开聊天室，刷新当前角色专属的表情面板 👇
-        renderChatStickerPanel(); setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 100);
+        renderChatStickerPanel(); 
         document.getElementById('emoji-picker').classList.remove('show');
+        
+        // 【关键技巧】浏览器渲染下一帧时，瞬间跳到底部，然后显示出来
+        requestAnimationFrame(() => {
+            bdy.scrollTop = bdy.scrollHeight; // 瞬间到底
+            // 再给一点点缓冲确保渲染完成
+            setTimeout(() => {
+                bdy.scrollTop = bdy.scrollHeight; // 双重保险
+                bdy.style.opacity = '1'; // 瞬间显示，无缝衔接
+            }, 50);
+        });
+        
+        // 应用背景图等视觉设置
+        applyChatRoomVisuals(); 
     };
 
 
 
-// 2. 往UI添加气泡 (防爆无包裹独立模块 + 动态脚本激活引擎)
- // 修改点：加入了 stickerObj 参数
+
+// 2. 往UI添加气泡 (防爆无包裹独立模块 + 动态脚本激活引擎 + QQ贴表情渲染)
 function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled = false, stickerObj = null) {
     const bdy = document.getElementById('at-body');
     const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
     let newDiv = document.createElement('div');
     newDiv.setAttribute('data-id', id); 
+    // 必须设置 relative，否则贴纸会飞到屏幕左上角去
+    newDiv.style.position = 'relative'; 
+
     let checkbox = `<div class="multi-select-circle" onclick="toggleMsgSelect('${id}', this, event)"></div>`;
+
+    // ----------------------------------------
+    // 渲染贴纸 (Peeled Stickers)
+    // ----------------------------------------
+    // ----------------------------------------
+    // 渲染贴纸 (Peeled Stickers) - 支持点击编辑版
+    // ----------------------------------------
+    let stickersHtml = '';
+    const msgData = appData.chatData.messages.find(m => m.id === id);
+    if (msgData && msgData.peeledStickers) {
+        msgData.peeledStickers.forEach((s, idx) => { // 注意这里多了个 idx
+            let content = '';
+            if (s.type === 'emoji') {
+                content = `<div style="font-size:32px;">${s.content}</div>`;
+            } else {
+                content = `<img src="${getRealImgSrc(s.content)}" style="width:50px;">`;
+            }
+            
+            // 计算翻转样式
+            const scaleX = s.flip ? -1 : 1;
+            
+            // 这里的 onclick 和 ondblclick 是新增的交互
+            stickersHtml += `
+                <div class="peeled-sticker" 
+                     style="left:${s.x}px; top:${s.y}px; transform: scale(${scaleX}) rotate(${s.r}deg); pointer-events: auto; cursor: pointer;"
+                     onclick="rotateSticker('${id}', ${idx}, event)"
+                     ondblclick="flipSticker('${id}', ${idx}, event)"
+                >
+                    ${content}
+                </div>`;
+        });
+    }
+    // ----------------------------------------
+
+    // ----------------------------------------
 
     if (isRecalled) {
         newDiv.className = 'at-msg-recalled';
         if (sender === 'me') {
-            newDiv.innerHTML = `${checkbox}<div class="time-divider">你撤回了一条消息</div>`;
+            newDiv.innerHTML = `${checkbox}${stickersHtml}<div class="time-divider">你撤回了一条消息</div>`;
         } else {
             let safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
-            newDiv.innerHTML = `${checkbox}<div class="time-divider">对方撤回了一条消息 <span class="msg-recalled-link" onclick="alert('【AI 原消息】\\n${safeText}')">查看</span></div>`;
+            newDiv.innerHTML = `${checkbox}${stickersHtml}<div class="time-divider">对方撤回了一条消息 <span class="msg-recalled-link" onclick="alert('【AI 原消息】\\n${safeText}')">查看</span></div>`;
         }
-    } 
-else {
+    } else {
         newDiv.className = sender === 'me' ? 'at-msg m-me' : 'at-msg m-bot';
 
-        let sandboxes =[];
+        let sandboxes = [];
         let pureText = text.replace(/<sandbox>([\s\S]*?)<\/sandbox>/gi, (match, htmlContent) => {
             sandboxes.push(htmlContent);
             return ''; 
@@ -3487,21 +3898,23 @@ else {
         let quoteHtml = quoteText ? `<div class="msg-quote-block">${quoteText}</div>` : '';
         let textHtml = quoteHtml + pureText.replace(/\n/g, '<br>');
 
-        // 修复 1：把表情包从 msg-core 里拿出来，单独做成一个模块
-        let coreStyle = (pureText || quoteText) ? '' : 'display: none;'; // 如果只有表情包，隐藏文字气泡框
+        let showCore = (pureText.length > 0 || quoteText);
+        let coreStyle = showCore ? '' : 'display: none;'; 
+        
         let coreBlock = `<div class="msg-core" style="${coreStyle}">${textHtml}</div>`;
         
-        let stickerBlock = stickerObj ? `<img src="${getRealImgSrc(stickerObj.src)}" style="max-width:140px; border-radius:12px; display:block; margin-top:4px; margin-bottom:4px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : '';
+        let stickerBlock = stickerObj ? `<img src="${getRealImgSrc(stickerObj.src)}" style="max-width:100px; border-radius:12px; display:block; margin-top:4px; margin-bottom:2px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : '';
 
         let moduleBlocks = '';
         sandboxes.forEach((htmlContent, index) => {
             let sbId = 'mod_' + id + '_' + index;
-            moduleBlocks += `<div id="${sbId}" class="msg-module-box">${htmlContent}</div>`;
+            moduleBlocks += `<div id="${sbId}" class="msg-module-box" style="margin-top:6px;">${htmlContent}</div>`;
         });
 
-        // 将 文字气泡 + 表情包 + 动态组件 拼装在一列里
         let contentCol = `<div class="msg-col">${coreBlock}${stickerBlock}${moduleBlocks}</div>`;
 
+                let timeHtml = `<span class="time">${timeStr}</span>`;
+        
         if(sender === 'me') {
             let myAvatarSrc = appData.images['user-avatar'];
             if(currentChatContact.userAvatarOverride) myAvatarSrc = currentChatContact.userAvatarOverride;
@@ -3509,10 +3922,13 @@ else {
                 const mask = appData.userMasks.find(m => m.id === currentChatContact.userMaskId);
                 if(mask && mask.avatar) myAvatarSrc = mask.avatar;
             }
-            newDiv.innerHTML = `${checkbox}${contentCol}<img src="${getRealImgSrc(myAvatarSrc)}" class="avatar"><span class="time">${timeStr}</span>`;
+            // 排列顺序：复选框 -> 时间戳(左) -> 气泡内容 -> 贴纸 -> 头像(右)
+            newDiv.innerHTML = `${checkbox}${timeHtml}${contentCol}${stickersHtml}<img src="${getRealImgSrc(myAvatarSrc)}" class="avatar">`;
         } else {
-            newDiv.innerHTML = `${checkbox}<img src="${getRealImgSrc(currentChatContact.avatar)}" class="avatar">${contentCol}<span class="time">${timeStr}</span>`;
+            // 排列顺序：复选框 -> 头像(左) -> 气泡内容 -> 贴纸 -> 时间戳(右)
+            newDiv.innerHTML = `${checkbox}<img src="${getRealImgSrc(currentChatContact.avatar)}" class="avatar" style="cursor:pointer;" onclick="triggerMindProbe()">${contentCol}${stickersHtml}${timeHtml}`;
         }
+
         
         bdy.appendChild(newDiv);
 
@@ -3533,6 +3949,8 @@ else {
     }
     bdy.scrollTop = bdy.scrollHeight;
 }
+
+
 
     // 3. 插入Emoji
     window.insertEmoji = (emoji) => {
@@ -3584,12 +4002,32 @@ window.openChatSettings = () => {
     document.getElementById('set-reply-min').value = currentChatContact.minReply || 1;
     document.getElementById('set-reply-max').value = currentChatContact.maxReply || 3;
     
-    const wbSelect = document.getElementById('set-worldbook');
-    wbSelect.innerHTML = '<option value="">-- 不关联 --</option>';
-    const cats = new Set();
-    if(appData.world) appData.world.forEach(w => { if(w.cat) cats.add(w.cat); });
-    cats.forEach(cat => wbSelect.add(new Option(cat, cat)));
-    wbSelect.value = currentChatContact.worldbookCat || '';
+    // 渲染世界书多选下拉框
+const wbDropdown = document.getElementById('set-worldbook-dropdown');
+wbDropdown.innerHTML = '';
+const cats = new Set();
+if(appData.world) appData.world.forEach(w => { if(w.cat) cats.add(w.cat); });
+
+let selectedCats = currentChatContact.worldbookCat || [];
+if (typeof selectedCats === 'string') selectedCats = selectedCats ?[selectedCats] :[]; // 兼容旧版
+
+cats.forEach(cat => {
+    const isChecked = selectedCats.includes(cat) ? 'checked' : '';
+    wbDropdown.innerHTML += `
+        <label class="cms-option">
+            <input type="checkbox" value="${cat}" ${isChecked} onchange="updateWbLabel()"> ${cat}
+        </label>`;
+});
+
+// 绑定一个更新文本的全局函数
+window.updateWbLabel = () => {
+    const boxes = document.querySelectorAll('#set-worldbook-dropdown input:checked');
+    const label = document.getElementById('set-worldbook-label');
+    if(boxes.length === 0) label.innerText = '-- 不关联 --';
+    else if(boxes.length === 1) label.innerText = boxes[0].value;
+    else label.innerText = `已选 ${boxes.length} 项`;
+};
+window.updateWbLabel();
     
     const timeTgl = document.getElementById('set-time-tgl');
     if(currentChatContact.timeAwareness) timeTgl.classList.add('on'); else timeTgl.classList.remove('on');
@@ -3637,14 +4075,14 @@ window.closeSummaryPage = () => {
 };
 
 // 3. 保存所有设置
-// 3. 保存所有设置
 window.saveChatSettings = async () => {
     if(!currentChatContact) return;
 
     currentChatContact.name = document.getElementById('set-char-name').value.trim();
     currentChatContact.note = document.getElementById('set-char-note').value.trim();
     currentChatContact.prompt = document.getElementById('set-char-prompt').value.trim();
-    currentChatContact.worldbookCat = document.getElementById('set-worldbook').value;
+    const wbBoxes = document.querySelectorAll('#set-worldbook-dropdown input:checked');
+currentChatContact.worldbookCat = Array.from(wbBoxes).map(b => b.value);
     currentChatContact.timeAwareness = document.getElementById('set-time-tgl').classList.contains('on');
     
     // 👇 这里是刚刚新增的：保存 HTML 动态模块的开关状态 👇
@@ -4137,8 +4575,40 @@ window.clearMyAvatarOverride = () => {
     img.setAttribute('data-clear', 'true');
     updatePreviews(); // <--- 新增：点击清除后立刻刷新预览，它会自动回退到面具头像或全局头像
 };
-// 独立纯净的 AI 请求引擎，处理上下文注入与角色扮演
-// 独立纯净的 AI 请求引擎：极致活人感 + 强制多气泡切割 + 唯一消息ID + AI自主引用/撤回
+
+// === 新增工具函数：智能长句分割 ===
+function smartSplitText(text, maxLen = 30) {
+    // 1. 先按显式的 ||| 或 换行符 切割
+    let blocks = text.split(/\|\|\||\n+/).map(t => t.trim()).filter(t => t);
+    let finalParts = [];
+
+    blocks.forEach(block => {
+        // 如果包含 HTML 模块，或者长度本来就很短，直接保留
+        if (block.includes('__SBOX_') || block.length < maxLen) {
+            finalParts.push(block);
+        } else {
+            // 2. 兜底机制：如果 AI 发了一大段话，按中文标点强行切碎
+            let subParts = block.split(/([。！？…~]+)/);
+            let buffer = "";
+            
+            for (let i = 0; i < subParts.length; i++) {
+                let part = subParts[i];
+                buffer += part;
+                // 只要遇到句号/问号/叹号，且当前句子长度超过 8 个字，立刻切断成新气泡
+                if (/^[。！？…~]+$/.test(part) && buffer.length >= 8) { 
+                    finalParts.push(buffer.trim());
+                    buffer = "";
+                }
+            }
+            if (buffer.trim()) finalParts.push(buffer.trim());
+        }
+    });
+
+    return finalParts;
+}
+
+
+// 独立纯净的 AI 请求引擎：极致活人感 + 强制多气泡切割 + 唯一消息ID + AI自主引用/撤回 + 潜意识自动读心
 window.triggerAtelierAI = async () => {
     if(!appData.lastApi.url || !appData.lastApi.key) {
         alert("请先去 API 页面配置服务器地址和 Key！"); 
@@ -4150,39 +4620,34 @@ window.triggerAtelierAI = async () => {
     dot.classList.add('typing');
     status.innerText = "对方正在输入中...";
 
-    // 1. 裁剪历史记录
     const memDepth = parseInt(currentChatContact.memDepth) || 20;
     const historyMsgs = appData.chatData.messages.filter(m => m.chatId === currentChatContact.id).slice(-memDepth);
     
     const apiMessages =[];
-    
-    const persona = currentChatContact.prompt || "A casual friend.";
+    const persona = currentChatContact.prompt || "一个随性的朋友。";
     const charName = currentChatContact.name || "Character";
     const minReply = currentChatContact.minReply || 1;
     const maxReply = currentChatContact.maxReply || 3;
     
-// 【魔法指令升级：强网聊感 + 行为驱动引擎】
-    let systemPrompt = `[Roleplay Instruction]
-You are "${charName}" chatting with the user on a mobile messenger (like WeChat or iMessage). 
-Your Persona: ${persona}
+    // ==========================================
+    // 1. 核心人设与网聊规则 (全中文严厉指令)
+    // ==========================================
+    let systemPrompt = `[角色扮演指令]
+你现在是“${charName}”，正在手机聊天软件上与用户进行真实的日常网聊。
+你的核心人设：${persona}[“绝对拟真”核心规则 - 必须严格遵守]
+1. 拒绝AI感：你是一个有血有肉的真人。绝对不要像AI助手那样说话，不要过度礼貌，不要频繁道歉，严禁使用“作为一个AI”、“我能为你做什么”等废话。
+2. 网聊风格（关键）：说话要随意、简短、碎片化。严禁发送长篇大论！手机打字的人通常只发短句。可以适当使用语气词（哈哈、嗯、哎、卧槽）甚至轻微的错别字来增加真实感。
+3. 强制消息拆分（关键）：你必须模拟真人连续发送多条消息的习惯。使用“|||”将你的回复强行拆分成 ${minReply} 到 ${maxReply} 个短气泡。每个气泡里只能有一两句简短的话。
+   ✅ 正确示范：“真的假的？||| 太离谱了吧哈哈 ||| 展开说说！”
+   ❌ 错误示范：“真的假的？太离谱了吧哈哈展开说说！|||”
+   严禁在句子中间使用换行符(\\n)！
+4. 禁止语C动作：不要使用星号来描述动作（例如 *微笑*、*叹气*），直接用文字聊天。[高级互动指令（请主动使用！）]
+- 引用回复：如果用户连问了几个问题，或者你想针对某句话吐槽，请使用引用标签：<quote>用户原话</quote> 你的回复。
+- 撤回消息：如果你想模拟发错消息、冲动发言或者秒撤回制造悬念，请使用撤回标签：<recall>见不得人的话</recall>。用户只会看到“对方撤回了一条消息”，这能极大增加互动的趣味性！`;
 
-[CRITICAL RULES FOR "HUMAN LIKENESS" - STRICTLY ENFORCED]
-1. ZERO AI VIBE: You are a REAL person texting on a phone. NEVER act like an AI assistant. NEVER apologize excessively, NEVER be overly polite, and NEVER use phrases like "As an AI" or "How can I help you".
-2. TEXTING STYLE (CRITICAL): Speak casually. Use extreme brevity. NO long essays! People texting on phones write short, fragmented sentences. Occasionally use conversational fillers (hmm, haha, lol) or even slight typos to be natural.
-3. MESSAGE SPLITTING: You MUST simulate rapid-fire texting by splitting your reply into ${minReply} to ${maxReply} short bubbles using "|||". Each bubble should be just 1-2 short sentences. 
-   Good Example: "Wait really? ||| That's crazy lol ||| tell me more!"
-   Bad Example (DO NOT DO THIS): "Wait really? That's crazy lol tell me more! |||"
-   CRITICAL: NEVER use line breaks (\n) inside a sentence!
-   Good Example: "Wait really? ||| That's crazy lol ||| tell me more!"
-   Bad Example (DO NOT DO THIS): "Wait really? That's crazy lol tell me more! |||"
-4. NO ROLEPLAY ACTIONS: NEVER use asterisks for actions like *smiles* or *sighs*. Just text naturally.[ADVANCED INTERACTIONS (BE PROACTIVE!)]
-- QUOTING: If the user asked multiple questions, or you want to tease them about a specific thing they said, USE THE QUOTE TAG: <quote>exact words from user</quote> your reply.
-- RECALLING (UNSENDING): If you want to simulate sending an impulsive message, a typo, or a secret you immediately regret, USE THE RECALL TAG: <recall>the embarrassing text</recall>. The user will only see that you unsent a message, creating curiosity/drama! Use this proactively to make the chat feel alive!`;
-
-
-// 在 systemPrompt 后面紧接着插入这段：
-    // --- 注入 AI 可以发送的表情包 ---
-    // --- 注入 AI 可以发送的表情包 (仅开启了 aiCanUse 的分类才会给AI看) ---
+    // ==========================================
+    // 2. 表情包指令
+    // ==========================================
     let availableStickers =[];
     appData.stickerVault.forEach(cat => {
         if((cat.linkedChars.includes('all') || cat.linkedChars.includes(currentChatContact.id)) && cat.aiCanUse) {
@@ -4191,58 +4656,60 @@ Your Persona: ${persona}
     });
     
     if(availableStickers.length > 0) {
-        systemPrompt += `\n[EMOTION STICKERS]
-You can send a sticker to express emotion. To do this, simply include[表情:Description] in your message!
-Valid Sticker Descriptions you own:
+        systemPrompt += `\n\n[表情包互动]
+你可以发送表情包来表达情绪！发送方式：在消息中包含 [表情:描述] 即可。
+你当前拥有的合法表情包描述如下：
 ${availableStickers.join('\n')}
 
-CRITICAL RULE: Do NOT invent fake descriptions. ONLY use the exact descriptions listed above. 
-Example of a good reply: "Hahaha that is crazy [表情:大笑]"`;
+警告：绝对不要捏造列表中没有的表情包描述！只能使用上面列出的精确描述。
+✅ 正确示范：“笑死我了 ||| [表情:大笑]”`;
     }
 
-    // 动态状态指令
-    systemPrompt += `\n[DYNAMIC STATUS]
-Update your profile status based on your current action, location, or mood to make it feel alive!
-Use exact format: <status>Short action/mood</status>
-Examples: <status>Eating dinner</status>, <status>Jealous...</status>, <status>Cooking</status>, <status>Just woke up</status>.
-Insert this tag ANYWHERE in your response when your state changes.`;
+    // ==========================================
+    // 3. 动态状态指令
+    // ==========================================
+    systemPrompt += `\n\n[动态状态感知]
+请根据你当前在做什么、在哪儿或心情如何，随时更新你的个人状态！
+格式必须精确为：<status>你此时的状态/心情/动作</status>
+例子：<status>吃晚饭中</status>、<status>有点小吃醋</status>、<status>去你家的路上</status>。
+当你的状态发生变化时，将此标签插入到回复的任意位置。`;
    
-    // --- 【增强版：高级动态 HTML 模块魔法指令】 ---
+    // ==========================================
+    // 4. HTML 模块指令
+    // ==========================================
     if(currentChatContact.htmlModules) {
-        systemPrompt += `
-
-[DYNAMIC HTML MODULES (PROACTIVE VISUALS)]
-You have the power to create interactive visual UI widgets! BE HIGHLY PROACTIVE!
-Don't just send text. Whenever it makes sense in the conversation to "send a photo", "share a link", "show a ticket", "send a file", or "play a mini-game", you MUST generate a raw HTML/CSS/JS module to simulate sending rich media.
-* RULE 1: Wrap the entire HTML EXACTLY inside <sandbox> and </sandbox> tags.
-* RULE 2: Keep it mobile-friendly (max width 280px), use modern UI (rounded corners, soft shadows).
-* RULE 3: You can use <script> for clicks or animations.
-* Example Scenario: You want to show a photo of what you are eating:
+        systemPrompt += `\n\n[动态可视化模块 (HTML)]
+你拥有发送交互式UI卡片的能力！请发挥创意！
+当你觉得适合“发张照片”、“分享链接”、“展示门票”、“发文件”或“玩个小游戏”等时，必须生成一段 HTML/CSS/JS 代码来模拟富媒体消息。
+* 规则1：整个 HTML 代码必须严格包裹在 <sandbox> 和 </sandbox> 标签内。
+* 规则2：适配手机端（最大宽度 280px），使用现代UI设计（圆角、柔和阴影）。
+* 规则3：可以使用 <script> 实现点击效果。
+* 示例场景（分享美食照）：
   <sandbox>
   <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:sans-serif;">
      <img src="https://placehold.co/280x200/ff9999/fff?text=Yummy+Food" style="width:100%; display:block;">
-     <div style="padding:12px;"><b style="color:#333;">Look at this! 🍰</b><p style="margin:4px 0 0; font-size:12px; color:#666;">Just got this from the new cafe.</p></div>
+     <div style="padding:12px;"><b style="color:#333;">看这个！🍰</b><p style="margin:4px 0 0; font-size:12px; color:#666;">刚在新开的咖啡店买的。</p></div>
   </div>
   </sandbox>`;
     }
     
-    // 注入时间感知
+    // ==========================================
+    // 5. 记忆与环境注入
+    // ==========================================
     if(currentChatContact.timeAwareness) {
         const now = new Date();
         const timeStr = now.toLocaleString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
-        systemPrompt += `\n[Environment]\nCurrent time: ${timeStr}. Let this influence your greeting or topic subtly.\n`;
+        systemPrompt += `\n\n[环境与时间]\n当前现实时间是：${timeStr}。请让时间自然地影响你的打招呼方式或话题。`;
     }
 
-    // 注入世界书与长时记忆
-    if(currentChatContact.worldbookCat && appData.world) {
-        const lore = appData.world.filter(w => w.cat === currentChatContact.worldbookCat).map(w => `- ${w.title}: ${w.content}`).join('\n');
-        if(lore) systemPrompt += `\n[World Lore Context]\n${lore}\n`;
+    if(currentChatContact.worldbookCat && currentChatContact.worldbookCat.length > 0 && appData.world) {
+        const lore = appData.world.filter(w => currentChatContact.worldbookCat.includes(w.cat)).map(w => `- ${w.title}: ${w.content}`).join('\n');
+        if(lore) systemPrompt += `\n\n[世界观与背景设定]\n${lore}`;
     }
     if(currentChatContact.longTermMemory) {
-        systemPrompt += `\n[Long-Term Memory Summary]\n${currentChatContact.longTermMemory}\n`;
+        systemPrompt += `\n\n[长时记忆总结]\n${currentChatContact.longTermMemory}`;
     }
 
-    // --- 注入“我”的面具人设 ---
     let myName = appData.customTexts['display-name'] || "User";
     let myPersona = "";
     if(currentChatContact.userMaskId && appData.userMasks) {
@@ -4253,16 +4720,52 @@ Don't just send text. Whenever it makes sense in the conversation to "send a pho
             if(mask.prompt) myPersona = mask.prompt;
         }
     }
-    systemPrompt += `\n[User Info]\nThe person you are talking to is named: ${myName}.\n`;
-    if(myPersona) systemPrompt += `Their Background/Persona: ${myPersona}\n(You MUST adapt your response to their persona.)\n`;
+    systemPrompt += `\n\n[用户信息]\n正在和你聊天的人叫：${myName}。`;
+    if(myPersona) systemPrompt += `\nTa的背景/人设：${myPersona}\n（你必须根据Ta的人设来调整你的聊天态度和语气。）`;
+
+    // ==========================================
+    // 6. 潜意识读心指令 (伴随聊天自动更新，节省Token的核心！)
+    // ==========================================
+    systemPrompt += `\n\n[潜意识与状态更新 (极其重要，必须提供！)]
+每次回复时，你除了发送聊天内容外，还必须在任意位置包含一个 <mind> 标签，里面是一个纯净的 JSON 对象，用于同步更新你的外在状态和最真实的内心潜意识。
+JSON 格式严格如下（必须是合法 JSON）：
+<mind>
+{
+  "location": "当前所在的场景定位，例如：📍 卧室大床",
+  "exp_icon": "一个代表你表情的 emoji",
+  "exp_text": "简短描述你此刻的面部表情",
+  "cloth_icon": "一个代表衣服的 emoji",
+  "cloth_text": "你此刻穿着什么衣服",
+  "act_icon": "一个代表动作的 emoji",
+  "act_text": "你此刻正在做什么小动作",
+  "mood_emoji": "代表你内心深处情绪的 emoji",
+  "inner_voice": "最真实的内心独白。支持HTML标签，可用 <span class='mind-strikethrough'>删除线文字</span> 表示不敢说的话，用 <span class='mind-highlight'>高亮文字</span> 强调重点情绪。",
+  "stat_title": "当前情绪的最高比重指标，例如：心动值 / 烦躁度",
+  "stat_percent": 0到100之间的整数
+}
+</mind>
+记住：这部分内容不会展现在聊天气泡中，但极其重要，每次回复必须包含！`;
 
     apiMessages.push({ role: "system", content: systemPrompt });
+    
+    // 【核心修改】构建历史消息时，注入贴纸信息
     historyMsgs.forEach(m => {
         let contentStr = m.content || "";
+        
+        // 1. 处理气泡内的表情包
         if (m.sticker) {
-            // 修复：换成后台系统音格式，防止 AI 照着格式复读
-            contentStr = `*(User sent a visual sticker: "${m.sticker.desc}")*\n${contentStr}`;
+            contentStr = `*(用户发送了一个表情包: "${m.sticker.desc}")*\n${contentStr}`;
         }
+        
+        // 2. 处理贴在气泡上的贴纸 (Peeled Stickers)
+        if (m.peeledStickers && m.peeledStickers.length > 0) {
+            const stickerNotes = m.peeledStickers.map(s => {
+                return s.type === 'emoji' ? s.content : '一张图片贴纸';
+            }).join(', ');
+            
+            contentStr += `\n(系统提示：用户在这条消息上贴了贴纸：[${stickerNotes}]，请根据贴纸内容做出反应)`;
+        }
+        
         apiMessages.push({ role: m.sender === 'me' ? 'user' : 'assistant', content: contentStr });
     });
 
@@ -4273,117 +4776,115 @@ Don't just send text. Whenever it makes sense in the conversation to "send a pho
         const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-            body: JSON.stringify({ 
-                model: useModel, 
-                messages: apiMessages, 
-                temperature: temp 
-            })
+            body: JSON.stringify({ model: useModel, messages: apiMessages, temperature: temp })
         });
 
         const data = await res.json();
         if(data.error) throw new Error(data.error.message);
         
-const rawText = data.choices[0].message.content;
+        let rawText = data.choices[0].message.content;
+
+        // 【终极防粘连黑科技】：强制把表情包前后加上 |||，让它绝对独立成一个气泡！
+        rawText = rawText.replace(/(\[表情:.*?\])/g, '|||$1|||');
         
-        // 【终极断句修复器】
-        // 1. 保护 HTML 模块不被切碎（先把 sandbox 提取出来）
-        let sandboxes = [];
+        // 1. 全局提取特殊标签
+        let globalQuote = null;
+        let globalRecall = false;
+        
+        // --- 提取潜意识心声并保存 (无感解析) ---
+        rawText = rawText.replace(/<mind>([\s\S]*?)<\/mind>/is, (match, mContent) => {
+            try {
+                let cleanJson = mContent.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+                const mindData = JSON.parse(cleanJson);
+                currentChatContact.latestMind = mindData; // 直接挂载到当前角色的内存里
+            } catch(e) {
+                console.warn("解析 <mind> JSON 失败:", e);
+            }
+            return ''; 
+        });
+
+        rawText = rawText.replace(/<quote>([\s\S]*?)<\/quote>/is, (match, qContent) => {
+            globalQuote = qContent.trim();
+            return ''; 
+        });
+
+        rawText = rawText.replace(/<recall>([\s\S]*?)<\/recall>/is, (match, rContent) => {
+            globalRecall = true;
+            return rContent.trim(); 
+        });
+
+        rawText = rawText.replace(/<status>(.*?)<\/status>/is, (match, st) => {
+            const newStatus = st.trim();
+            if(newStatus) {
+                currentChatContact.currentStatus = newStatus; 
+                document.getElementById('at-room-status').innerText = newStatus; 
+            }
+            return ''; 
+        });
+
+        // 2. 保护 HTML 模块
+        let sandboxes =[];
         let safeText = rawText.replace(/<sandbox>([\s\S]*?)<\/sandbox>/gi, (match) => {
             sandboxes.push(match);
             return `__SBOX_${sandboxes.length - 1}__`;
         });
 
-        // 2. 核心：将所有的 ||| 和 换行符 \n 都统一变成内部切割符 ✂️
-        // 这样只要 AI 敢换行，就会被强行拆成两个单独的聊天气泡！
-        safeText = safeText.replace(/\|\|\|/g, '✂️').replace(/\n+/g, '✂️');
-
-        // 3. 把 HTML 模块完好无损地放回文本里
-        sandboxes.forEach((box, idx) => {
-            safeText = safeText.replace(`__SBOX_${idx}__`, box);
-        });
-
-        // 4. 正式按 ✂️ 切割成气泡数组
-        let parts = safeText.split('✂️').map(t => t.trim()).filter(t => t.length > 0);
-        
+        // 3. 智能分段
+        let parts = smartSplitText(safeText);
         if(parts.length > maxReply) parts = parts.slice(0, maxReply);
+        if(parts.length === 0 && (globalQuote || sandboxes.length > 0)) parts = [""]; 
 
         for (let i = 0; i < parts.length; i++) {
             let partText = parts[i];
-            const aiNow = Date.now() + i; 
+            const aiNow = Date.now() + i * 100; 
 
-            // 【黑科技解码器：解析 AI 的隐秘指令】
-            // 【黑科技解码器：解析 AI 的隐秘指令】
-            let quoteTextToSave = null;
-            let isRecalledToSave = false;
-            let stickerToSave = null; // 新增
+            // 还原 HTML
+            let currentSandboxes =[];
+            partText = partText.replace(/__SBOX_(\d+)__/g, (match, idx) => {
+                currentSandboxes.push(sandboxes[idx]);
+                return ''; 
+            });
 
-            // 1. 解析简单的 [表情:描述] 指令
+            // 提取表情包
+            let stickerToSave = null;
             partText = partText.replace(/\[表情:\s*(.+?)\]/gi, (match, sDesc) => {
                 sDesc = sDesc.trim();
-                if (!stickerToSave) { // 只要找到第一个合法的表情包，就存下来
+                if (!stickerToSave) { 
                     appData.stickerVault.forEach(c => {
                         const s = c.stickers.find(x => x.desc === sDesc);
                         if(s) stickerToSave = { id: s.id, src: s.src, desc: s.desc };
                     });
                 }
-                return ''; // 挖掉标签
+                return ''; 
             }).trim();
 
-            // 兜底清理垃圾标签
-            partText = partText.replace(/\[(sticker|表情):.*?\]/gi, '').trim();
-            partText = partText.replace(/<sticker>.*?<\/sticker>/gi, '').trim();
-
-            // 2. 解析动态状态 <status> (新增)
-            partText = partText.replace(/<status>(.*?)<\/status>/is, (match, st) => {
-                const newStatus = st.trim();
-                if(newStatus) {
-                    currentChatContact.currentStatus = newStatus; // 存入联系人数据
-                    document.getElementById('at-room-status').innerText = newStatus; // 更新UI
-                }
-                return ''; // 从文本挖去
-            });
-
-            // 1. 如果 AI 触发了撤回指令
-            const recallMatch = partText.match(/<recall>(.*?)<\/recall>/is);
-            if (recallMatch) {
-                isRecalledToSave = true;
-                partText = recallMatch[1].trim(); // 把里面的真实文本扒出来当秘密记录
-            } else {
-                // 2. 如果 AI 没撤回，检查它有没有触发引用指令
-                const quoteMatch = partText.match(/<quote>(.*?)<\/quote>/is);
-                if (quoteMatch) {
-                    quoteTextToSave = quoteMatch[1].trim();
-                    partText = partText.replace(quoteMatch[0], '').trim(); // 把标签删掉，剩下的当正文
-                }
+            if (currentSandboxes.length > 0) {
+                partText += "\n" + currentSandboxes.join("\n");
             }
 
-// 【核心修复：防空气泡判定】
-            // 如果不仅没正文，而且也没表情包、没引用、没撤回，那才是真正的空气泡！
-            if (partText === '' && !stickerToSave && !quoteTextToSave && !isRecalledToSave) {
+            let thisMsgQuote = (i === 0) ? globalQuote : null;
+
+            // 防空气泡判定
+            if (!partText && !stickerToSave && !thisMsgQuote && !globalRecall) {
                 continue; 
             }
 
-            if(i > 0) {
-                const delayTime = Math.min(partText.length * 60, 2500); 
-                await new Promise(r => setTimeout(r, delayTime)); 
-            }
+            if(i > 0) await new Promise(r => setTimeout(r, Math.min(partText.length * 50, 1500)));
 
-            // 存入数据库 (带上解析好的 quote 和 isRecalled 属性)
             const aiMsg = { 
                 id: 'm_' + aiNow, 
                 chatId: currentChatContact.id, 
                 sender: 'bot', 
                 content: partText, 
                 timestamp: aiNow,
-                quote: quoteTextToSave,
-                isRecalled: isRecalledToSave,
-                sticker: stickerToSave // <--- 新增
+                quote: thisMsgQuote,
+                isRecalled: globalRecall,
+                sticker: stickerToSave 
             };
             appData.chatData.messages.push(aiMsg);
-            saveData();
+            saveData(); // 存气泡的同时也会把 latestMind 一并存下来
             
-            // 直接扔给渲染器 (加上 stickerToSave)
-            appendMsgToUI(aiMsg.id, 'bot', partText, aiNow, quoteTextToSave, isRecalledToSave, stickerToSave);
+            appendMsgToUI(aiMsg.id, 'bot', partText, aiNow, thisMsgQuote, globalRecall, stickerToSave);
         }
     } catch (e) {
         console.error(e);
@@ -4393,6 +4894,76 @@ const rawText = data.choices[0].message.content;
         status.innerText = currentChatContact.currentStatus || "在线";
     }
 };
+// ==========================================
+// ==========================================
+// 魔法核心：AI 读心系统 (Mind Probe) - 伴随聊天瞬间同步版
+// ==========================================
+
+window.closeMindProbe = (e) => {
+    if(e.target.id === 'modal-mind-probe') {
+        document.getElementById('modal-mind-probe').classList.remove('show');
+        document.getElementById('mind-scene').classList.remove('flipped');
+    }
+};
+
+window.triggerMindProbe = async () => {
+    if(!currentChatContact) return;
+
+    // 1. 打开弹窗，恢复默认状态
+    const modal = document.getElementById('modal-mind-probe');
+    document.getElementById('mind-scene').classList.remove('flipped');
+    
+    // 隐藏加载动画，因为数据现在已经随着每次聊天同步保存在内存里了
+    document.getElementById('mind-loading').style.display = 'none';
+    
+    document.getElementById('mind-avatar').src = getRealImgSrc(currentChatContact.avatar);
+    document.getElementById('mind-name').innerText = currentChatContact.note || currentChatContact.name;
+    
+    modal.classList.add('show');
+
+    // 2. 瞬间提取随着聊天生成的最新心声
+    let mindData = currentChatContact.latestMind;
+
+    // 兜底设计：如果刚建好角色还没发过一句话，给他一个“默认状态”
+    if (!mindData) {
+        mindData = {
+            location: "📍 未知领域",
+            exp_icon: "😶",
+            exp_text: "面无表情",
+            cloth_icon: "👔",
+            cloth_text: "日常着装",
+            act_icon: "🧍",
+            act_text: "静静站立",
+            mood_emoji: "💭",
+            inner_voice: "<span class='mind-strikethrough'>没有任何想法...</span><br>多和对方聊聊天，心声面板就会自动同步最新状态啦。",
+            stat_title: "同步率",
+            stat_percent: 0
+        };
+    }
+
+    // 3. 将数据直接填入 DOM
+    document.getElementById('mind-location').innerText = mindData.location;
+    document.getElementById('mind-exp-icon').innerText = mindData.exp_icon;
+    document.getElementById('mind-exp-text').innerText = mindData.exp_text;
+    document.getElementById('mind-cloth-icon').innerText = mindData.cloth_icon;
+    document.getElementById('mind-cloth-text').innerText = mindData.cloth_text;
+    document.getElementById('mind-act-icon').innerText = mindData.act_icon;
+    document.getElementById('mind-act-text').innerText = mindData.act_text;
+    
+    // 背面数据 (日期时间还是取手机真实的当下时间更有沉浸感)
+    const now = new Date();
+    const days =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    document.getElementById('mind-date').innerText = `${days[now.getDay()]} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('mind-mood-emoji').innerText = mindData.mood_emoji;
+    
+    document.getElementById('mind-inner-voice').innerHTML = mindData.inner_voice;
+    
+    // 渲染进度条和不同颜色
+    document.getElementById('mind-stat-title').innerText = mindData.stat_title;
+    document.getElementById('mind-stat-bar').style.width = mindData.stat_percent + '%';
+    document.getElementById('mind-stat-bar').style.background = mindData.stat_percent > 70 ? '#e76f51' : (mindData.stat_percent < 30 ? '#a1abc0' : '#2c3e50');
+};
+
 // ==========================================
 // 9. 聊天室交互：长按、菜单、复制与删除 (Phase 1)
 // ==========================================
@@ -4480,6 +5051,11 @@ window.openMsgActionModal = (msgId) => {
         else if(!msgData.isRecalled) html += createBtn('ri-eye-off-line', 'AI撤回<br>Simulate', 'recallTargetMsg(false)');
     }
 
+    // 新增：如果这个气泡上有贴纸，显示“撕下贴纸”按钮
+    if (msgData.peeledStickers && msgData.peeledStickers.length > 0) {
+        html += createBtn('ri-sticky-note-line', '撕下贴纸<br>Unpeel', 'clearMsgStickers()', true);
+    }
+
     html += createBtn('ri-list-check-2', '多选<br>Select', 'toggleMultiSelect()');
     html += createBtn('ri-delete-bin-line', '删除<br>Delete', 'deleteTargetMsg()', true);
 
@@ -4490,6 +5066,23 @@ window.openMsgActionModal = (msgId) => {
 window.closeMsgActionModal = () => {
     document.getElementById('modal-msg-action').classList.remove('show');
     // 修复：不要在这里清空 currentActionMsgId，否则会导致编辑保存时丢失目标！
+};
+
+window.clearMsgStickers = async () => {
+    if(!currentActionMsgId) return;
+    const msgData = appData.chatData.messages.find(m => m.id === currentActionMsgId);
+    if(msgData) {
+        msgData.peeledStickers = []; // 清空数据库里的贴纸
+        await saveData();
+        
+        // 清除画面上的贴纸
+        const msgBubble = document.querySelector(`.at-msg[data-id="${currentActionMsgId}"]`);
+        if(msgBubble) {
+            msgBubble.querySelectorAll('.peeled-sticker').forEach(el => el.remove());
+        }
+        showToast('贴纸已撕下');
+    }
+    closeMsgActionModal();
 };
 
 window.saveEditedMsg = () => {
@@ -4872,12 +5465,21 @@ window.renderChatStickerGrid = (type, catId = null) => {
     gridEl.innerHTML = '';
     
     if(type === 'emoji') {
-        const emojis =['✨','🖤','☕','🥀','💭','🥂','👀','🤍','🌙','🦋','🎶','🍸','🥺','🫶','🔥','🎵'];
+        const emojis = [
+            '😀','😃','😄','😁','😆','😅','😂','🤣','🥲','🥹','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥸','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😶‍🌫️','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🫡','🤫','🫠','🤥','😶','🫥','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','😵‍💫','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠',
+            '😈','👿','👹','👺','🤡','💩','👻','💀','☠️','👽','👾','🤖','🎃','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🫶','👐','🙌','👏','🤝','👍','👎','👊','✊','🤛','🤜','🤞','✌️','🫰','🤟','🤘','👌','🤌','🤏','👈','👉','👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤙','🫲','🫳','💪','🦾','🖕','✍️','🙏','🫵','🦶','🦵','🦿','💄','💋','👄','🫦','🦷','👅','👂','🦻','👃','👣','👁️','👀','🫀','🫁','🧠','🗣️','👤','👥','🫂',
+            '💘','💝','💖','💗','💓','💞','💕','💟','❣️','💔','❤️','🧡','💛','💚','💙','💜','🤎','🖤','🩶','🤍','💋','💯','💢','💥','💫','💦','💨','🕳️','💣','💬','👁️‍🗨️','🗨️','🗯️','💭','💤','👋','🤚','🖐️','✋','🖖','👌','🤌','🤏','✌️','🤞','🫰','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','👐','🤲','🤝','🙏','✍️','💅','🤳','💪','🦾','🦿','🦵','🦶','👂','🦻','👃','🧠','🫀','🫁','🦷','🦴','👀','👁️','👅','👄','🫦',
+            '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐻‍❄️','🐨','🐯','🦁','🐮','🐷','🐽','🐸','🐵','🙈','🙉','🙊','🐒','🐔','🐧','🐦','🐤','🐣','🐥','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🪱','🐛','🦋','🐌','🐞','🐜','🪰','🪲','🪳','🦟','🦗','🕷️','🕸️','🦂','🐢','🐍','🦎','🦖','🦕','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🦭','🐊','🐅','🐆','🦓','🦍','🦧','🦣','🐘','🦛','🦏','🐪','🐫','🦒','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','RAM','🐑','🐑','🐐','🦌','🐕','🐩','🦮','🐕‍🦺','🐈','🐈‍⬛','🪶','🐓','🦃','🦤','🦚','🦜','🦢','🪿','🦩','🕊️','🐇','🦝','🦨','🦡','🦦','🦫','🦦','🐁','🐀','🐿️','🦔','🐉','🐲','🌵','🎄','🌲','🌳','🌴','🪵','🌱','🌿','☘️','🍀','🎍','🪴','🎋','🍃','🍂','🍁','🍄','🌾','🪸','🪸','🐚','🪨','🥀','🌺','🌻','🌹','🌷','🪷','🌸','💐','🪻','🌼','🌞','🌝','🌛','🌜','🌚','🌕','🌖','🌗','🌘','🌑','🌒','🌓','🌔','🌙','🌎','🌍','🌏','🪐','💫','⭐️','🌟','✨','⚡️','☄️','💥','🔥','🌪️','🌈','☀️','🌤️','⛅️','🌥️','☁️','🌦️','🌧️','⛈️','🌩️','🌨️','❄️','☃️','⛄️','🌬️','💨','💧','💦','🫧','☔️','☂️','🌊','🌫️'
+        ];
+        
         emojis.forEach(em => {
             const div = document.createElement('div');
             div.className = 'emoji-item';
             div.innerText = em;
+            // 点击还是直接发送
             div.onclick = () => insertEmoji(em);
+            // 【关键】绑定长按拖拽
+            bindLongPress(div, em, 'emoji');
             gridEl.appendChild(div);
         });
     } else {
@@ -4886,17 +5488,21 @@ window.renderChatStickerGrid = (type, catId = null) => {
             cat.stickers.forEach(stk => {
                 const box = document.createElement('div');
                 box.className = 'chat-picker-stk-box';
-                box.onclick = () => sendStickerMsg(stk.id); // 点击发送
+                box.onclick = () => sendStickerMsg(stk.id); 
                 
                 box.innerHTML = `
                     <img src="${getRealImgSrc(stk.src)}" class="chat-picker-stk-img">
                     <div class="chat-picker-stk-desc" title="${stk.desc}">${stk.desc || '无描述'}</div>
                 `;
+                // 【关键】绑定长按拖拽 (图片表情也可以贴！)
+                bindLongPress(box, stk.src, 'img');
                 gridEl.appendChild(box);
             });
         }
     }
-}; 
+};
+
+
 
 // 6. 聊天室：发送表情包消息
 window.sendStickerMsg = async (stkId) => {
@@ -4932,6 +5538,43 @@ window.sendStickerMsg = async (stkId) => {
     setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 50);
     
 };
+
+// === 贴纸编辑功能 ===
+
+// 单击：旋转 45 度
+window.rotateSticker = async (msgId, idx, e) => {
+    e.stopPropagation(); // 防止触发气泡的长按菜单
+    const msg = appData.chatData.messages.find(m => m.id === msgId);
+    if (msg && msg.peeledStickers && msg.peeledStickers[idx]) {
+        // 每次加 45 度
+        msg.peeledStickers[idx].r = (msg.peeledStickers[idx].r || 0) + 45;
+        await saveData();
+        
+        // 局部刷新：直接修改 DOM，不重载页面
+        const stickerEl = e.currentTarget;
+        const currentFlip = msg.peeledStickers[idx].flip ? -1 : 1;
+        stickerEl.style.transform = `scale(${currentFlip}) rotate(${msg.peeledStickers[idx].r}deg)`;
+    }
+};
+
+// 双击：左右翻转
+window.flipSticker = async (msgId, idx, e) => {
+    e.stopPropagation();
+    const msg = appData.chatData.messages.find(m => m.id === msgId);
+    if (msg && msg.peeledStickers && msg.peeledStickers[idx]) {
+        // 切换翻转状态
+        msg.peeledStickers[idx].flip = !msg.peeledStickers[idx].flip;
+        await saveData();
+        
+        // 局部刷新
+        const stickerEl = e.currentTarget;
+        const currentFlip = msg.peeledStickers[idx].flip ? -1 : 1;
+        stickerEl.style.transform = `scale(${currentFlip}) rotate(${msg.peeledStickers[idx].r}deg)`;
+        
+        showToast(msg.peeledStickers[idx].flip ? "已翻转" : "已复原");
+    }
+};
+
 // ==========================================
 // Phase 3 & 4: 撤回 (Recall) 与 多选 (Multi-select)
 // ==========================================
@@ -5230,6 +5873,8 @@ window.openPage = async (id) => {
         renderThemePresets();
     }
 };
+
+
 </script>
 
 </body>
