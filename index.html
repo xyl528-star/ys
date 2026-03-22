@@ -72,7 +72,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -999;
             background-color: #111;
-            background-image: url('https://placehold.co/430x932/1a1a1a/FFF?text=Wallpaper');
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='932'%3E%3Crect width='430' height='932' fill='%231a1a1a'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='40' fill='%23333' text-anchor='middle' dy='.3em'%3EWallpaper%3C/text%3E%3C/svg%3E");
             background-size: cover; background-position: center;
         }
         #wallpaper-layer::after {
@@ -96,7 +96,7 @@
             padding-bottom: 0; 
         }
 
-        .top-section { padding: 2px 24px 2px; flex-shrink: 0; }
+        .top-section { padding: 10px 24px 10px; margin-top: 0; flex-shrink: 0; }
         
         .timestamp-label {
             text-align: center; font-size: 14px; 
@@ -123,7 +123,7 @@
 
         .hero-complex {
             display: flex; align-items: center; justify-content: flex-end;
-            gap: 12px; margin-bottom: 15px; padding-right: 5px;
+            gap: 12px; margin-bottom: 5px; padding-right: 5px;
             min-height: 180px; 
         }
         
@@ -195,7 +195,7 @@
 
         .right-grid {
             width: 62%; display: grid; grid-template-columns: 1fr 1fr;
-            gap: 50px 15px; padding-left: 15px;
+            gap: 28px 15px; padding-left: 15px;
         }
         .app-item {
             width: 62px; height: 62px; border-radius: 18px; margin: 0 auto;
@@ -349,23 +349,23 @@
         .ins-header {
             padding: calc(env(safe-area-inset-top) + 10px) 20px 10px;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            border-bottom: 0.5px solid #E5E5EA; z-index: 50; flex-shrink: 0;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-bottom: 0.5px solid #E5E5EA; z-index: 50; flex-shrink: 0; transform: translateZ(0);
         }
         .ins-header-title { font-size: 24px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
         .ins-btn { font-size: 26px; color: #111; cursor: pointer; transition: opacity 0.2s; }
         .ins-btn:active { opacity: 0.5; }
 
-        .ins-main-view { flex: 1; overflow-y: auto; background: #fff; padding-bottom: 80px; }
+        .ins-main-view { flex: 1; overflow-y: auto; background: #fff; padding-bottom: 80px; position: relative; transform: translateZ(0); }
         .ins-main-view::-webkit-scrollbar { display: none; }
-        .ins-page { display: none; animation: fadeIn 0.3s ease; }
+        .ins-page { display: none; width: 100%; transform: translateZ(0); }
         .ins-page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } */
 
         /* 底部 TabBar */
         .ins-tab-bar {
             position: absolute; bottom: 0; width: 100%; height: calc(56px + var(--safe-bottom));
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transform: translateZ(0);
             border-top: 0.5px solid #E5E5EA; display: flex; justify-content: space-around; padding-top: 8px; z-index: 100;
         }
         .ins-tab-item { width: 60px; text-align: center; color: #999; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
@@ -392,9 +392,9 @@
         .ins-post-loc { font-size: 11px; color: #999; display: flex; align-items: center; gap: 4px; }
 
         /* 底部抽屉模态框 (Bottom Sheet) */
-        .ins-sheet-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9000; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; align-items: flex-end; }
+        .ins-sheet-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9000; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; align-items: flex-end; transform: translateZ(0); }
         .ins-sheet-mask.show { opacity: 1; pointer-events: auto; }
-        .ins-sheet-body { background: #fff; width: 100%; height: 90vh; border-radius: 20px 20px 0 0; transform: translateY(100%); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; overflow: hidden; }
+        .ins-sheet-body { background: #fff; width: 100%; height: 90vh; border-radius: 20px 20px 0 0; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; overflow: hidden; will-change: transform; }
         .ins-sheet-mask.show .ins-sheet-body { transform: translateY(0); }
         .ins-sheet-top { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid #eee; font-weight: 600; }
         .ins-sheet-content { flex: 1; overflow-y: auto; padding: 20px; }
@@ -1056,7 +1056,7 @@
                         <svg class="send-icon-svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
                     </div>
                     <div class="hero-img-box" onclick="openUpload('hero-img')">
-                        <img id="hero-img" class="hero-img" src="https://placehold.co/280x380/CCC/FFF?text=Hero">
+                        <img id="hero-img" class="hero-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='380'%3E%3Crect width='280' height='380' fill='%23ccc'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='30' fill='%23fff' text-anchor='middle' dy='.3em'%3EHero%3C/text%3E%3C/svg%3E">
                     </div>
                 </div>
             </div>
@@ -1076,7 +1076,7 @@
 
             <div class="content-body">
                 <div class="left-col">
-                    <img id="user-avatar" class="avatar" src="https://placehold.co/160x160/DDD/FFF?text=Avatar" onclick="openUpload('user-avatar')">
+                    <img id="user-avatar" class="avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Crect width='160' height='160' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23fff' text-anchor='middle' dy='.3em'%3EAvatar%3C/text%3E%3C/svg%3E" onclick="openUpload('user-avatar')">
                     <div id="display-name" class="username" onclick="openProfileEdit()">User</div>
                     <div id="display-status" class="status-pill" onclick="openProfileEdit()"># Focus</div>
                 </div>
@@ -1422,7 +1422,7 @@
             <div id="ins-tab-me" class="ins-page">
                 <div style="padding:30px 20px; text-align:center;">
                     <div style="position:relative; display:inline-block; margin-bottom:15px;">
-                        <img id="ins-my-avatar" src="https://placehold.co/150/000/fff?text=Me" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:1px solid #eee; cursor:pointer;" onclick="document.getElementById('ins-my-avatar-file').click()">
+                        <img id="ins-my-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23000'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='30' fill='%23fff' text-anchor='middle' dy='.3em'%3EMe%3C/text%3E%3C/svg%3E" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:1px solid #eee; cursor:pointer;" onclick="document.getElementById('ins-my-avatar-file').click()">
                         <div style="position:absolute; bottom:0; right:0; background:#007AFF; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; pointer-events:none;">
                             <i class="ri-camera-fill" style="font-size:14px;"></i>
                         </div>
@@ -1436,11 +1436,11 @@
                 <div id="ins-mask-list" class="mask-scroll"></div>
                 <div style="padding: 10px 20px 5px; font-size:13px; font-weight:700; color:#111; letter-spacing:0.5px;">MY GALLERY</div>
                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2px; padding:0 2px;">
-                    <img id="ins-grid-1" src="https://placehold.co/200/eee/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-1').click()">
+                    <img id="ins-grid-1" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23eee'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='40' fill='%23999' text-anchor='middle' dy='.3em'%3E+%3C/text%3E%3C/svg%3E" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-1').click()">
                     <input type="file" id="ins-grid-file-1" hidden accept="image/*" onchange="uploadInsGrid(this, 'ins-grid-1')">
-                    <img id="ins-grid-2" src="https://placehold.co/200/e5e5ea/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-2').click()">
+                    <img id="ins-grid-2" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23e5e5ea'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='40' fill='%23999' text-anchor='middle' dy='.3em'%3E+%3C/text%3E%3C/svg%3E" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-2').click()">
                     <input type="file" id="ins-grid-file-2" hidden accept="image/*" onchange="uploadInsGrid(this, 'ins-grid-2')">
-                    <img id="ins-grid-3" src="https://placehold.co/200/f2f2f7/999?text=+" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-3').click()">
+                    <img id="ins-grid-3" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23f2f2f7'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='40' fill='%23999' text-anchor='middle' dy='.3em'%3E+%3C/text%3E%3C/svg%3E" style="width:100%; aspect-ratio:1; object-fit:cover; cursor:pointer;" onclick="document.getElementById('ins-grid-file-3').click()">
                     <input type="file" id="ins-grid-file-3" hidden accept="image/*" onchange="uploadInsGrid(this, 'ins-grid-3')">
                 </div>
             </div>
@@ -1658,7 +1658,7 @@
             <div class="card-box">
                 <div class="identity-row">
                     <div class="avatar-edit" onclick="document.getElementById('set-avatar-file').click()">
-                        <img id="set-char-avatar" src="https://placehold.co/150">
+                        <img id="set-char-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23f2f2f7'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23ccc' text-anchor='middle' dy='.3em'%3EAvatar%3C/text%3E%3C/svg%3E">
                         <div class="edit-badge"><i class="ri-camera-fill"></i></div>
                     </div>
                     <input type="file" id="set-avatar-file" hidden accept="image/*" onchange="previewSetAvatar(this)">
@@ -2156,9 +2156,9 @@ const IntifaceLogic = {
     const DEFAULTS = {
         lang: 'cn', 
         images: {
-            'wallpaper-layer': 'https://placehold.co/430x932/1a1a1a/FFF?text=Wallpaper',
-            'hero-img': 'https://placehold.co/280x380/CCC/FFF?text=Hero',
-            'user-avatar': 'https://placehold.co/160x160/DDD/FFF?text=Avatar'
+            'wallpaper-layer': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='932'%3E%3Crect width='430' height='932' fill='%231a1a1a'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='40' fill='%23333' text-anchor='middle' dy='.3em'%3EWallpaper%3C/text%3E%3C/svg%3E",
+            'hero-img': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='380'%3E%3Crect width='280' height='380' fill='%23ccc'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='30' fill='%23fff' text-anchor='middle' dy='.3em'%3EHero%3C/text%3E%3C/svg%3E",
+            'user-avatar': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Crect width='160' height='160' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23fff' text-anchor='middle' dy='.3em'%3EAvatar%3C/text%3E%3C/svg%3E"
         },
         customTexts: {},
         fontPresets: { '系统默认': '', '站酷小薇': 'https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap' },
@@ -2603,7 +2603,7 @@ function bindLongPress(element, content, type) {
         ];
 
         const createItem = (item) => {
-            let src = appData.images[item.id] || "https://placehold.co/100?text=Icon";
+            let src = appData.images[item.id] || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23eee'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23999' text-anchor='middle' dy='.3em'%3EIcon%3C/text%3E%3C/svg%3E";
             const div = document.createElement('div');
             div.className = 'list-item';
             
@@ -3320,7 +3320,8 @@ function initInsData() {
             document.getElementById('ins-char-name').value = '';
             document.getElementById('ins-char-note').value = '';
             document.getElementById('ins-char-prompt').value = '';
-            document.getElementById('ins-char-preview').src = 'https://placehold.co/150/eee/999?text=+';
+            // 使用 Base64 SVG 避免网络加载导致的闪烁
+            document.getElementById('ins-char-preview').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23f2f2f7' rx='20' ry='20'/%3E%3Cpath d='M75 45V105M45 75H105' stroke='%23ccc' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E";
             document.getElementById('ins-char-preview').removeAttribute('data-base64');
             document.getElementById('modal-ins-char').classList.add('show');
         } 
@@ -3367,9 +3368,10 @@ window.previewInsPostImg = (input) => {
 
     // 获取图片(根据ID或Base64)
     function getRealImgSrc(src) {
-        if(!src) return 'https://placehold.co/150/f0f0f0/ccc?text=?';
+        const DEFAULT_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23ccc' text-anchor='middle' dy='.3em'%3E?%3C/text%3E%3C/svg%3E";
+        if(!src) return DEFAULT_IMG;
         if(src.startsWith('http') || src.startsWith('data:')) return src;
-        return appData.images[src] || 'https://placehold.co/150/f0f0f0/ccc?text=?';
+        return appData.images[src] || DEFAULT_IMG;
     }
 
     // ==========================================
@@ -3481,7 +3483,7 @@ window.previewInsPostImg = (input) => {
     // ==========================================
     window.renderInsProfile = () => {
         // 渲染基础信息
-        document.getElementById('ins-my-avatar').src = getRealImgSrc(appData.images['user-avatar']) || 'https://placehold.co/150/000/fff?text=Me';
+        document.getElementById('ins-my-avatar').src = getRealImgSrc(appData.images['user-avatar']) || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23000'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='30' fill='%23fff' text-anchor='middle' dy='.3em'%3EMe%3C/text%3E%3C/svg%3E";
         document.getElementById('ins-my-name').innerText = appData.customTexts['display-name'] || '@Master';
         document.getElementById('ins-my-bio').innerText = appData.customTexts['ins-bio'] || 'Virtual Space Creator';
         
@@ -3490,7 +3492,7 @@ window.previewInsPostImg = (input) => {
             const key = 'ins-grid-' + i;
             const el = document.getElementById(key);
             if(el) {
-                el.src = appData.images[key] || `https://placehold.co/200/eee/999?text=Photo+${i}`;
+                el.src = appData.images[key] || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23eee'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23999' text-anchor='middle' dy='.3em'%3EPhoto ${i}%3C/text%3E%3C/svg%3E`;
             }
         }
     };
@@ -3740,7 +3742,7 @@ window.previewInsPostImg = (input) => {
 
         appData.chatData.posts.forEach(p => {
             const authorName = p.authorId === 'me' ? (appData.customTexts['display-name'] || '@Master') : 'Someone';
-            const authorImg = p.authorId === 'me' ? getRealImgSrc(appData.images['user-avatar']) : 'https://placehold.co/100';
+            const authorImg = p.authorId === 'me' ? getRealImgSrc(appData.images['user-avatar']) : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23eee'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23999' text-anchor='middle' dy='.3em'%3E?%3C/text%3E%3C/svg%3E";
 
             const locHtml = p.location ? `<div class="ins-post-loc"><i class="ri-map-pin-2-fill"></i> ${p.location}</div>` : '';
             const imgHtml = p.image ? `<img src="${getRealImgSrc(p.image)}" class="ins-post-img">` : '';
@@ -4443,28 +4445,28 @@ window.renderUserMasks = () => {
     list.appendChild(addBtn);
 };
 
-window.openMaskEditor = (id) => {
-    currentEditingMaskId = id;
-    const delBtn = document.getElementById('mask-delete-btn');
-    if(id) {
-        const mask = appData.userMasks.find(m => m.id === id);
-        document.getElementById('mask-modal-title').innerText = 'Edit Mask';
-        document.getElementById('ins-mask-name').value = mask.name || '';
-        document.getElementById('ins-mask-note').value = mask.note || '';
-        document.getElementById('ins-mask-prompt').value = mask.prompt || '';
-        document.getElementById('ins-mask-preview').src = getRealImgSrc(mask.avatar);
-        delBtn.style.display = 'block';
-    } else {
-        document.getElementById('mask-modal-title').innerText = 'New Mask';
-        document.getElementById('ins-mask-name').value = '';
-        document.getElementById('ins-mask-note').value = '';
-        document.getElementById('ins-mask-prompt').value = '';
-        document.getElementById('ins-mask-preview').src = 'https://placehold.co/150/eee/999?text=+';
-        delBtn.style.display = 'none';
-    }
-    document.getElementById('ins-mask-preview').removeAttribute('data-base64');
-    document.getElementById('modal-ins-mask').classList.add('show');
-};
+    window.openMaskEditor = (id) => {
+        currentEditingMaskId = id;
+        const delBtn = document.getElementById('mask-delete-btn');
+        if(id) {
+            const mask = appData.userMasks.find(m => m.id === id);
+            document.getElementById('mask-modal-title').innerText = 'Edit Mask';
+            document.getElementById('ins-mask-name').value = mask.name || '';
+            document.getElementById('ins-mask-note').value = mask.note || '';
+            document.getElementById('ins-mask-prompt').value = mask.prompt || '';
+            document.getElementById('ins-mask-preview').src = getRealImgSrc(mask.avatar);
+            delBtn.style.display = 'block';
+        } else {
+            document.getElementById('mask-modal-title').innerText = 'New Mask';
+            document.getElementById('ins-mask-name').value = '';
+            document.getElementById('ins-mask-note').value = '';
+            document.getElementById('ins-mask-prompt').value = '';
+            document.getElementById('ins-mask-preview').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23f2f2f7' rx='20' ry='20'/%3E%3Cpath d='M75 45V105M45 75H105' stroke='%23ccc' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E";
+            delBtn.style.display = 'none';
+        }
+        document.getElementById('ins-mask-preview').removeAttribute('data-base64');
+        document.getElementById('modal-ins-mask').classList.add('show');
+    };
 
 window.saveUserMask = async () => {
     const name = document.getElementById('ins-mask-name').value.trim();
@@ -4528,7 +4530,7 @@ window.openChatSettings = () => {
 
     // 加载专属头像覆盖
     const overrideAva = document.getElementById('set-my-avatar-override');
-    overrideAva.src = getRealImgSrc(currentChatContact.userAvatarOverride || 'https://placehold.co/100/f0f0f0/ccc?text=无');
+    overrideAva.src = getRealImgSrc(currentChatContact.userAvatarOverride || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23ccc' text-anchor='middle' dy='.3em'%3E无%3C/text%3E%3C/svg%3E");
     overrideAva.removeAttribute('data-base64');
     overrideAva.removeAttribute('data-clear');
 };
@@ -4570,7 +4572,7 @@ window.previewSetMyAvatarOverride = (input) => {
 
 window.clearMyAvatarOverride = () => {
     const img = document.getElementById('set-my-avatar-override');
-    img.src = 'https://placehold.co/100/f0f0f0/ccc?text=无';
+    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23ccc' text-anchor='middle' dy='.3em'%3E无%3C/text%3E%3C/svg%3E";
     img.removeAttribute('data-base64');
     img.setAttribute('data-clear', 'true');
     updatePreviews(); // <--- 新增：点击清除后立刻刷新预览，它会自动回退到面具头像或全局头像
@@ -5319,7 +5321,7 @@ window.deleteSticker = async (stkId) => {
 };
 
 window.openAddStickerModal = () => {
-    document.getElementById('new-stk-preview').src = 'https://placehold.co/100/f0f0f0/ccc?text=Image';
+    document.getElementById('new-stk-preview').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23f9f9f9' rx='10' ry='10'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='14' fill='%23ccc' text-anchor='middle' dy='.3em'%3EImage%3C/text%3E%3C/svg%3E";
     document.getElementById('new-stk-preview').removeAttribute('data-base64');
     document.getElementById('new-stk-url').value = '';
     document.getElementById('new-stk-desc').value = '';
