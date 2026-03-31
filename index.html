@@ -1438,6 +1438,87 @@
 #cp-note-content[placeholder]:empty:before { content: attr(placeholder); color: #c7c7cc; }
 #cp-note-content input[type="checkbox"] { transform: scale(1.3); margin-right: 10px; accent-color: #d4a311; }
 
+
+/* ==============================================
+   [查阅手机 - 微信 APP] 专属样式
+============================================== */
+.cp-wx-container {
+    background-color: #ededed;
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", STHeiti, Tahoma, sans-serif;
+}
+.cp-wx-container.visible { display: flex; }
+
+.cp-wx-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: #ededed; will-change: transform;
+}
+#cp-wx-list-view { transform: translateX(0); z-index: 1; }
+#cp-wx-chat-view { transform: translateX(100%); z-index: 2; }
+
+/* 页面切换动画 */
+.cp-wx-container.chat-active #cp-wx-list-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-wx-container.chat-active #cp-wx-chat-view { transform: translateX(0); box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+
+/* 顶部导航 */
+.cp-wx-header {
+    background: #ededed; height: 50px; display: flex; align-items: center; justify-content: space-between;
+    padding: calc(env(safe-area-inset-top) + 10px) 16px 10px; border-bottom: 0.5px solid #d1d1d1; flex-shrink: 0;
+}
+.cp-wx-header-title { font-size: 17px; font-weight: 600; color: #111; }
+
+/* 消息列表 */
+.cp-wx-list-body { flex: 1; overflow-y: auto; background: #fff; padding-bottom: 20px; }
+.cp-wx-item { display: flex; padding: 12px 16px; border-bottom: 0.5px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
+.cp-wx-item:active { background: #f2f2f2; }
+.cp-wx-avatar { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; margin-right: 12px; }
+.cp-wx-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.cp-wx-name-row { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: center; }
+.cp-wx-name { font-size: 16px; font-weight: 500; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-wx-time { font-size: 12px; color: #b2b2b2; flex-shrink: 0; }
+.cp-wx-msg-preview { font-size: 14px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* 聊天室内部 */
+.cp-wx-chat-body { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 16px; background: #ededed; }
+.cp-wx-bubble-wrap { display: flex; max-width: 100%; align-items: flex-start; position: relative; }
+.cp-wx-bubble-wrap.me { justify-content: flex-end; }
+.cp-wx-bubble-wrap.them { justify-content: flex-start; }
+.cp-wx-chat-ava { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.cp-wx-bubble-wrap.me .cp-wx-chat-ava { margin-left: 12px; }
+.cp-wx-bubble-wrap.them .cp-wx-chat-ava { margin-right: 12px; }
+
+/* 聊天气泡 */
+.cp-wx-bubble {
+    max-width: 68%; padding: 10px 14px; font-size: 16px; line-height: 1.5; border-radius: 8px; word-wrap: break-word; position: relative;
+    min-height: 40px; box-sizing: border-box;
+}
+.cp-wx-bubble-wrap.me .cp-wx-bubble { background: #95ec69; color: #111; }
+.cp-wx-bubble-wrap.them .cp-wx-bubble { background: #fff; color: #111; }
+
+/* 小尾巴 */
+.cp-wx-bubble-wrap.me .cp-wx-bubble::after { content: ''; position: absolute; top: 14px; right: -5px; border-width: 5px 0 5px 6px; border-style: solid; border-color: transparent transparent transparent #95ec69; }
+.cp-wx-bubble-wrap.them .cp-wx-bubble::after { content: ''; position: absolute; top: 14px; left: -5px; border-width: 5px 6px 5px 0; border-style: solid; border-color: transparent #fff transparent transparent; }
+
+/* 去除纯表情包的背景和气泡小尾巴 */
+.cp-wx-bubble.no-bg { 
+    background: transparent !important; 
+    padding: 0 !important; 
+    box-shadow: none !important; 
+}
+.cp-wx-bubble-wrap.me .cp-wx-bubble.no-bg::after,
+.cp-wx-bubble-wrap.them .cp-wx-bubble.no-bg::after { 
+    display: none !important; 
+}
+.cp-wx-bubble.no-bg img { 
+    max-width: 130px !important; 
+    border-radius: 8px; /* 稍微给表情包一点圆角更自然 */
+}
+/* 撤回或系统消息 */
+.cp-wx-sys-msg { text-align: center; font-size: 12px; color: #b2b2b2; margin: 10px 0; }
+
         /* 彻底锁死大容器防抖动 */
         #app-library-root { position: fixed; inset: 0; overflow: hidden; display: none; flex-direction: column; }
         #app-library-root.visible { display: flex; }
@@ -1941,7 +2022,7 @@
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-weather" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-5" onclick="editCharPhoneText('cp-text-app-5', '输入App名称', event)">天气</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-clock" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-6" onclick="editCharPhoneText('cp-text-app-6', '输入App名称', event)">时钟</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-settings" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-7" onclick="editCharPhoneText('cp-text-app-7', '输入App名称', event)">设置</span></div>
-                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-wechat" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-8" onclick="editCharPhoneText('cp-text-app-8', '输入App名称', event)">微信</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-wechat" onclick="openCpWechat()"></div><span id="cp-text-app-8" onclick="editCharPhoneText('cp-text-app-8', '输入App名称', event)">微信</span></div>
                 </div>
                 <div class="cp-section-col">
                     <div class="cp-widget-card cp-square-widget cp-new-profile-widget">
@@ -2035,6 +2116,57 @@
         </footer>
     </div>
 </div>
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：微信 APP (带底部退出小白条版) -->
+<!-- ============================================== -->
+<div id="page-cp-wechat" class="page-layer cp-wx-container">
+    <!-- 视图1：会话列表 -->
+    <div id="cp-wx-list-view" class="cp-wx-view">
+        <header class="cp-wx-header">
+            <span style="font-size:20px; font-weight:600;">微信</span>
+            <div style="display:flex; gap:15px; align-items:center;">
+                <!-- AI 生成 NPC 联系人按钮 -->
+                <i class="ri-magic-line" style="font-size:22px; cursor:pointer;" onclick="generateCpWechatNPCs()"></i>
+                <i class="ri-add-circle-line" style="font-size:24px;"></i>
+            </div>
+        </header>
+        <div class="cp-wx-list-body" id="cp-wx-list-content">
+            <!-- 动态渲染联系人 -->
+        </div>
+        <!-- 底部导航占位 (注意：这里 padding 增加了 20px，专门给底部触控条留出空间) -->
+        <div style="background:#f7f7f7; border-top:0.5px solid #d1d1d1; padding: 8px 0 calc(24px + env(safe-area-inset-bottom)); display:flex; justify-content:space-around; font-size:10px; color:#b2b2b2; flex-shrink:0;">
+            <div style="text-align:center; color:#07c160;"><i class="ri-wechat-fill" style="font-size:24px; display:block;"></i>微信</div>
+            <div style="text-align:center;"><i class="ri-contacts-book-2-line" style="font-size:24px; display:block;"></i>通讯录</div>
+            <div style="text-align:center;"><i class="ri-compass-3-line" style="font-size:24px; display:block;"></i>发现</div>
+            <div style="text-align:center;"><i class="ri-user-line" style="font-size:24px; display:block;"></i>我</div>
+        </div>
+    </div>
+
+    <!-- 视图2：聊天室 -->
+    <div id="cp-wx-chat-view" class="cp-wx-view">
+        <header class="cp-wx-header">
+            <!-- 这个返回键是退回到微信列表的 -->
+            <i class="ri-arrow-left-s-line" style="font-size:28px; cursor:pointer; margin-left:-8px;" onclick="closeCpWechatChat()"></i>
+            <span class="cp-wx-header-title" id="cp-wx-chat-title">对方名字</span>
+            <i class="ri-more-fill" style="font-size:24px; color:#111;"></i>
+        </header>
+        <div class="cp-wx-chat-body" id="cp-wx-chat-content">
+            <!-- 动态渲染聊天气泡 -->
+        </div>
+        <!-- 底部输入框占位 (同样增加 padding 给小黑条留空间) -->
+        <div style="background:#f7f7f7; border-top:0.5px solid #d1d1d1; padding: 10px 15px calc(24px + env(safe-area-inset-bottom)); display:flex; gap:10px; align-items:center; flex-shrink:0;">
+            <i class="ri-voiceprint-line" style="font-size:26px;"></i>
+            <div style="flex:1; height:36px; background:#fff; border-radius:4px;"></div>
+            <i class="ri-emoji-sticker-line" style="font-size:26px;"></i>
+            <i class="ri-add-circle-line" style="font-size:26px;"></i>
+        </div>
+    </div>
+
+    <!-- ✨ 核心：全局退出应用的 iOS 底部触控条 -->
+    <div class="cp-home-indicator" onclick="closePage('page-cp-wechat')" style="cursor:pointer; z-index: 9999; background: rgba(0,0,0,0.3);"></div>
+</div>
+
     <!-- 弹窗 1：创建好友 (Create Character) -->
     <div id="modal-ins-char" class="ins-sheet-mask">
         <div class="ins-sheet-body">
@@ -8185,6 +8317,274 @@ ${historyText || "(你们暂时还没聊过天，请脑补你自己的单方面�
         // 恢复按钮状态
         btn.innerHTML = '<i class="ri-magic-line" style="font-size:22px;"></i>';
         btn.disabled = false;
+    }
+};
+
+// ==========================================
+// [查阅手机 - 微信 APP] 核心逻辑 & AI 生成 (完美重构版)
+// ==========================================
+let currentCpWxChatId = null;
+
+window.openCpWechat = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+    if (!contact.wechatNpcs) contact.wechatNpcs =[]; // 初始化 NPC 列表
+
+    renderCpWechatList();
+    openPage('page-cp-wechat');
+};
+
+// 1. 渲染微信列表（全部由 AI 生成的数据驱动）
+window.renderCpWechatList = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const listEl = document.getElementById('cp-wx-list-content');
+    listEl.innerHTML = '';
+
+    const npcs = contact.wechatNpcs ||[];
+
+    // 空白态提示（刚打开微信，还没刷新时）
+    if (npcs.length === 0) {
+        listEl.innerHTML = `
+            <div style="text-align:center; color:#b2b2b2; padding: 60px 20px;">
+                <i class="ri-wechat-line" style="font-size:50px; color:#e5e5ea; margin-bottom:10px; display:block;"></i>
+                暂无聊天记录<br><span style="font-size:12px;">点击右上角魔法棒，偷看 Ta 的微信列表</span>
+            </div>
+        `;
+        return;
+    }
+
+    // 渲染列表
+    npcs.forEach(npc => {
+        let lastMsg = "暂无消息";
+        let displayTime = npc.time || "";
+
+        // 如果是“你”（user），抓取真实的最新聊天记录和时间
+        if (npc.id === 'user') {
+            const realHistory = appData.chatData.messages.filter(m => m.chatId === contact.id);
+            if (realHistory.length > 0) {
+                const m = realHistory[realHistory.length - 1];
+                lastMsg = m.sticker ? "[表情包]" : (m.content.replace(/<[^>]+>/g, '') || "[图片/文件]");
+                const d = new Date(m.timestamp);
+                displayTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            }
+        } else {
+            // 如果是 NPC，取假数据的最后一条
+            if (npc.messages && npc.messages.length > 0) {
+                const m = npc.messages[npc.messages.length - 1];
+                lastMsg = m.content.replace(/<[^>]+>/g, '');
+            }
+        }
+
+        const el = document.createElement('div');
+        el.className = 'cp-wx-item';
+        el.onclick = () => openCpWechatChat(npc.id);
+        
+        // 头像处理：如果是 user，强制使用全局设置里的头像
+        let avatarSrc = npc.id === 'user' ? getRealImgSrc(appData.images['user-avatar']) : npc.avatar;
+
+        el.innerHTML = `
+            <img src="${avatarSrc}" class="cp-wx-avatar">
+            <div class="cp-wx-info">
+                <div class="cp-wx-name-row">
+                    <span class="cp-wx-name">${npc.name}</span>
+                    <span class="cp-wx-time">${displayTime}</span>
+                </div>
+                <div class="cp-wx-msg-preview">${lastMsg}</div>
+            </div>
+        `;
+        listEl.appendChild(el);
+    });
+};
+
+// 2. 打开聊天室
+window.openCpWechatChat = (id) => {
+    currentCpWxChatId = id;
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const bodyEl = document.getElementById('cp-wx-chat-content');
+    bodyEl.innerHTML = '';
+
+    const charAvatar = getRealImgSrc(contact.avatar); // Char 的头像（右侧）
+    const npcData = contact.wechatNpcs.find(n => n.id === id);
+    if (!npcData) return;
+
+    // 名字显示 AI 生成的备注名
+    document.getElementById('cp-wx-chat-title').innerText = npcData.name;
+
+    if (id === 'user') {
+        // --- 渲染与你（User）的真实对话记录 ---
+        let myAvatar = getRealImgSrc(appData.images['user-avatar']);
+
+        const realHistory = appData.chatData.messages.filter(m => m.chatId === contact.id);
+        realHistory.forEach(msg => {
+            if (msg.isRecalled) {
+                bodyEl.innerHTML += `<div class="cp-wx-sys-msg">" ${msg.sender === 'me' ? npcData.name : '我'} " 撤回了一条消息</div>`;
+                return;
+            }
+
+            // 在对方手机里，发件人是 bot 代表自己(右侧)，发件人是 me 代表用户(左侧)
+            const isMe = msg.sender === 'bot'; 
+            const wrapClass = isMe ? 'me' : 'them';
+            const avatarSrc = isMe ? charAvatar : myAvatar;
+
+            // 纯表情包判断：如果没有文字只有贴纸
+            const isOnlySticker = (!msg.content || msg.content.trim() === '') && msg.sticker;
+            const bubbleClass = isOnlySticker ? 'cp-wx-bubble no-bg' : 'cp-wx-bubble';
+
+            // 拼装内容
+            let contentHtml = msg.content.replace(/\n/g, '<br>');
+            if (msg.quote) contentHtml = `<div style="font-size:12px; color:#888; border-left:2px solid #ccc; padding-left:4px; margin-bottom:4px;">${msg.quote}</div>` + contentHtml;
+            
+            if (msg.sticker) {
+                // 如果不仅有贴纸还有字，换个行
+                contentHtml += (isOnlySticker ? '' : '<br>') + `<img src="${getRealImgSrc(msg.sticker.src)}" style="max-width:130px; display:block;">`;
+            }
+            
+            // QQ 贴纸(漂浮特效)
+            let peeledHtml = '';
+            if (msg.peeledStickers) {
+                msg.peeledStickers.forEach(s => {
+                    let sC = s.type === 'emoji' ? `<div style="font-size:32px;">${s.content}</div>` : `<img src="${getRealImgSrc(s.content)}" style="width:40px;">`;
+                    const scaleX = s.flip ? -1 : 1;
+                    peeledHtml += `<div style="position:absolute; left:${s.x}px; top:${s.y}px; transform: scale(${scaleX}) rotate(${s.r}deg); z-index:10; pointer-events:none;">${sC}</div>`;
+                });
+            }
+
+            bodyEl.innerHTML += `
+                <div class="cp-wx-bubble-wrap ${wrapClass}">
+                    ${isMe ? '' : `<img src="${avatarSrc}" class="cp-wx-chat-ava">`}
+                    <div class="${bubbleClass}">${contentHtml}${peeledHtml}</div>
+                    ${isMe ? `<img src="${avatarSrc}" class="cp-wx-chat-ava">` : ''}
+                </div>
+            `;
+        });
+
+    } else {
+        // --- 渲染 AI 生成的 NPC 假聊天 ---
+        npcData.messages.forEach(msg => {
+            const isMe = msg.sender === 'me'; // NPC消息中，me就是Char自己(右)，them是NPC(左)
+            const wrapClass = isMe ? 'me' : 'them';
+            const avatarSrc = isMe ? charAvatar : npcData.avatar;
+
+            // 智能判断 NPC 发的是不是纯 HTML 图片（为了做到假表情包透明底）
+            const isOnlyImg = /^<img[^>]+>$/.test(msg.content.trim());
+            const bubbleClass = isOnlyImg ? 'cp-wx-bubble no-bg' : 'cp-wx-bubble';
+
+            bodyEl.innerHTML += `
+                <div class="cp-wx-bubble-wrap ${wrapClass}">
+                    ${isMe ? '' : `<img src="${avatarSrc}" class="cp-wx-chat-ava">`}
+                    <div class="${bubbleClass}">${msg.content}</div>
+                    ${isMe ? `<img src="${avatarSrc}" class="cp-wx-chat-ava">` : ''}
+                </div>
+            `;
+        });
+    }
+
+    document.getElementById('page-cp-wechat').classList.add('chat-active');
+    setTimeout(() => bodyEl.scrollTop = bodyEl.scrollHeight, 50);
+};
+
+window.closeCpWechatChat = () => {
+    document.getElementById('page-cp-wechat').classList.remove('chat-active');
+    currentCpWxChatId = null;
+};
+
+// 3. AI 大模型生成微信 NPC 列表（包含对你的定制备注）
+window.generateCpWechatNPCs = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { 
+        alert("请先去 API 页面配置 API 服务器与 Key！"); return; 
+    }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const btn = document.querySelector('#cp-wx-list-view .ri-magic-line');
+    btn.className = 'ri-loader-4-line';
+    btn.style.animation = 'spin 1s linear infinite';
+    btn.style.pointerEvents = 'none';
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    const prompt = `你现在正在扮演“${contact.name}”。请为你手机里的“微信APP”伪造一个真实的聊天列表。
+【你的人设】：${contact.prompt}
+【正在查阅你手机的人】：名字叫 ${myName}，人设是 ${myPersona || '普通网友'}。
+
+【生成要求】（极其重要）：
+1. 你必须生成至少 5 个联系人！
+2. **列表的第一个联系人必须是正在查阅手机的“我”（User）！**
+   - 它的 "id" 必须严格设为 "user"。
+   - 它的 "name" 字段：请根据你的人设和对我的态度，给我起一个**符合你们关系的真实微信备注**（例如：宝贝、怨种网友、房东、全名等）。
+   - 它的 "messages" 数组留空即可。
+3. 剩下的联系人必须是你世界观中可能存在的人物（如：老板、闺蜜、外卖小哥等）。为他们生成生动的历史记录（3-8条）。"sender": "me" 代表你发出(右)，"them" 代表对方发出(左)。可以使用HTML格式（如微信转账、图片表情包）。
+4. 头像请使用：https://api.dicebear.com/7.x/adventurer/svg?seed=随机英文
+5. 严格输出 JSON 数组，绝不要有 Markdown！格式参考禁止照搬：[
+  {
+    "id": "user",
+    "name": "臭宝猪",
+    "avatar": "", 
+    "time": "",
+    "messages": []
+  },
+  {
+    "id": "npc_1",
+    "name": "怨种老板",
+    "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=boss",
+    "time": "10:30",
+    "messages":[
+      {"sender": "them", "content": "方案改好了没？"},
+      {"sender": "me", "content": "<img src='https://placehold.co/100x100?text=OK'>"}
+    ]
+  }
+]`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: 0.85 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let generatedNPCs = JSON.parse(rawText);
+        
+        // 兜底检查：如果 AI 没把 user 塞进去，强制塞一个进去
+        if (!generatedNPCs.find(n => n.id === 'user')) {
+            generatedNPCs.unshift({ 
+                id: 'user', 
+                name: myName, 
+                avatar: '', 
+                time: '',
+                messages:[] // 绝对不编造聊天记录，保持空数组
+            });
+        } else {
+            // 【核心防伪造锁】：强行清空 AI 可能违规生成的与 user 的伪造记录
+            // 确保点开你的头像时，只渲染你们在主界面聊的真实记录！
+            const userNode = generatedNPCs.find(n => n.id === 'user');
+            userNode.messages =[]; 
+        }
+
+        // 覆盖并保存 NPC 数据
+        contact.wechatNpcs = generatedNPCs;
+        await saveData();
+        renderCpWechatList();
+        showToast(`已成功刷新微信列表`);
+
+    } catch (e) {
+        alert("微信刷新失败，可能是网络异常或AI格式错误:\n" + e.message);
+        console.error(e);
+    } finally {
+        // 恢复魔法棒按钮的原始状态
+        btn.className = 'ri-magic-line';
+        btn.style.animation = 'none';
+        btn.style.pointerEvents = 'auto';
     }
 };
 // 查阅手机桌面实时时间
