@@ -1053,17 +1053,21 @@
         }
         #app-library-root.visible { display: flex; }
 
-        /* --- 1. 头部 & 搜索栏 --- */
+/* --- 1. 头部 & 搜索栏 --- */
         .lib-header {
-            padding: calc(env(safe-area-inset-top) + 20px) 24px 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0;
+            position: relative;
+            padding: calc(env(safe-area-inset-top) + 15px) 24px 10px;
+            display: flex; align-items: center; justify-content: center;
+            height: 44px; flex-shrink: 0;
         }
+        /* 强制两边的图标绝对定位，保证中间的标题绝对居中！ */
+        .lib-header .ri-arrow-left-s-line { position: absolute; left: 24px; z-index: 10; }
+        #lib-header-avatar { position: absolute; right: 24px; z-index: 10; }
         .lib-header-title {
-            font-family: 'Playfair Display', serif; font-size: 28px;
-            font-weight: 600; font-style: italic; color: var(--lib-ink);
+            font-family: 'Playfair Display', serif; font-size: 26px;
+            font-weight: 600; font-style: italic; color: var(--lib-ink); text-align: center;
         }
-        .lib-search-area { margin: 10px 24px 0px; position: relative; flex-shrink: 0;}
+        .lib-search-area { margin: 15px 24px 0px; position: relative; flex-shrink: 0;}
         .lib-search-input {
             width: 100%; height: 44px; background: #fff; border: 1px solid #eee;
             border-radius: 22px; padding-left: 44px; font-size: 14px;
@@ -1071,6 +1075,29 @@
         }
         .lib-search-icon { position: absolute; left: 16px; top: 12px; color: #bbb; font-size: 18px; pointer-events: none;}
 
+       /*[核心新增] 书籍详情页 (仿截屏) 专属沉浸式美化 */
+        #modal-book-detail .ins-sheet-body { background: transparent; height: 100vh; border-radius: 0; box-shadow:none; overflow: hidden; position: relative;}
+        .book-bg-blur { position: absolute; inset: 0; background-size: cover; background-position: center; filter: blur(45px) brightness(0.8); transform: scale(1.2); z-index: -2; }
+        .book-bg-gradient { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.95) 30%, #f9f8f4 100%); z-index: -1; }
+        #app-library-root.lib-dark .book-bg-gradient { background: linear-gradient(to bottom, rgba(18,18,18,0.3) 0%, rgba(18,18,18,0.95) 30%, #121212 100%); }
+        
+        .nav-circle-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.25); display:flex; align-items:center; justify-content:center; backdrop-filter: blur(10px); cursor: pointer; transition: 0.2s; color: #fff;}
+        .nav-circle-btn:active { transform: scale(0.9); }
+        
+        .bd-chapter-item { padding:18px 0; border-bottom:1px solid rgba(0,0,0,0.05); cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: background 0.2s; }
+        .bd-chapter-item:active { background: rgba(0,0,0,0.03); }
+        #app-library-root.lib-dark .bd-chapter-item { border-bottom-color: rgba(255,255,255,0.05); }
+        .chap-del-btn { color:#ff4d4f; font-size:18px; padding:5px; margin-right:10px; opacity:0.6; }
+        
+        /* 续写弹窗及胶囊美化 */
+        .bd-cc-pill { padding: 6px 16px; border-radius: 12px; font-size: 13px; font-weight: bold; background: #f0f0f0; color: #888; cursor: pointer; transition: 0.2s; }
+        .bd-cc-pill.active { background: var(--lib-ink); color: #fff; }
+        #app-library-root.lib-dark .bd-cc-pill { background: #333; color:#aaa; }
+        #app-library-root.lib-dark .bd-cc-pill.active { background: var(--lib-accent); color:#fff; }
+
+        /* 锁定我的页面不滚动并上移 */
+        #lib-tab-me { overflow-y: hidden !important; padding-top: 10px !important; }
+        #lib-tab-me .profile-header { padding: 0 24px 20px !important; }
         /* --- 2. 顶部横向滚动分类 --- */
         .lib-cat-scroll {
             margin-top: 15px; padding-left: 24px; display: flex; align-items: center; overflow-x: auto;
@@ -1270,6 +1297,147 @@
         body.lib-dark-theme #reader-tags .lib-meta-tag { background: #2c2c2c !important; color: #bbb !important; }
         body.lib-dark-theme .ins-sheet-top i { color: #e0e0e0 !important; }
         
+/* ==================================
+           [查阅 AI 手机] 专属样式 (V6 终极吸顶 + 纯净锁定版)
+        ================================== */
+        #page-char-phone-select { background: #F7F8FA; z-index: 1500; }
+        #page-char-phone-desktop { background-color: #FAFAFC; display: none; flex-direction: column; z-index: 2000; position: fixed; inset: 0;}
+        #page-char-phone-desktop.visible { display: flex; }
+        
+        /* --- 1. 状态栏：【突破天际的吸顶】去掉了所有多余 margin --- */
+   .cp-top-bar { 
+    flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 18px 4px;
+    font-weight: 600; color: #111; z-index: 50;
+    box-sizing: border-box;
+}
+        .cp-status-icons { display: flex; gap: 4px; align-items: center; }
+        
+        /* --- 2. 内部滚动容器：跟着极限上移 --- */
+        .cp-desktop-inner { 
+            flex: 1; display: flex; flex-direction: column; justify-content: flex-start; 
+            gap: 10px; 
+            padding-top:12px;
+            padding-bottom: 110px; overflow-y: auto; 
+        }
+        
+        .cp-search-bar { background: #F2F2F4; border-radius: 20px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 11px; color: #B0B0B0; margin: 0 20px; cursor: pointer; flex-shrink: 0;}
+        .cp-widget-label { text-align: center; font-size: 11px; color: #555; font-weight: 600; margin-top: 2px; margin-bottom: 0; cursor: pointer; }
+        .cp-widget-card { background: #FFFFFF; border-radius: 20px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        
+        .cp-top-widget-container { margin: 0 20px; flex-shrink: 0;}
+        .cp-top-widget-header { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 8px; cursor: pointer;}
+        .cp-top-widget-images { display: flex; justify-content: space-between; gap: 10px; }
+        .cp-img-box { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .cp-img-placeholder { width: 100%; aspect-ratio: 1; border-radius: 12px; background-size: cover; background-position: center; cursor: pointer; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03);}
+        .cp-img-box span { font-size: 11px; font-weight: 500; color: #333; cursor: pointer; }
+        
+        .cp-section-row { display: flex; justify-content: space-between; margin: 0 20px; gap: 12px; flex-shrink: 0;}
+        .cp-section-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        .cp-app-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px 12px; }
+        .cp-app-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .cp-app-icon { width: 56px; height: 56px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background-size: cover; background-position: center; cursor: pointer; border: 0.5px solid rgba(0,0,0,0.05);}
+        .cp-app-item span { font-size: 11px; color: #333; font-weight: 500; cursor: pointer; }
+        
+        .cp-square-widget { aspect-ratio: 1; border-radius: 20px; position: relative; }
+        .cp-rabbit-widget { background-size: cover; background-position: center; cursor: pointer; border: 1px solid #f0f0f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
+        
+        .cp-new-profile-widget { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; gap: 6px; box-sizing: border-box; overflow: hidden; min-width: 0; }
+        .cp-new-avatar { width: 65px; height: 65px; border-radius: 50%; background-size: cover; background-position: center; flex-shrink: 0; border: 2px solid #eee; }
+        .cp-new-username { font-size: 13px; color: #555; letter-spacing: 0.5px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+        .cp-status-pill { background: #EBEBEB; border-radius: 20px; padding: 4px 8px 4px 8px; display: flex; align-items: center; gap: 6px; width: 100%; box-sizing: border-box; overflow: hidden; }
+        
+.cp-hash-icon { width: 18px; height: 18px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='10' r='10' fill='%23555'/%3E%3Cpolygon points='4,17 2,22 9,18' fill='%23555'/%3E%3C/svg%3E"); background-size: contain; background-repeat: no-repeat; background-position: center; color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; flex-shrink: 0; padding-bottom: 3px; }
+.cp-hash-icon::after { display: none; }
+        .cp-status-text { font-size: 10px; font-weight: 700; color: #555; font-family: Georgia, "Times New Roman", Times, serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+        
+        .cp-dock { position: absolute; bottom: calc(20px + var(--safe-bottom)); left: 20px; right: 20px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 35px; padding: 12px 15px; display: flex; justify-content: space-around; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4);}
+        .cp-dock .cp-app-icon { width: 54px; height: 54px; box-shadow: none; border-radius: 13px; }
+
+.cp-home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px; height: 5px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+        /* ========================================================
+           【终极绝招】将 iOS 高保真图标直接写入 CSS，绝不会消失！
+           ======================================================== */
+        #cp-icon-notes { background-image: url("https://i.postimg.cc/tJBr1Pzj/bei-wang-lu-i-OS-512x512.png"); }
+#cp-icon-music { background-image: url("https://i.postimg.cc/wTBfCf90/Apple-Music-i-OS-512x512.png"); }
+#cp-icon-mail { background-image: url("https://i.postimg.cc/fWCqgnQP/you-jian-i-OS-512x512.png"); }
+#cp-icon-taobao { background-image: url("https://i.postimg.cc/X7bgcsP3/tao-bao-wan-neng-de-tao-bao-i-OS-512x512.png"); }
+#cp-icon-weather { background-image: url("https://i.postimg.cc/XNL1DS6F/tian-qi-i-OS-512x512.png"); }
+#cp-icon-clock { background-image: url("https://i.postimg.cc/gk0SCSGT/Clock-i-OS-512x512.png"); }
+#cp-icon-settings { background-image: url("https://i.postimg.cc/xj5pFDVz/she-zhi-shou-ji-shi-yong-ji-qiao-i-OS-512x512.png"); }
+#cp-icon-wechat { background-image: url("https://i.postimg.cc/g2wbyc55/wei-xin-i-OS-512x512.png"); }
+#cp-icon-messages { background-image: url("https://i.postimg.cc/J7xYdVC6/xin-xi-i-OS-512x512-(1).png"); }
+#cp-icon-phone { background-image: url("https://i.postimg.cc/3r1fb5Qg/dian-hua-i-OS-512x512.png"); }
+#cp-icon-safari { background-image: url("https://i.postimg.cc/Prq3g3dB/Safari-i-OS-512x512.png"); }
+#cp-icon-camera { background-image: url("https://i.postimg.cc/7P9tQ8rd/照片_i_OS_512x512.png"); }  
+
+/* ==============================================[查阅手机 - 备忘录 APP] 专属样式
+============================================== */
+.cp-notes-container {
+    background-color: #f2f2f7;
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+}
+.cp-notes-container.visible { display: flex; }
+
+.cp-notes-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: #f2f2f7; will-change: transform;
+}
+#cp-notes-list-view { transform: translateX(0); z-index: 1; }
+#cp-notes-detail-view { transform: translateX(100%); background-color: #fff; z-index: 2; }
+
+/* 页面切换动画 */
+.cp-notes-container.detail-active #cp-notes-list-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-notes-container.detail-active #cp-notes-detail-view { transform: translateX(0); box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+
+/* 导航与顶部 */
+.cp-notes-nav { display: flex; justify-content: space-between; align-items: center; padding: calc(env(safe-area-inset-top) + 10px) 16px 10px; flex-shrink: 0; }
+.cp-notes-nav-btn { color: #d4a311; background: none; border: none; font-size: 17px; display: flex; align-items: center; gap: 4px; cursor: pointer; outline: none; font-weight: 500;}
+.cp-notes-header-title { font-size: 34px; font-weight: 700; padding: 0 16px; margin-top: 5px; color: #000; letter-spacing: 0.5px;}
+
+/* 搜索框 */
+.cp-notes-search { padding: 10px 16px; }
+.cp-notes-search-box { background: #e3e3e8; border-radius: 10px; display: flex; align-items: center; padding: 8px 12px; color: #8e8e93; }
+.cp-notes-search-box input { border: none; background: transparent; font-size: 17px; margin-left: 8px; width: 100%; outline: none; color: #000; }
+
+/* 列表区 */
+.cp-notes-section-title { font-size: 20px; font-weight: 600; padding: 10px 16px; color: #000; }
+.cp-notes-list { padding: 0 16px 20px; flex: 1; overflow-y: auto; }
+.cp-note-item { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; }
+.cp-note-item:active { background: #f9f9f9; }
+.cp-note-item-title { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-note-item-desc { font-size: 15px; color: #8e8e93; display: flex; align-items: center; }
+.cp-note-item-folder { margin-top: 6px; font-size: 13px; color: #8e8e93; display: flex; align-items: center; gap: 4px; }
+
+/* 底栏 */
+.cp-notes-bottom { background: rgba(249,249,249,0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(0,0,0,0.1); padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.cp-notes-count { font-size: 12px; color: #000; flex: 1; text-align: center; }
+.cp-notes-compose { color: #d4a311; background: none; border: none; cursor: pointer; }
+
+/* 详情编辑区 */
+.cp-notes-editor { flex: 1; padding: 0 20px; display: flex; flex-direction: column; overflow-y: hidden; }
+#cp-note-title { font-size: 24px; font-weight: bold; border: none; outline: none; margin: 10px 0; padding: 5px 0; color: #000; background: transparent; }
+#cp-note-title::placeholder { color: #c7c7cc; font-weight: normal; }
+
+/* 富文本渲染区 (支持 HTML 模块) */
+#cp-note-content { font-size: 17px; color: #000; line-height: 1.6; outline: none; flex: 1; overflow-y: auto; padding-bottom: 40px; }
+#cp-note-content[placeholder]:empty:before { content: attr(placeholder); color: #c7c7cc; }
+#cp-note-content input[type="checkbox"] { transform: scale(1.3); margin-right: 10px; accent-color: #d4a311; }
+
         /* 彻底锁死大容器防抖动 */
         #app-library-root { position: fixed; inset: 0; overflow: hidden; display: none; flex-direction: column; }
         #app-library-root.visible { display: flex; }
@@ -1351,8 +1519,9 @@
             <div class="dock-icon" id="dock-1" onclick="openPage('page-appr')">
                 <svg class="dock-svg" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path></svg>
             </div>
-            <div class="dock-icon" id="dock-2">
-                <svg class="dock-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+           <!--dock-2：查阅 AI 手机入口 -->
+            <div class="dock-icon" id="dock-2" onclick="openCharPhoneSelect()">
+                <svg class="dock-svg" viewBox="0 0 24 24"><path d="M6 2H18C19.1046 2 20 2.89543 20 4V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4C4 2.89543 4.89543 2 6 2ZM12 17C10.8954 17 10 16.1046 10 15C10 13.8954 10.8954 13 12 13C13.1046 13 14 13.8954 14 15C14 16.1046 13.1046 17 12 17Z"></path></svg>
             </div>
             <div class="dock-icon" id="dock-3" onclick="openPage('page-font')">
                 <svg class="dock-svg" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
@@ -1694,6 +1863,178 @@
         </div>
     </div>
 
+
+<!-- ============================================== -->
+    <!-- 查阅 AI 手机：选择好友列表 -->
+    <!-- ============================================== -->
+    <div id="page-char-phone-select" class="page-layer">
+        <div class="nav-header">
+            <div class="nav-btn nav-left" onclick="closePage('page-char-phone-select')">
+                <i class="ri-arrow-left-s-line" style="font-size:24px;"></i>
+            </div>
+            <span>悄悄监视中ing</span>
+        </div>
+        <div class="scroll-content">
+            <div class="group-header" style="margin-top:0">选择目标对象</div>
+            <div id="cp-contact-list">
+                <!-- JS 动态渲染 -->
+            </div>
+        </div>
+    </div>
+
+<!-- ============================================== -->
+    <!-- 查阅 AI 手机：目标对象的桌面系统 (极限吸顶 + 锁定App版) -->
+    <!-- ============================================== -->
+    <div id="page-char-phone-desktop" class="page-layer">
+        
+        <!-- 状态栏：贴紧屏幕最顶端，没有时间 -->
+        <div class="cp-top-bar">
+            <div id="cp-live-time" style="font-size:13px; font-weight:600; letter-spacing:0.5px; color:#111; min-width:50px;"></div>
+            <div class="cp-status-icons">
+                <svg viewBox="0 0 18 12" width="16" height="10"><path d="M1 9h3v3H1zM6 6h3v6H6zM11 3h3v9h-3zM16 0h2v12h-2z" fill="#111"/></svg>
+                <span style="font-family:-apple-system; font-weight:700; font-size:11px; margin:0 2px;">5G</span>
+                <svg viewBox="0 0 25 12" width="25" height="12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111" stroke-width="1"/><rect x="2" y="2" width="15" height="8" rx="2" fill="#111"/><path d="M23 4h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1V4Z" fill="#111"/></svg>
+            </div>
+        </div>
+
+        <!-- 内部容器：自动向上对齐排布 -->
+        <div class="cp-desktop-inner">
+            <div class="cp-search-bar" id="cp-text-search" onclick="editCharPhoneText('cp-text-search', '输入新的搜索栏文字')">⟳ ⊹♡┈┈ 𓏴 𝒫𝒾𝓃𝓀 𝒱𝑒𝓁𝓋𝑒𝓉 𓏴 ┈┈♡ ⊹🤍</div>
+
+            <div class="cp-top-widget-container">
+                <div class="cp-widget-card">
+                    <div class="cp-top-widget-header" id="cp-text-topwidget-header" onclick="editCharPhoneText('cp-text-topwidget-header', '输入新的组件标题')">
+                        <span>[☆₊⋆행복이 찾아오다🐰💬⋆*☆]</span><span>📌</span>
+                    </div>
+                    <div class="cp-top-widget-images">
+                        <!-- 这三张相册大图依然可以点击换图 -->
+                        <div class="cp-img-box"><div class="cp-img-placeholder" id="cp-img-1" onclick="openUploadForCharPhone('cp-img-1')"></div><span id="cp-text-img1-label" onclick="editCharPhoneText('cp-text-img1-label', '输入图片1的标签')">🫧•͈ᴗ⁃͈★</span></div>
+                        <div class="cp-img-box"><div class="cp-img-placeholder" id="cp-img-2" onclick="openUploadForCharPhone('cp-img-2')"></div><span id="cp-text-img2-label" onclick="editCharPhoneText('cp-text-img2-label', '输入图片2的标签')">𝙸♥︎..</span></div>
+                        <div class="cp-img-box"><div class="cp-img-placeholder" id="cp-img-3" onclick="openUploadForCharPhone('cp-img-3')"></div><span id="cp-text-img3-label" onclick="editCharPhoneText('cp-text-img3-label', '输入图片3的标签')">🌨☃︎ *･ﾟ</span></div>
+                    </div>
+                </div>
+                <div class="cp-widget-label" id="cp-text-widgetlabel-1" onclick="editCharPhoneText('cp-text-widgetlabel-1', '输入组件分类名')">Top Widgets⁺</div>
+            </div>
+
+            <!-- 中部区块 -->
+            <div class="cp-section-row">
+                <div class="cp-section-col">
+                    <!-- 这个大组件依然可以点击换图 -->
+                    <div class="cp-widget-card cp-square-widget cp-rabbit-widget" id="cp-img-rabbit" onclick="openUploadForCharPhone('cp-img-rabbit')">
+                        <div style="position:absolute; inset:5px; border: 1px solid rgba(255,255,255,0.8); border-radius: 16px; pointer-events:none;"></div>
+                        <div id="cp-text-rabbit-date" onclick="editCharPhoneText('cp-text-rabbit-date', '输入文字', event)" style="position:absolute; bottom:10px; left:10px; font-size:9px; color:#666; font-style:italic; background:rgba(255,255,255,0.85); padding:2px 6px; border-radius:10px;">together 520 day</div>
+                    </div>
+                    <div class="cp-widget-label" id="cp-text-widgetlabel-2" onclick="editCharPhoneText('cp-text-widgetlabel-2', '输入组件分类名')">Top Widgets⁺</div>
+                </div>
+                <div class="cp-section-col cp-app-grid">
+                    <!-- 所有 App 图标锁定，点击触发未来开发的弹窗，不再触发换图 -->
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-notes" onclick="openCpNotes()"></div><span id="cp-text-app-1" onclick="editCharPhoneText('cp-text-app-1', '输入App名称', event)">备忘录</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-music" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-2" onclick="editCharPhoneText('cp-text-app-2', '输入App名称', event)">音乐</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-mail" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-3" onclick="editCharPhoneText('cp-text-app-3', '输入App名称', event)">邮件</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-taobao" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-4" onclick="editCharPhoneText('cp-text-app-4', '输入App名称', event)">淘宝</span></div>
+                </div>
+            </div>
+
+            <!-- 底部区块 -->
+            <div class="cp-section-row">
+                <div class="cp-section-col cp-app-grid">
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-weather" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-5" onclick="editCharPhoneText('cp-text-app-5', '输入App名称', event)">天气</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-clock" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-6" onclick="editCharPhoneText('cp-text-app-6', '输入App名称', event)">时钟</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-settings" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-7" onclick="editCharPhoneText('cp-text-app-7', '输入App名称', event)">设置</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-wechat" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-8" onclick="editCharPhoneText('cp-text-app-8', '输入App名称', event)">微信</span></div>
+                </div>
+                <div class="cp-section-col">
+                    <div class="cp-widget-card cp-square-widget cp-new-profile-widget">
+                        <div class="cp-new-avatar" id="cp-dynamic-avatar"></div>
+                        <div class="cp-new-username" id="cp-dynamic-name">@User</div>
+                        <div class="cp-status-pill">
+                            <div class="cp-hash-icon">#</div>
+                            <div class="cp-status-text" id="cp-dynamic-status">only temporary 2 u</div>
+                        </div>
+                    </div>
+                    <div class="cp-widget-label" id="cp-text-widgetlabel-3" onclick="editCharPhoneText('cp-text-widgetlabel-3', '输入组件分类名')">Colorful Widget</div>
+                </div>
+            </div>
+        </div>
+
+      <!-- 底部 Dock 栏（四款原生iOS级图标）锁定点击 -->
+        <div class="cp-dock">
+            <div class="cp-app-icon" id="cp-icon-messages" onclick="alert('即将开发：进入该APP界面')"></div>
+            <div class="cp-app-icon" id="cp-icon-phone" onclick="alert('即将开发：进入该APP界面')"></div>
+            <div class="cp-app-icon" id="cp-icon-safari" onclick="alert('即将开发：进入该APP界面')"></div>
+            <div class="cp-app-icon" id="cp-icon-camera" onclick="alert('即将开发：进入该APP界面')"></div>
+        </div>
+        <div class="cp-home-indicator" onclick="closePage('page-char-phone-desktop')" style="cursor:pointer;"></div>
+    </div>
+        </div>
+    </div>
+    
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：备忘录 APP (Apple Notes 仿版) -->
+<!-- ============================================== -->
+<div id="page-cp-notes" class="page-layer cp-notes-container">
+    
+    <!-- 视图1：列表页 -->
+    <div id="cp-notes-list-view" class="cp-notes-view">
+        <header class="cp-notes-nav">
+            <button class="cp-notes-nav-btn" onclick="closePage('page-cp-notes')">
+                <i class="ri-arrow-left-s-line" style="font-size:24px;"></i> 桌面
+            </button>
+            <div style="display:flex; gap:15px;">
+                <!-- 神奇的 AI 刷新生成按钮 -->
+                <button class="cp-notes-nav-btn" onclick="generateCpNotes()">
+                    <i class="ri-magic-line" style="font-size:22px;"></i>
+                </button>
+            </div>
+        </header>
+        <h1 class="cp-notes-header-title">备忘录</h1>
+        
+        <div class="cp-notes-search">
+            <div class="cp-notes-search-box">
+                <i class="ri-search-line"></i>
+                <input type="text" placeholder="搜索">
+            </div>
+        </div>
+
+        <div class="cp-notes-section-title">Ta 的备忘录</div>
+        <div class="cp-notes-list" id="cp-notes-list-content">
+            <!-- JS 动态渲染 -->
+        </div>
+
+        <footer class="cp-notes-bottom">
+            <div style="width: 24px;"></div>
+            <span class="cp-notes-count" id="cp-notes-count">0个备忘录</span>
+            <button class="cp-notes-compose" onclick="createNewCpNote()">
+                <i class="ri-edit-box-line" style="font-size:24px;"></i>
+            </button>
+        </footer>
+    </div>
+
+    <!-- 视图2：详情编辑页 -->
+    <div id="cp-notes-detail-view" class="cp-notes-view">
+        <header class="cp-notes-nav">
+            <button class="cp-notes-nav-btn" onclick="closeCpNote()">
+                <i class="ri-arrow-left-s-line" style="font-size:24px;"></i> 备忘录
+            </button>
+            <button class="cp-notes-nav-btn" onclick="deleteCurrentCpNote()">
+                <i class="ri-delete-bin-line" style="font-size:20px; color:#ff3b30;"></i>
+            </button>
+        </header>
+
+        <div class="cp-notes-editor">
+            <input type="text" id="cp-note-title" placeholder="标题">
+            <!-- 这里使用 contenteditable 以渲染 HTML（待办、灰色气泡、涂鸦等） -->
+            <div id="cp-note-content" contenteditable="true" placeholder="在此输入文本..."></div>
+        </div>
+
+        <footer class="cp-notes-bottom" style="justify-content: space-around;">
+            <button class="cp-notes-compose"><i class="ri-checkbox-circle-line" style="font-size:22px;"></i></button>
+            <button class="cp-notes-compose"><i class="ri-camera-line" style="font-size:22px;"></i></button>
+            <button class="cp-notes-compose"><i class="ri-markup-line" style="font-size:22px;"></i></button>
+            <button class="cp-notes-compose" onclick="createNewCpNote()"><i class="ri-edit-box-line" style="font-size:22px;"></i></button>
+        </footer>
+    </div>
+</div>
     <!-- 弹窗 1：创建好友 (Create Character) -->
     <div id="modal-ins-char" class="ins-sheet-mask">
         <div class="ins-sheet-body">
@@ -2500,7 +2841,144 @@
     <!-- 专属弹窗区域 -->
     <!-- ============================================== -->
 
-    <!-- 抽屉弹窗 1：新建/编辑分类 (增强版配方) -->
+<!-- ============================================== -->
+    <!-- [阅读 APP] 专属弹窗区域 (已彻底去重) -->
+    <!-- ============================================== -->
+
+    <!-- 抽屉弹窗 1：书籍主页 (沉浸式+三个点菜单) -->
+    <div id="modal-book-detail" class="ins-sheet-mask" style="z-index: 9800;">
+        <div class="ins-sheet-body">
+            <div id="bd-bg-blur" class="book-bg-blur"></div>
+            <div class="book-bg-gradient"></div>
+
+            <div class="ins-sheet-top" style="border:none; background:transparent; padding: calc(env(safe-area-inset-top) + 15px) 24px 10px;">
+               <div class="nav-circle-btn" onclick="closeInsModal('modal-book-detail')"><i class="ri-arrow-left-line" style="font-size:20px;"></i></div>
+               <!-- 右上角变成了三个点 -->
+               <div class="nav-circle-btn" onclick="openBookActionMenu()"><i class="ri-more-fill" style="font-size:20px;"></i></div>
+            </div>
+
+            <div class="ins-sheet-content" style="padding: 0 24px 100px;">
+                <div style="text-align:center; margin-top: 5px;">
+                    <img id="bd-cover" src="" style="width:150px; height:210px; border-radius:12px; box-shadow:0 25px 50px -10px rgba(0,0,0,0.3); object-fit:cover; cursor:pointer;" onclick="changeCurrentArticleCover()">
+                </div>
+                <div style="text-align:center; margin-top:25px;">
+                    <h2 id="bd-title" style="font-family:'Noto Serif SC', serif; font-size:26px; font-weight: 700; color:var(--lib-ink); letter-spacing:1px;">书名</h2>
+                    <div id="bd-author" style="font-size:14px; color:var(--lib-sub); margin-top:8px; font-weight:600;">@作者网名</div>
+                </div>
+                <div id="bd-tags" style="display:flex; justify-content:center; gap:8px; margin-top:16px; flex-wrap:wrap;"></div>
+                <div id="bd-snippet" style="font-size:14px; color:var(--lib-sub); line-height:1.8; margin-top:35px; font-family:'Noto Serif SC'; text-align:justify;"></div>
+                <div style="margin-top:40px;" id="bd-chapter-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 抽屉弹窗 2：书籍右上角的三个点操作菜单 -->
+    <div id="modal-book-actions" class="ins-sheet-mask" style="z-index: 9850;" onclick="closeInsModal('modal-book-actions')">
+        <div class="ins-sheet-body" style="height: auto; padding-bottom: calc(env(safe-area-inset-bottom) + 10px); background: var(--lib-bg);" onclick="event.stopPropagation()">
+            <div style="width: 40px; height: 5px; background: rgba(0,0,0,0.1); border-radius: 3px; margin: 15px auto;"></div>
+            <div style="padding: 10px 24px 20px;">
+                <div class="setting-item" onclick="openContinueModal()">
+                    <span class="setting-label" style="font-size:16px;"><i class="ri-magic-line"></i> 执笔续写 (提供剧情梗)</span>
+                </div>
+                <div class="setting-item" onclick="deleteCurrentBook()" style="border-bottom:none;">
+                    <span class="setting-label" style="color:#ff3b30; font-size:16px;"><i class="ri-delete-bin-line" style="color:#ff3b30;"></i> 从书架及喜欢中永久移除</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 抽屉弹窗 3：执笔续写专属高定面板 -->
+    <div id="modal-continue-writing" class="ins-sheet-mask" style="z-index: 9900;">
+        <div class="ins-sheet-body" style="height: 75vh; background: var(--lib-bg); border-radius: 30px 30px 0 0;">
+            <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <span onclick="closeInsModal('modal-continue-writing')" style="color:var(--lib-sub); cursor:pointer;">取消</span>
+                <span style="font-family:'Noto Serif SC'; font-weight:700; font-size:18px; color:var(--lib-ink);">执笔续写</span>
+                <span style="color:transparent;">空</span>
+            </div>
+            <div class="ins-sheet-content" style="padding: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+                    <span style="font-size:15px; font-weight:bold; color:var(--lib-ink);">生成篇幅</span>
+                    <div style="display:flex; gap:10px;" id="bd-cc-num-pills">
+                        <div class="bd-cc-pill active" onclick="setCcNum(1, this)">1章</div>
+                        <div class="bd-cc-pill" onclick="setCcNum(3, this)">3章</div>
+                        <div class="bd-cc-pill" onclick="setCcNum(5, this)">5章</div>
+                    </div>
+                </div>
+                <textarea id="bd-continue-prompt" rows="6" style="width:100%; border:none; background:#fff; border-radius:16px; padding:18px; font-size:14px; resize:none; margin-bottom:30px; box-shadow:0 5px 20px rgba(0,0,0,0.03); outline:none; font-family:'Noto Serif SC';" placeholder="提供接下来的剧情走向、人物对话或指定的梗...&#10;(例如：女主突然恢复了记忆，男主彻底慌了，开始疯狂弥补)"></textarea>
+                <button id="bd-btn-continue" onclick="continueWriting()" style="width:100%; background:var(--lib-ink); color:var(--lib-bg); border:none; padding:16px; border-radius:100px; font-size:16px; font-family:'Noto Serif SC'; font-weight:bold; cursor:pointer; transition:0.2s; box-shadow:0 10px 25px -5px rgba(0,0,0,0.2);">呼叫 AI 生成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 抽屉弹窗 4：沉浸式阅读器 -->
+    <div id="modal-lib-reader" class="ins-sheet-mask" style="z-index: 9999;">
+        <div class="ins-sheet-body" style="background: var(--lib-bg); height: 100vh; border-radius: 0;">
+            <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-top: calc(env(safe-area-inset-top) + 10px);">
+                <i class="ri-arrow-left-s-line" style="font-size:28px; color:var(--lib-ink); cursor:pointer;" onclick="closeInsModal('modal-lib-reader')"></i>
+                <span id="reader-top-tag" style="font-family:'Noto Serif SC'; font-size:12px; color:#aaa; text-transform:uppercase;">Reading</span>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <i class="ri-bookmark-line" id="reader-btn-folder" style="font-size:24px; color:var(--lib-ink); cursor:pointer;" onclick="openFolderSelect()"></i>
+                    <i class="ri-heart-3-line" id="reader-btn-like" style="font-size:24px; color:var(--lib-ink); cursor:pointer;" onclick="toggleLikeArticle()"></i>
+                </div>
+            </div>
+            <div class="ins-sheet-content" style="padding: 30px 24px 100px;">
+                <h1 id="reader-title" style="font-family:'Noto Serif SC', serif; font-size:26px; color:var(--lib-ink); margin-bottom:15px; line-height:1.3;">标题</h1>
+                <div id="reader-tags" style="margin-bottom:25px; display:flex; gap:8px; flex-wrap:wrap;"></div>
+                <div id="reader-content" style="font-family:'Noto Serif SC', serif; font-size:16px; color:#333; line-height:2.0; white-space:pre-wrap; text-align:justify;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 抽屉弹窗 5：选择合集 -->
+    <div id="modal-folder-select" class="ins-sheet-mask" style="z-index: 10000;">
+        <div class="ins-sheet-body" style="height: 60vh; border-radius: 20px 20px 0 0; background: #fff;">
+            <div class="ins-sheet-top" style="background:var(--lib-bg);">
+                <span onclick="closeInsModal('modal-folder-select')" style="cursor:pointer; color:#888;">取消</span>
+                <span style="font-family:'Noto Serif SC'; font-weight:700;">保存至书架</span>
+                <span style="color:var(--lib-accent); cursor:pointer; font-weight:600;" onclick="createNewFolder()"><i class="ri-add-line"></i> 新建</span>
+            </div>
+            <div class="ins-sheet-content" id="folder-select-list" style="padding: 10px 20px;"></div>
+        </div>
+    </div>
+
+    <!-- 抽屉弹窗 6：合集详情页 -->
+    <div id="modal-folder-detail" class="ins-sheet-mask" style="z-index: 9000;">
+        <div class="ins-sheet-body" style="height: 100vh; border-radius: 0; background: var(--lib-bg);">
+            <div class="ins-sheet-top" style="padding-top: calc(env(safe-area-inset-top) + 10px); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <i class="ri-arrow-left-s-line" style="font-size:28px; cursor:pointer;" onclick="closeInsModal('modal-folder-detail')"></i>
+                <span id="folder-detail-title" style="font-family:'Noto Serif SC'; font-weight:700; font-size:18px;">合集名字</span>
+                <i class="ri-delete-bin-line" style="color:#ff3b30; font-size:20px; cursor:pointer;" onclick="deleteCurrentFolder()"></i>
+            </div>
+            <div class="ins-sheet-content shelf-pad" id="folder-detail-list" style="padding-top: 20px;"></div>
+        </div>
+    </div>
+    
+    <!-- 抽屉弹窗 7：阅读偏好设置 (梗池管理无X版) -->
+    <div id="modal-lib-prefs" class="ins-sheet-mask" style="z-index: 10000;">
+        <div class="ins-sheet-body" style="height: 85vh; border-radius: 30px 30px 0 0; background: var(--lib-bg);">
+            <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <span style="color:var(--lib-sub); cursor:pointer;" onclick="closeInsModal('modal-lib-prefs')">关闭</span>
+                <span style="font-family:'Noto Serif SC'; font-weight:700; color:var(--lib-ink);">我的偏好梗池</span>
+                <span id="pref-edit-btn" style="color:var(--lib-accent); font-weight:700; cursor:pointer;" onclick="togglePrefEditMode()">管理</span>
+            </div>
+            <div class="ins-sheet-content" style="padding: 24px; position:relative;">
+                <div id="pref-desc-text" style="font-size:12px; color:var(--lib-sub); margin-bottom:20px;">选中高亮的梗，AI 在生成文章时会优先深度融合剧情。</div>
+                <div id="lib-prefs-container" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+                <div id="pref-add-area" style="margin-top:25px; display:flex; gap:10px;">
+                    <input type="text" id="lib-custom-pref" class="ins-input" style="flex:1; background:#fff; border:1px solid #eee;" placeholder="添加自定义梗，如: 破镜重圆">
+                    <button class="btn-std" style="width:auto; background:var(--lib-ink);" onclick="addCustomPref()">添加</button>
+                </div>
+                <div id="pref-reset-area" style="text-align:center; margin-top: 35px;">
+                    <span style="font-size:12px; color:#aaa; text-decoration:underline; cursor:pointer;" onclick="resetLibPrefs()">恢复系统默认梗池</span>
+                </div>
+                <div id="pref-delete-area" style="display:none; text-align:center; margin-top: 30px;">
+                    <button class="btn-std" style="background:#ff3b30; box-shadow: 0 8px 20px rgba(255,59,48,0.2);" onclick="deleteSelectedPrefs()">删除选中的梗</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 抽屉弹窗 8：新建文风配方 -->
     <div id="modal-lib-category" class="ins-sheet-mask" style="z-index: 9500;">
         <div class="ins-sheet-body" style="background: var(--lib-bg); border-top-left-radius: 30px; border-top-right-radius: 30px; height: 90vh;">
             <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
@@ -2513,117 +2991,37 @@
                     <label class="ins-label" style="color:var(--lib-accent);">分类名称 (中文)</label>
                     <input type="text" id="lib-cat-name" class="ins-input" style="background:#fff; border:1px solid #eee; font-family:'Noto Serif SC';" placeholder="例如：赛博废土 / 古言权谋">
                 </div>
-                
                 <div style="display:flex; gap:15px; margin-bottom:20px;">
                     <div style="flex:1;">
                         <label class="ins-label" style="color:var(--lib-ink);">生成篇数</label>
                         <select id="lib-cat-count" class="ins-input" style="background:#fff; border:1px solid #eee;">
-                            <option value="1">1 篇</option>
-                            <option value="3" selected>3 篇</option>
-                            <option value="5">5 篇</option>
+                            <option value="1">1 篇</option><option value="3" selected>3 篇</option><option value="5">5 篇</option>
                         </select>
                     </div>
                     <div style="flex:1;">
                         <label class="ins-label" style="color:var(--lib-ink);">字数要求</label>
                         <select id="lib-cat-words" class="ins-input" style="background:#fff; border:1px solid #eee;">
-                            <option value="300">微小说 (~300字)</option>
-                            <option value="800" selected>短篇 (~800字)</option>
-                            <option value="2000">大章 (~2000字)</option>
+                            <option value="300">微小说 (~300字)</option><option value="800" selected>短篇 (~800字)</option><option value="2000">大章 (~2000字)</option>
                         </select>
                     </div>
                 </div>
-
                 <div class="ins-input-wrap">
                     <label class="ins-label" style="color:var(--lib-ink);">关联设定 (配方)</label>
                     <select id="lib-cat-mask" class="ins-input" style="background:#fff; border:1px solid #eee; margin-bottom:10px;"></select>
                     <select id="lib-cat-wb" class="ins-input" style="background:#fff; border:1px solid #eee; margin-bottom:10px;"></select>
-                    
                     <div class="custom-multi-select" id="lib-cat-char-wrapper" style="max-width:100%;">
                         <div class="cms-header" style="background:#fff; border:1px solid #eee; padding:14px; border-radius:12px; font-weight:normal;" onclick="this.nextElementSibling.classList.toggle('show')">
-                            <span id="lib-cat-char-label">-- 关联角色 (出场人物) --</span>
-                            <i class="ri-arrow-down-s-line"></i>
+                            <span id="lib-cat-char-label">-- 关联角色 (出场人物) --</span><i class="ri-arrow-down-s-line"></i>
                         </div>
                         <div class="cms-dropdown" id="lib-cat-char-dropdown" onmouseleave="this.classList.remove('show')" style="width:100%; max-height:250px;"></div>
                     </div>
                 </div>
-
                 <div class="ins-input-wrap" style="margin-top: 20px;">
                     <label class="ins-label" style="color:var(--lib-accent);">核心设定与基调</label>
                     <textarea id="lib-cat-desc" class="ins-input" rows="5" style="background:#fff; border:1px solid #eee; font-family:'Noto Serif SC'; line-height:1.6;" placeholder="在这里描述底层逻辑。例如：穿越到古代、修仙求道、日常甜宠等..."></textarea>
                 </div>
-
                 <div id="lib-cat-delete-btn" style="text-align:center; margin-top:30px; display:none;">
                     <span style="color:#ff3b30; font-weight:600; cursor:pointer;" onclick="deleteLibCategory()"><i class="ri-delete-bin-line"></i> 删除此分类</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 抽屉弹窗 2：沉浸式阅读器 -->
-    <div id="modal-lib-reader" class="ins-sheet-mask" style="z-index: 9999;">
-        <div class="ins-sheet-body" style="background: var(--lib-bg); height: 100vh; border-radius: 0;">
-            <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-top: calc(env(safe-area-inset-top) + 10px);">
-                <i class="ri-arrow-left-s-line" style="font-size:28px; color:var(--lib-ink); cursor:pointer;" onclick="closeInsModal('modal-lib-reader')"></i>
-                <span id="reader-top-tag" style="font-family:'Noto Serif SC'; font-size:12px; color:#aaa; text-transform:uppercase;">Reading</span>
-                <div style="display:flex; gap:15px; align-items:center;">
-                    <!-- 书签：加入合集 -->
-                    <i class="ri-bookmark-line" id="reader-btn-folder" style="font-size:24px; color:var(--lib-ink); cursor:pointer;" onclick="openFolderSelect()"></i>
-                    <!-- 爱心：加入喜欢 -->
-                    <i class="ri-heart-3-line" id="reader-btn-like" style="font-size:24px; color:var(--lib-ink); cursor:pointer;" onclick="toggleLikeArticle()"></i>
-                </div>
-            </div>
-            <div class="ins-sheet-content" style="padding: 30px 24px 100px;">
-                <h1 id="reader-title" style="font-family:'Noto Serif SC', serif; font-size:26px; color:var(--lib-ink); margin-bottom:15px; line-height:1.3;">标题</h1>
-                <div id="reader-tags" style="margin-bottom:25px; display:flex; gap:8px; flex-wrap:wrap;"></div>
-                <div id="reader-content" style="font-family:'Noto Serif SC', serif; font-size:16px; color:#333; line-height:2.0; white-space:pre-wrap; text-align:justify;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 抽屉弹窗 3：选择合集 (添加到文件夹) -->
-    <div id="modal-folder-select" class="ins-sheet-mask" style="z-index: 10000;">
-        <div class="ins-sheet-body" style="height: 60vh; border-radius: 20px 20px 0 0; background: #fff;">
-            <div class="ins-sheet-top" style="background:var(--lib-bg);">
-                <span onclick="closeInsModal('modal-folder-select')" style="cursor:pointer; color:#888;">取消</span>
-                <span style="font-family:'Noto Serif SC'; font-weight:700;">保存至书架</span>
-                <span style="color:var(--lib-accent); cursor:pointer; font-weight:600;" onclick="createNewFolder()"><i class="ri-add-line"></i> 新建</span>
-            </div>
-            <div class="ins-sheet-content" id="folder-select-list" style="padding: 10px 20px;">
-                <!-- JS 渲染夹子列表 -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 抽屉弹窗 4：合集详情页 (查看某个文件夹里的文章) -->
-    <div id="modal-folder-detail" class="ins-sheet-mask" style="z-index: 9000;">
-        <div class="ins-sheet-body" style="height: 100vh; border-radius: 0; background: var(--lib-bg);">
-            <div class="ins-sheet-top" style="padding-top: calc(env(safe-area-inset-top) + 10px); border-bottom: 1px solid rgba(0,0,0,0.05);">
-                <i class="ri-arrow-left-s-line" style="font-size:28px; cursor:pointer;" onclick="closeInsModal('modal-folder-detail')"></i>
-                <span id="folder-detail-title" style="font-family:'Noto Serif SC'; font-weight:700; font-size:18px;">合集名字</span>
-                <i class="ri-delete-bin-line" style="color:#ff3b30; font-size:20px; cursor:pointer;" onclick="deleteCurrentFolder()"></i>
-            </div>
-            <div class="ins-sheet-content shelf-pad" id="folder-detail-list" style="padding-top: 20px;">
-                <!-- JS 渲染文章列表 -->
-            </div>
-        </div>
-    </div>
-    
-<!-- 抽屉弹窗 5：阅读偏好设置 (梗池) -->
-    <div id="modal-lib-prefs" class="ins-sheet-mask" style="z-index: 10000;">
-        <div class="ins-sheet-body" style="height: 85vh; border-radius: 30px 30px 0 0; background: var(--lib-bg);">
-            <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
-                <span style="color:var(--lib-sub); cursor:pointer;" onclick="closeInsModal('modal-lib-prefs')">关闭</span>
-                <span style="font-family:'Noto Serif SC'; font-weight:700; color:var(--lib-ink);">我的阅读偏好 (梗)</span>
-                <span style="color:var(--lib-accent); font-weight:700; cursor:pointer;" onclick="saveLibPrefs()">保存</span>
-            </div>
-            <div class="ins-sheet-content" style="padding: 24px;">
-                <div style="font-size:12px; color:var(--lib-sub); margin-bottom:15px;">选中的梗，AI 在生成文章时会深度融合剧情。支持多选与自定义。</div>
-                <div id="lib-prefs-container" style="display:flex; flex-wrap:wrap; gap:10px;">
-                    <!-- JS 动态渲染胶囊 -->
-                </div>
-                <div style="margin-top:25px; display:flex; gap:10px;">
-                    <input type="text" id="lib-custom-pref" class="ins-input" style="flex:1; background:#fff; border:1px solid #eee;" placeholder="添加自定义梗，如: 破镜重圆">
-                    <button class="btn-std" style="width:auto; background:var(--lib-ink);" onclick="addCustomPref()">添加</button>
                 </div>
             </div>
         </div>
@@ -6568,7 +6966,6 @@ window.openPage = async (id) => {
 // [阅读 APP] 盲盒书库引擎 V6.0 (合集系统+小言风图片+双独立收藏)
 // ==========================================
 
-// 高质量唯美小言封面库 (固定使用，不再依赖外链不稳定的随机图)
 const ROMANCE_COVERS =[
     "https://images.unsplash.com/photo-1493606371202-6275828f90f3?w=200&q=80",
     "https://images.unsplash.com/photo-1518599904199-0ca897819ddb?w=200&q=80",
@@ -6583,7 +6980,7 @@ const ROMANCE_COVERS =[
 ];
 
 function getCoverForArticle(article) {
-    if (article.coverUrl) return getRealImgSrc(article.coverUrl); // 支持自定义封面
+    if (article.coverUrl) return getRealImgSrc(article.coverUrl); 
     let hash = 0;
     const title = article.title || "";
     for (let i = 0; i < title.length; i++) hash = title.charCodeAt(i) + ((hash << 5) - hash);
@@ -6623,19 +7020,17 @@ window.switchLibTab = (tab) => {
     const searchInput = document.querySelector('.lib-search-input');
     const header = document.querySelector('.lib-header');
     const fab = document.querySelector('.lib-fab');
-    const headerAvatar = document.getElementById('lib-header-avatar'); // 头像节点
+    const headerAvatar = document.getElementById('lib-header-avatar');
 
     appData.libraryData.shelfSearchKeyword = '';
     if(searchInput) searchInput.value = '';
 
-    // 无论在哪个Tab，头部导航栏始终存在
     header.style.display = 'flex';
 
     if(tab === 'me') {
-        // [我的页面] 隐藏不该出现的东西：
-        headerAvatar.style.display = 'none'; // 隐藏右上角头像
-        fab.style.display = 'none';          // 隐藏悬浮羽毛
-        searchBar.style.display = 'none';    // 隐藏搜索栏
+        headerAvatar.style.display = 'none'; 
+        fab.style.display = 'none';          
+        searchBar.style.display = 'none';    
         document.getElementById('lib-cat-container').style.display = 'none';
         
         const likesCount = appData.libraryData.likes.length;
@@ -6647,15 +7042,15 @@ window.switchLibTab = (tab) => {
         document.getElementById('lib-profile-avatar-new').src = getRealImgSrc(appData.images['user-avatar']);
         document.getElementById('lib-profile-name-new').innerText = appData.customTexts['display-name'] || 'Master';
     } else if (tab === 'bookshelf') {
-        headerAvatar.style.display = 'block'; // 恢复头像
+        headerAvatar.style.display = 'block'; 
         fab.style.display = 'none';
         searchBar.style.display = 'block';
         searchInput.placeholder = "搜索我点赞和收藏的帖子...";
         document.getElementById('lib-cat-container').style.display = 'none';
         renderBookshelf();
     } else if (tab === 'discover') {
-        headerAvatar.style.display = 'block'; // 恢复头像
-        fab.style.display = 'flex';           // 恢复羽毛
+        headerAvatar.style.display = 'block'; 
+        fab.style.display = 'flex';           
         searchBar.style.display = 'block';
         searchInput.placeholder = "召唤灵感...生成全新文章";
         document.getElementById('lib-cat-container').style.display = 'flex';
@@ -6674,7 +7069,7 @@ window.toggleLibDarkMode = () => {
     appData.libraryData.darkMode = !appData.libraryData.darkMode;
     if(appData.libraryData.darkMode) {
         root.classList.add('lib-dark');
-        document.body.classList.add('lib-dark-theme'); // 强行给body加暗黑滤镜，让外挂的弹窗变色
+        document.body.classList.add('lib-dark-theme'); 
         tgl.classList.add('active');
     } else {
         root.classList.remove('lib-dark');
@@ -6697,7 +7092,6 @@ window.openLibraryApp = () => {
     switchLibTab('discover'); 
 };
 
-// --- 修改原有的图片拦截逻辑，增加文章封面的替换保存 ---
 const originalLibHandleImg = window.handleImage;
 window.handleImage = async (src) => {
     if (currentUploadId && currentUploadId.startsWith('art_cover_')) {
@@ -6705,19 +7099,17 @@ window.handleImage = async (src) => {
         try { await idbHelper.saveImage(currentUploadId, src); } catch(e) {}
         appData.images[currentUploadId] = src;
         
-        // 全局同步更新这篇文章的封面 URL
         const updateArt = (art) => { if (art.id === artId) art.coverUrl = currentUploadId; };
         appData.libraryData.categories.forEach(c => c.articles.forEach(updateArt));
         appData.libraryData.likes.forEach(updateArt);
         appData.libraryData.folders.forEach(f => f.articles.forEach(updateArt));
         
-        const coverImg = document.getElementById('reader-cover-img');
+        const coverImg = document.getElementById('bd-cover'); // 修正为详情页的封面
         if(coverImg) coverImg.src = src;
         
         saveData();
         document.getElementById('modal-upload').classList.remove('show');
         
-        // 即时刷新后面的列表
         if(appData.libraryData.currentTab === 'discover') renderDynamicArticles();
         else if (appData.libraryData.currentTab === 'bookshelf') renderBookshelf();
         return;
@@ -6731,20 +7123,46 @@ window.changeCurrentArticleCover = () => {
     document.getElementById('modal-upload').classList.add('show');
 };
 
+const DEFAULT_PREFS =["女尊", "弱攻强受", "破镜重圆", "先婚后爱", "追妻火葬场", "替身梗", "白月光", "强取豪夺", "欢喜冤家", "青梅竹马", "带球跑", "双向暗恋", "师徒恋", "穿书", "快穿", "无限流", "废柴逆袭", "扮猪吃老虎", "星际机甲", "哨向", "ABO", "娱乐圈", "宫斗宅斗", "权谋", "虐恋情深", "甜宠无虐", "互攻", "年下", "年上", "病娇", "黑化", "强制爱", "真假千金", "读心术"];
+const INTERNET_AUTHORS =["@白日梦想家", "@熬夜秃头写手", "@赛博甜妹", "@云端造梦师", "@摸鱼大王", "@星河漫游者", "@码字机007", "@浪漫过敏症", "@银河补习班", "@不吃香菜"];
 
-const DEFAULT_PREFS =["女尊", "弱攻强受", "破镜重圆", "先婚后爱", "追妻火葬场", "替身梗", "白月光", "强取豪夺", "欢喜冤家", "青梅竹马", "天降胜竹马", "带球跑", "追夫火葬场", "双向暗恋", "骨科/伪骨科", "师徒恋", "穿书", "快穿", "无限流", "爽文", "废柴逆袭", "扮猪吃老虎", "灵异神怪", "星际机甲", "哨向", "ABO", "娱乐圈", "电竞", "种田文", "悬疑推理", "宫斗宅斗", "权谋", "虐恋情深", "甜宠无虐", "互攻", "年下", "年上", "养成", "救赎", "病娇", "黑化", "强制爱", "真假千金", "灵魂互换", "读心术"];
+function getAuthorForArticle(title) {
+    let hash = 0;
+    for (let i = 0; i < (title || "").length; i++) hash = title.charCodeAt(i) + ((hash << 5) - hash);
+    return INTERNET_AUTHORS[Math.abs(hash) % INTERNET_AUTHORS.length];
+}
 
-// --- 梗池控制 ---
+// --- 梗池高级管理控制 ---
+let isPrefEditMode = false;
+let prefsToDelete = new Set();
+
 function initLibPrefsData() {
     if(!appData.libraryData.prefsPool) appData.libraryData.prefsPool =[...DEFAULT_PREFS];
     if(!appData.libraryData.selectedPrefs) appData.libraryData.selectedPrefs =[];
 }
 
 window.openLibPreferences = () => {
-    initLibPrefsData();
-    renderLibPrefs();
+    isPrefEditMode = false;
+    prefsToDelete.clear();
+    initLibPrefsData(); 
+    syncPrefUIState();
     document.getElementById('modal-lib-prefs').classList.add('show');
 };
+
+window.togglePrefEditMode = () => {
+    isPrefEditMode = !isPrefEditMode;
+    prefsToDelete.clear();
+    syncPrefUIState();
+};
+
+function syncPrefUIState() {
+    document.getElementById('pref-edit-btn').innerText = isPrefEditMode ? '完成' : '管理';
+    document.getElementById('pref-desc-text').innerText = isPrefEditMode ? '【管理模式】点击选中你想永久删除的梗：' : '选中高亮的梗，AI 在生成文章时会优先深度融合剧情。';
+    document.getElementById('pref-add-area').style.display = isPrefEditMode ? 'none' : 'flex';
+    document.getElementById('pref-reset-area').style.display = isPrefEditMode ? 'none' : 'block';
+    document.getElementById('pref-delete-area').style.display = isPrefEditMode ? 'block' : 'none';
+    renderLibPrefs();
+}
 
 window.renderLibPrefs = () => {
     const container = document.getElementById('lib-prefs-container');
@@ -6752,44 +7170,71 @@ window.renderLibPrefs = () => {
     const isDark = appData.libraryData.darkMode;
     
     appData.libraryData.prefsPool.forEach(pref => {
-        const isSelected = appData.libraryData.selectedPrefs.includes(pref);
         const div = document.createElement('div');
-        // 借用世界书的胶囊样式进行修改
         div.className = 'ko-filter-pill'; 
-        div.style.background = isSelected ? 'var(--lib-accent)' : (isDark ? '#2c2c2c' : '#f0f0f0');
-        div.style.color = isSelected ? '#fff' : 'var(--lib-ink)';
-        div.style.border = 'none';
+        
+        if (isPrefEditMode) {
+            const toDelete = prefsToDelete.has(pref);
+            div.style.background = toDelete ? 'rgba(255,59,48,0.1)' : (isDark ? '#2c2c2c' : '#f0f0f0');
+            div.style.color = toDelete ? '#ff3b30' : 'var(--lib-sub)';
+            div.style.border = toDelete ? '1px solid #ff3b30' : '1px solid transparent';
+            div.onclick = () => {
+                if(toDelete) prefsToDelete.delete(pref);
+                else prefsToDelete.add(pref);
+                renderLibPrefs();
+            };
+        } else {
+            const isSelected = appData.libraryData.selectedPrefs.includes(pref);
+            div.style.background = isSelected ? 'var(--lib-accent)' : (isDark ? '#2c2c2c' : '#f0f0f0');
+            div.style.color = isSelected ? '#fff' : 'var(--lib-ink)';
+            div.style.border = 'none';
+            div.onclick = async () => {
+                if(isSelected) appData.libraryData.selectedPrefs = appData.libraryData.selectedPrefs.filter(p => p !== pref);
+                else appData.libraryData.selectedPrefs.push(pref);
+                await saveData();
+                renderLibPrefs();
+            };
+        }
         div.innerText = pref;
-        div.onclick = () => {
-            if(isSelected) appData.libraryData.selectedPrefs = appData.libraryData.selectedPrefs.filter(p => p !== pref);
-            else appData.libraryData.selectedPrefs.push(pref);
-            renderLibPrefs();
-        };
         container.appendChild(div);
     });
 };
 
-window.addCustomPref = () => {
+window.deleteSelectedPrefs = async () => {
+    if(prefsToDelete.size === 0) { togglePrefEditMode(); return; }
+    if(confirm(`确定永久删除选中的 ${prefsToDelete.size} 个梗吗？`)) {
+        appData.libraryData.prefsPool = appData.libraryData.prefsPool.filter(p => !prefsToDelete.has(p));
+        appData.libraryData.selectedPrefs = appData.libraryData.selectedPrefs.filter(p => !prefsToDelete.has(p));
+        await saveData();
+        togglePrefEditMode();
+        showToast('梗已删除');
+    }
+};
+
+window.addCustomPref = async () => {
     const val = document.getElementById('lib-custom-pref').value.trim();
     if(val && !appData.libraryData.prefsPool.includes(val)) {
         appData.libraryData.prefsPool.push(val);
         appData.libraryData.selectedPrefs.push(val);
         document.getElementById('lib-custom-pref').value = '';
+        await saveData();
         renderLibPrefs();
     }
 };
 
-window.saveLibPrefs = () => {
-    saveData();
-    closeInsModal('modal-lib-prefs');
-    showToast('偏好已保存');
+window.resetLibPrefs = async () => {
+    if(confirm('确定恢复系统的默认梗池吗？这会清除你的自定义梗。')) {
+        appData.libraryData.prefsPool = [...DEFAULT_PREFS];
+        appData.libraryData.selectedPrefs =[];
+        await saveData(); 
+        renderLibPrefs(); 
+        showToast('已恢复默认');
+    }
 };
-
 
 window.renderLibCategories = () => {
     const container = document.getElementById('lib-cat-container');
     container.innerHTML = '';
-    
     const cats = appData.libraryData.categories;
     if(!cats.find(c => c.id === appData.libraryData.currentCatId)) appData.libraryData.currentCatId = cats[0].id;
 
@@ -6797,14 +7242,9 @@ window.renderLibCategories = () => {
         const item = document.createElement('span');
         item.className = `lib-tab-item ${appData.libraryData.currentCatId === cat.id ? 'active' : ''}`;
         item.innerText = cat.name;
-        item.onclick = () => {
-            appData.libraryData.currentCatId = cat.id;
-            saveData();
-            renderLibCategories();
-        };
+        item.onclick = () => { appData.libraryData.currentCatId = cat.id; saveData(); renderLibCategories(); };
         container.appendChild(item);
     });
-
     const addBtn = document.createElement('div');
     addBtn.className = 'lib-add-cat-btn';
     addBtn.innerHTML = '<i class="ri-add-line"></i> NEW';
@@ -6818,38 +7258,30 @@ window.renderLibCategories = () => {
     }
 };
 
-// ==========================================
-// 发现页 & 文章列表渲染
-// ==========================================
-
-// 通用的文章渲染函数
-function renderArticleList(articlesArray, containerId) {
+function renderArticleList(articlesArray, containerId, contextMode) {
     const container = document.getElementById(containerId);
     if(!container) return;
     container.innerHTML = '';
     window.currentRenderedArticles = articlesArray;
 
     if(!articlesArray || articlesArray.length === 0) {
-        container.innerHTML = `
-            <div style="text-align:center; padding: 60px 20px; color:#aaa;">
-                <i class="ri-quill-pen-line" style="font-size:40px; color:#ddd; margin-bottom:15px; display:block;"></i>
-                <div style="font-size:14px; font-family:'Noto Serif SC'; line-height:1.6;">空空如也。<br>没有找到符合的文章。</div>
-            </div>`;
+        container.innerHTML = `<div style="text-align:center; padding: 60px 20px; color:#aaa;"><i class="ri-quill-pen-line" style="font-size:40px; color:#ddd; margin-bottom:15px; display:block;"></i><div style="font-size:14px; font-family:'Noto Serif SC'; line-height:1.6;">空空如也。<br>没有找到符合的文章。</div></div>`;
         return;
     }
 
-    articlesArray.forEach((article, idx) => {
+    articlesArray.forEach((article) => {
         const tagsHtml = article.tags.map(t => `<span class="lib-meta-tag">${t}</span>`).join('');
-        // 这里调取上一步新增的真实封面函数
         const cover = getCoverForArticle(article); 
 
         const div = document.createElement('div');
         div.className = 'lib-list-item'; 
-        // 只有点击整个列表项才会打开阅读器
-        div.onclick = () => openArticleReader(idx); 
+        
+        div.onclick = () => {
+            if(contextMode === 'discover') openArticleReader(article, null);
+            else openBookDetail(article);
+        };
         
         div.innerHTML = `
-            <!-- 新增：单独给左侧图片加独立点击事件，且使用 e.stopPropagation() 阻止打开阅读器 -->
             <img class="lib-list-cover" src="${cover}" onclick="window.changeArticleCover(event, '${article.id}')" style="cursor:pointer; position:relative; z-index:2;">
             <div class="lib-list-detail">
                 <div class="lib-list-title">${article.title}</div>
@@ -6860,233 +7292,222 @@ function renderArticleList(articlesArray, containerId) {
         container.appendChild(div);
     });
 }
-        
-// 更换列表封面 (阻止进入阅读器)
-window.changeArticleCover = (e, articleId) => {
-    e.stopPropagation(); 
-    currentUploadId = 'art_cover_' + articleId;
-    document.getElementById('url-core').value = ''; 
-    document.getElementById('modal-upload').classList.add('show');
-};
-
-// 修改原有的打开阅读器事件，加入封面读取
-window.openArticleReader = (idx) => {
-    currentReadingArticle = window.currentRenderedArticles[idx];
-    if(!currentReadingArticle) return;
-
-    updateReaderIcons();
-    document.getElementById('reader-cover-img').src = getCoverForArticle(currentReadingArticle); // 渲染当前封面
-    document.getElementById('reader-title').innerText = currentReadingArticle.title;
-    document.getElementById('reader-tags').innerHTML = currentReadingArticle.tags.map(t => `<span class="lib-meta-tag" style="background:#f0f0f0;">${t}</span>`).join('');
-    document.getElementById('reader-content').innerText = currentReadingArticle.content;
-    document.getElementById('modal-lib-reader').classList.add('show');
-};
-
-// 带有搜索过滤的书架渲染引擎
-window.renderBookshelf = () => {
-    const keyword = appData.libraryData.shelfSearchKeyword || '';
-    
-    // 强大的本地搜索过滤器 (标题、简介、标签同时匹配)
-    const filterArt = (arts) => {
-        if (!keyword) return arts;
-        return arts.filter(a => 
-            a.title.toLowerCase().includes(keyword) || 
-            a.snippet.toLowerCase().includes(keyword) || 
-            a.tags.some(t => t.toLowerCase().includes(keyword))
-        );
-    };
-
-    const folderList = document.getElementById('lib-folder-list');
-    folderList.innerHTML = '';
-    
-    appData.libraryData.folders.forEach(f => {
-        const filteredArts = filterArt(f.articles);
-        if (keyword && filteredArts.length === 0) return; // 搜索时如果没有符合的书，折叠整个合集
-
-        let coversHtml = '';
-        if(filteredArts.length > 0) {
-            filteredArts.slice(0, 3).forEach(a => {
-                coversHtml += `<img class="collection-cover-mini" src="${getCoverForArticle(a)}">`;
-            });
-        } else {
-            coversHtml = `<span class="collection-empty-tip">空空如也...</span>`;
-        }
-
-        const card = document.createElement('div');
-        card.className = 'collection-card';
-        card.onclick = () => openFolderDetail(f.id);
-        card.innerHTML = `
-            <div class="collection-header">
-                <span class="collection-title">${f.name}</span>
-                <span class="collection-stats">${filteredArts.length} 篇</span>
-            </div>
-            <div class="collection-covers">${coversHtml}</div>
-        `;
-        folderList.appendChild(card);
-    });
-
-    // 喜欢列表也支持同步实时搜索
-    const filteredLikes = filterArt(appData.libraryData.likes);
-    renderArticleList(filteredLikes, 'lib-likes-list');
-};
-
-// ======================= 搜索框事件双模重构 =========================
-// 找到代码最底部的 `document.addEventListener("DOMContentLoaded", ...)`，整个替换为：
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.querySelector('.lib-search-input');
-    const searchIcon = document.querySelector('.lib-search-icon');
-    
-    const executeSearch = () => {
-        const keywords = searchInput.value.trim();
-        if (appData.libraryData.currentTab === 'bookshelf') {
-            appData.libraryData.shelfSearchKeyword = keywords.toLowerCase();
-            renderBookshelf();
-        } else {
-            // 默认“发现页”行为：调用AI模型生成新梗文章
-            switchLibTab('discover');
-            generateCategoryArticles(keywords);
-            searchInput.value = ''; 
-        }
-        searchInput.blur();
-    };
-
-    if(searchInput) {
-        // 回车执行
-        searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') executeSearch(); });
-        // 【书架专属】打字时实时过滤
-        searchInput.addEventListener('input', (e) => {
-            if (appData.libraryData.currentTab === 'bookshelf') {
-                appData.libraryData.shelfSearchKeyword = e.target.value.trim().toLowerCase();
-                renderBookshelf();
-            }
-        });
-    }
-    if(searchIcon) {
-        searchIcon.style.pointerEvents = 'auto'; 
-        searchIcon.style.cursor = 'pointer';
-        searchIcon.addEventListener('click', executeSearch);
-    }
-});
 
 window.renderDynamicArticles = () => {
     const cat = appData.libraryData.categories.find(c => c.id === appData.libraryData.currentCatId);
-    if(cat) renderArticleList(cat.articles, 'lib-dynamic-articles');
+    if(cat) renderArticleList(cat.articles, 'lib-dynamic-articles', 'discover');
 };
 
-// ==========================================
-// 核心高能区：调取 API，强约束第三人称生成
-// ==========================================
-window.generateCategoryArticles = async (keyword = null) => {
-    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先配置 API！"); return; }
-    const cat = appData.libraryData.categories.find(c => c.id === appData.libraryData.currentCatId);
-    if(!cat) return;
+window.renderBookshelf = () => {
+    const keyword = appData.libraryData.shelfSearchKeyword || '';
+    const filterArt = (arts) => {
+        if (!keyword) return arts;
+        return arts.filter(a => a.title.toLowerCase().includes(keyword) || a.snippet.toLowerCase().includes(keyword) || a.tags.some(t => t.toLowerCase().includes(keyword)));
+    };
 
-    document.getElementById('lib-dynamic-articles').innerHTML = `
-        <div style="text-align:center; padding: 60px 20px; color:#aaa; animation: pulse 1.5s infinite;">
-            <i class="ri-meteor-line" style="font-size:40px; display:inline-block; margin-bottom:10px; color:var(--lib-accent);"></i>
-            <div style="font-size:14px; font-family:'Noto Serif SC'; line-height:1.6;">
-                笔墨流转中...<br>正在为你生成 ${cat.genCount} 篇全新故事
-            </div>
-        </div>
-        <style>@keyframes pulse { 0%, 100% {opacity:1;} 50% {opacity:0.5;} }</style>
-    `;
+    const folderList = document.getElementById('lib-folder-list');
+    if(folderList) {
+        folderList.innerHTML = '';
+        appData.libraryData.folders.forEach(f => {
+            const filteredArts = filterArt(f.articles);
+            if (keyword && filteredArts.length === 0) return; 
 
-    let wbDesc = "";
-    if(cat.worldbookCat && appData.world) {
-        const lore = appData.world.filter(w => w.cat === cat.worldbookCat).map(w => `- ${w.title}: ${w.content}`).join('\n');
-        if(lore) wbDesc = `【世界观背景】：\n${lore}\n`;
+            let coversHtml = '';
+            if(filteredArts.length > 0) {
+                filteredArts.slice(0, 3).forEach(a => coversHtml += `<img class="collection-cover-mini" src="${getCoverForArticle(a)}">`);
+            } else {
+                coversHtml = `<span class="collection-empty-tip">空空如也...</span>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'collection-card';
+            card.onclick = () => openFolderDetail(f.id);
+            card.innerHTML = `<div class="collection-header"><span class="collection-title">${f.name}</span><span class="collection-stats">${filteredArts.length} 篇</span></div><div class="collection-covers">${coversHtml}</div>`;
+            folderList.appendChild(card);
+        });
     }
+    const filteredLikes = filterArt(appData.libraryData.likes);
+    renderArticleList(filteredLikes, 'lib-likes-list', 'shelf');
+};
 
-    let writerPersona = "";
-    if(cat.maskId && appData.userMasks) {
-        const mask = appData.userMasks.find(m => m.id === cat.maskId);
-        if(mask) writerPersona = `【核心主角之一（原面具设定）】：名为“${mask.name}”，人设特征是：${mask.prompt}。`;
+let currentDetailArticle = null;
+
+window.openBookDetail = (article) => {
+    currentDetailArticle = article;
+    currentReadingArticle = article; 
+
+    if (!currentDetailArticle.chapters || currentDetailArticle.chapters.length === 0) {
+        currentDetailArticle.chapters =[{ title: "第一章：楔子", content: currentDetailArticle.content }];
     }
+    if (!currentDetailArticle.author) currentDetailArticle.author = getAuthorForArticle(article.title);
+
+    const coverUrl = getCoverForArticle(article);
+    document.getElementById('bd-bg-blur').style.backgroundImage = `url('${coverUrl}')`;
+    document.getElementById('bd-cover').src = coverUrl;
     
-    let charsDesc = "";
-    if(cat.linkedChars && cat.linkedChars.length > 0 && appData.chatData && appData.chatData.contacts) {
-        const chars = appData.chatData.contacts.filter(c => cat.linkedChars.includes(c.id));
-        if(chars.length > 0) charsDesc = `【其他登场主角】：\n` + chars.map(c => `- ${c.name}: ${c.prompt}`).join('\n') + `\n`;
-    }
+    document.getElementById('bd-title').innerText = article.title;
+    document.getElementById('bd-author').innerText = currentDetailArticle.author;
+    document.getElementById('bd-tags').innerHTML = article.tags.map(t => `<span class="lib-meta-tag" style="background:rgba(0,0,0,0.05); color:var(--lib-sub); font-weight:600;">${t}</span>`).join('');
+    document.getElementById('bd-snippet').innerText = article.snippet;
 
-    let interactionHint = (writerPersona || charsDesc) ? `\n【视角与人物要求】：请以【第三人称上帝视角】撰写故事（严禁使用“我”作为主角自称）。请生动演绎上述主角之间的羁绊与剧情发展。\n` : "";
-    let keywordDesc = keyword ? `\n【核心梗/剧情要求】：用户特别指定了关键词：[${keyword}]。请务必围绕这个脑洞展开剧情！\n` : "";
-let prefsDesc = "";
-    if(appData.libraryData.selectedPrefs && appData.libraryData.selectedPrefs.length > 0) {
-        prefsDesc = `\n【必须融入的私人口味与梗】：${appData.libraryData.selectedPrefs.join('、')}。请让剧情往这些梗的方向发展！\n`;
-    }
-    let qualityHint = (cat.id === 'cat_recommend') ? "【最高文笔警告】：本文必须展现出极其优秀的网文大神级文笔！情感描写细腻动人直击人心！\n" : "";
+    renderChapterList();
+    document.getElementById('modal-book-detail').classList.add('show');
+};
 
-    const systemPrompt = `你现在是一位文笔登峰造极的小说作者。
-${qualityHint}
-【本文基调/底层逻辑（绝对核心）】：${cat.desc}
-（⚠️ 警告：你必须严格遵守此时空和世界观设定，绝不可偏离！如果是古代穿越，必定是身处古代；如果是末世，绝不会出现校园日常！）
-${wbDesc}
-${writerPersona}
-${charsDesc}
-${interactionHint}
-${keywordDesc}
-${prefsDesc}
-【你的任务】：
-生成 ${cat.genCount} 篇截然不同的短文章，每篇约 ${cat.wordCount} 字。
-必须严格输出纯 JSON 数组，严禁 markdown 标记。
-格式要求：[{"id": "随机唯一ID如art_123", "title": "标题", "tags": ["Tag1"], "snippet": "摘要40字", "content": "正文\\n换行"}]`;
+window.renderChapterList = () => {
+    const list = document.getElementById('bd-chapter-list');
+    list.innerHTML = '';
+    currentDetailArticle.chapters.forEach((chap, idx) => {
+        let delBtn = idx > 0 ? `<i class="ri-delete-bin-line chap-del-btn" onclick="deleteChapter(${idx}, event)"></i>` : '';
+        list.innerHTML += `
+            <div class="bd-chapter-item" onclick="openArticleReader(currentDetailArticle, ${idx})">
+                <span style="font-family:'Noto Serif SC'; font-size:16px; font-weight:bold; color:var(--lib-ink);">${chap.title}</span>
+                <div>
+                    ${delBtn}
+                    <i class="ri-arrow-right-s-line" style="color:var(--lib-sub); font-size:20px; vertical-align:middle;"></i>
+                </div>
+            </div>
+        `;
+    });
+};
+
+window.deleteChapter = async (idx, event) => {
+    event.stopPropagation();
+    if(confirm('确定要删除这一章吗？删除后不可恢复。')) {
+        currentDetailArticle.chapters.splice(idx, 1);
+        await saveData();
+        renderChapterList();
+    }
+};
+
+window.openBookActionMenu = () => {
+    document.getElementById('modal-book-actions').classList.add('show');
+};
+
+window.deleteCurrentBook = async () => {
+    if(confirm('确定将这本书从你的书架/喜欢列表中永久移除吗？')) {
+        const artId = currentDetailArticle.id;
+        appData.libraryData.likes = appData.libraryData.likes.filter(a => a.id !== artId);
+        appData.libraryData.folders.forEach(f => {
+            f.articles = f.articles.filter(a => a.id !== artId);
+        });
+        await saveData();
+        closeInsModal('modal-book-actions');
+        closeInsModal('modal-book-detail');
+        if(document.getElementById('lib-tab-bookshelf').classList.contains('active')) renderBookshelf();
+        showToast('已彻底移出书架');
+    }
+};
+
+let continueChapCount = 1;
+
+window.openContinueModal = () => {
+    closeInsModal('modal-book-actions'); 
+    document.getElementById('modal-continue-writing').classList.add('show'); 
+};
+
+window.setCcNum = (num, el) => {
+    continueChapCount = num;
+    document.querySelectorAll('.bd-cc-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+};
+
+window.continueWriting = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先配置 API！"); return; }
+    
+    const btn = document.getElementById('bd-btn-continue');
+    const prompt = document.getElementById('bd-continue-prompt').value.trim();
+
+    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; display:inline-block;"></i> 大神码字中，请稍候...';
+    btn.disabled = true;
+
+    const fullContext = currentDetailArticle.chapters.map(c => `【${c.title}】\n${c.content}`).join('\n\n');
+    const startChapterNum = currentDetailArticle.chapters.length + 1;
+    
+    const systemPrompt = `你是一位文笔登峰造极的小说家。
+以下是正在连载的小说《${currentDetailArticle.title}》的已有全文内容，请你认真阅读并牢记人物设定、剧情细节和伏笔：
+
+${fullContext}
+
+【你的核心续写任务】：
+请紧接着上一章的结尾，严格保持原有的人设风格和情绪基调，往下续写。
+用户的私信要求（剧情走向/特定梗）：[ ${prompt || '顺其自然发展，情节要有起伏拉扯'} ]
+第 ${startChapterNum} 章是你要续写的第一章。
+
+【输出格式强制约束（极为重要！）】：
+你必须且只能输出一个包含刚好 ${continueChapCount} 个 JSON 对象的数组！严禁输出其他任何废话和Markdown修饰符。
+格式严格要求如下：[
+  {"title": "第X章：小标题", "content": "正文内容..."},
+  {"title": "第Y章：小标题", "content": "正文内容..."}
+]`;
 
     try {
         const model = appData.lastApi.model || "gpt-3.5-turbo";
         const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-            body: JSON.stringify({ model, messages:[ {role: "system", content: systemPrompt}, {role: "user", content: "开始生成纯 JSON 数组。"} ], temperature: 0.8 })
+            body: JSON.stringify({ model, messages:[ {role: "system", content: systemPrompt}, {role: "user", content: `开始生成接下来的 ${continueChapCount} 章。严格输出纯JSON数组。`} ], temperature: 0.8 })
         });
         const data = await res.json();
         if(data.error) throw new Error(data.error.message);
 
         let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
-        let articles = JSON.parse(rawText);
-        articles.forEach((a, i) => { if(!a.id) a.id = 'art_' + Date.now() + '_' + i; });
-        
-        cat.articles = articles;
-        await saveData(); 
-        renderDynamicArticles();
-    } catch (e) {
-        alert("生成失败，API异常或内容不符合规范: " + e.message);
-        renderDynamicArticles(); 
+        let newChapters = JSON.parse(rawText);
+
+        if (!Array.isArray(newChapters)) throw new Error("API未返回有效的数组格式");
+
+        currentDetailArticle.chapters.push(...newChapters);
+        await saveData();
+        renderChapterList();
+        document.getElementById('bd-continue-prompt').value = '';
+        closeInsModal('modal-continue-writing');
+        showToast("续写成功！章节已更新。");
+    } catch(e) {
+        alert("续写失败: 可能是模型响应超时或格式错误。请重试。");
+    } finally {
+        btn.innerHTML = '呼叫 AI 生成';
+        btn.disabled = false;
     }
 };
 
-// ==========================================
-// 沉浸式阅读器 & 双轨收藏 (心 与 文件夹)
-// ==========================================
-let currentReadingArticle = null;
+window.openArticleReader = (article, chapIdx = null) => {
+    if(!article) return;
+    currentReadingArticle = article;
 
-window.openArticleReader = (idx) => {
-    currentReadingArticle = window.currentRenderedArticles[idx];
-    if(!currentReadingArticle) return;
+    if (chapIdx !== null && article.chapters) {
+        const chap = article.chapters[chapIdx];
+        document.getElementById('reader-top-tag').innerText = article.title; 
+        document.getElementById('reader-title').innerText = chap.title; 
+        document.getElementById('reader-content').innerText = chap.content;
+    } else {
+        document.getElementById('reader-top-tag').innerText = "Reading"; 
+        document.getElementById('reader-title').innerText = article.title; 
+        document.getElementById('reader-content').innerText = article.content;
+    }
 
+    document.getElementById('reader-tags').innerHTML = article.tags.map(t => `<span class="lib-meta-tag" style="background:#f0f0f0;">${t}</span>`).join('');
     updateReaderIcons();
-    document.getElementById('reader-title').innerText = currentReadingArticle.title;
-    document.getElementById('reader-tags').innerHTML = currentReadingArticle.tags.map(t => `<span class="lib-meta-tag" style="background:#f0f0f0;">${t}</span>`).join('');
-    document.getElementById('reader-content').innerText = currentReadingArticle.content;
     document.getElementById('modal-lib-reader').classList.add('show');
 };
 
-function updateReaderIcons() {
+window.updateReaderIcons = () => {
     if(!currentReadingArticle) return;
     const artId = currentReadingArticle.id;
     
-    // 检查“喜欢”
     const isLiked = appData.libraryData.likes.some(a => a.id === artId);
-    const likeBtn = document.getElementById('reader-btn-like');
-    likeBtn.className = isLiked ? 'ri-heart-3-fill' : 'ri-heart-3-line';
-    likeBtn.style.color = isLiked ? '#ff4d4f' : 'var(--lib-ink)';
-
-    // 检查“合集”
     const isInFolder = appData.libraryData.folders.some(f => f.articles.some(a => a.id === artId));
+
+    const likeBtn = document.getElementById('reader-btn-like');
+    if(likeBtn) {
+        likeBtn.className = isLiked ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+        likeBtn.style.color = isLiked ? '#ff4d4f' : 'var(--lib-ink)';
+    }
     const folderBtn = document.getElementById('reader-btn-folder');
-    folderBtn.className = isInFolder ? 'ri-bookmark-fill' : 'ri-bookmark-line';
-    folderBtn.style.color = isInFolder ? 'var(--lib-accent)' : 'var(--lib-ink)';
-}
+    if(folderBtn) {
+        folderBtn.className = isInFolder ? 'ri-bookmark-fill' : 'ri-bookmark-line';
+        folderBtn.style.color = isInFolder ? 'var(--lib-accent)' : 'var(--lib-ink)';
+    }
+};
 
 window.toggleLikeArticle = async () => {
     const artId = currentReadingArticle.id;
@@ -7095,7 +7516,9 @@ window.toggleLikeArticle = async () => {
         appData.libraryData.likes.splice(existingIdx, 1);
         showToast("已取消喜欢");
     } else {
-        appData.libraryData.likes.unshift(currentReadingArticle); // 插入最前
+        let newCopy = JSON.parse(JSON.stringify(currentReadingArticle));
+        if(!newCopy.chapters) newCopy.chapters =[{ title: "第一章：楔子", content: newCopy.content }];
+        appData.libraryData.likes.unshift(newCopy); 
         showToast("已添加至我的喜欢");
     }
     updateReaderIcons();
@@ -7103,9 +7526,28 @@ window.toggleLikeArticle = async () => {
     if(document.getElementById('lib-tab-bookshelf').classList.contains('active')) renderBookshelf();
 };
 
-// ==========================================
-// 合集文件夹管理系统
-// ==========================================
+window.toggleArticleInFolder = async (folderId) => {
+    const folder = appData.libraryData.folders.find(f => f.id === folderId);
+    if(!folder) return;
+    const artId = currentReadingArticle.id;
+    const existingIdx = folder.articles.findIndex(a => a.id === artId);
+    
+    if(existingIdx >= 0) {
+        folder.articles.splice(existingIdx, 1);
+        showToast("已从合集中移除");
+    } else {
+        let newCopy = JSON.parse(JSON.stringify(currentReadingArticle));
+        if(!newCopy.chapters) newCopy.chapters =[{ title: "第一章：楔子", content: newCopy.content }];
+        folder.articles.unshift(newCopy);
+        showToast("已加入合集");
+    }
+    
+    await saveData();
+    openFolderSelect(); 
+    updateReaderIcons(); 
+    if(document.getElementById('lib-tab-bookshelf').classList.contains('active')) renderBookshelf();
+};
+
 window.switchShelfView = (viewId) => {
     document.querySelectorAll('.main-shelf-tab').forEach(t => t.classList.remove('active'));
     event.currentTarget.classList.add('active');
@@ -7114,13 +7556,10 @@ window.switchShelfView = (viewId) => {
     renderBookshelf();
 };
 
-
-// 在阅读器中点击“书签”打开文件夹选择
 window.openFolderSelect = () => {
     const list = document.getElementById('folder-select-list');
     list.innerHTML = '';
     const artId = currentReadingArticle.id;
-
     appData.libraryData.folders.forEach(f => {
         const isInThis = f.articles.some(a => a.id === artId);
         const btnHtml = isInThis 
@@ -7140,26 +7579,6 @@ window.openFolderSelect = () => {
     document.getElementById('modal-folder-select').classList.add('show');
 };
 
-window.toggleArticleInFolder = async (folderId) => {
-    const folder = appData.libraryData.folders.find(f => f.id === folderId);
-    if(!folder) return;
-    const artId = currentReadingArticle.id;
-    const existingIdx = folder.articles.findIndex(a => a.id === artId);
-    
-    if(existingIdx >= 0) {
-        folder.articles.splice(existingIdx, 1);
-        showToast("已从合集中移除");
-    } else {
-        folder.articles.unshift(currentReadingArticle);
-        showToast("已加入合集");
-    }
-    
-    await saveData();
-    openFolderSelect(); // 刷新列表状态
-    updateReaderIcons(); // 刷新阅读器按钮状态
-    if(document.getElementById('lib-tab-bookshelf').classList.contains('active')) renderBookshelf();
-};
-
 window.createNewFolder = async () => {
     const name = prompt("请输入新合集的名称：");
     if(name && name.trim()) {
@@ -7171,18 +7590,12 @@ window.createNewFolder = async () => {
     }
 };
 
-// ==========================================
-// 合集详情页 (进入具体文件夹)
-// ==========================================
-let currentViewingFolderId = null;
-
 window.openFolderDetail = (folderId) => {
     currentViewingFolderId = folderId;
     const folder = appData.libraryData.folders.find(f => f.id === folderId);
     if(!folder) return;
-
     document.getElementById('folder-detail-title').innerText = folder.name;
-    renderArticleList(folder.articles, 'folder-detail-list');
+    renderArticleList(folder.articles, 'folder-detail-list', 'shelf');
     document.getElementById('modal-folder-detail').classList.add('show');
 };
 
@@ -7196,9 +7609,6 @@ window.deleteCurrentFolder = async () => {
     }
 };
 
-// ==========================================
-// 配置保存等其他支撑逻辑 (包含在内，防止丢失)
-// ==========================================
 window.openLibCategoryModal = (catId) => {
     const isNew = !catId;
     document.getElementById('lib-cat-modal-title').innerText = isNew ? '新建文风分类' : '配置本区配方';
@@ -7293,21 +7703,108 @@ window.deleteLibCategory = async () => {
     }
 };
 
-// 搜索框：在当前分类内触发灵感梗生成
+window.generateCategoryArticles = async (keyword = null) => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先配置 API！"); return; }
+    const cat = appData.libraryData.categories.find(c => c.id === appData.libraryData.currentCatId);
+    if(!cat) return;
+
+    document.getElementById('lib-dynamic-articles').innerHTML = `
+        <div style="text-align:center; padding: 60px 20px; color:#aaa; animation: pulse 1.5s infinite;">
+            <i class="ri-meteor-line" style="font-size:40px; display:inline-block; margin-bottom:10px; color:var(--lib-accent);"></i>
+            <div style="font-size:14px; font-family:'Noto Serif SC'; line-height:1.6;">笔墨流转中...<br>正在为你生成 ${cat.genCount} 篇全新故事</div>
+        </div>
+        <style>@keyframes pulse { 0%, 100% {opacity:1;} 50% {opacity:0.5;} }</style>`;
+
+    let wbDesc = "";
+    if(cat.worldbookCat && appData.world) {
+        const lore = appData.world.filter(w => w.cat === cat.worldbookCat).map(w => `- ${w.title}: ${w.content}`).join('\n');
+        if(lore) wbDesc = `【世界观背景】：\n${lore}\n`;
+    }
+    let writerPersona = "";
+    if(cat.maskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === cat.maskId);
+        if(mask) writerPersona = `【核心主角之一（原面具设定）】：名为“${mask.name}”，人设特征是：${mask.prompt}。`;
+    }
+    let charsDesc = "";
+    if(cat.linkedChars && cat.linkedChars.length > 0 && appData.chatData && appData.chatData.contacts) {
+        const chars = appData.chatData.contacts.filter(c => cat.linkedChars.includes(c.id));
+        if(chars.length > 0) charsDesc = `【其他登场主角】：\n` + chars.map(c => `- ${c.name}: ${c.prompt}`).join('\n') + `\n`;
+    }
+
+    let interactionHint = (writerPersona || charsDesc) ? `\n【视角与人物要求】：请以【第三人称上帝视角】撰写故事（严禁使用“我”作为主角自称）。请生动演绎上述主角之间的羁绊与剧情发展。\n` : "";
+    let keywordDesc = keyword ? `\n【核心梗/剧情要求】：用户特别指定了关键词：[${keyword}]。请务必围绕这个脑洞展开剧情！\n` : "";
+    let prefsDesc = "";
+    if(appData.libraryData.selectedPrefs && appData.libraryData.selectedPrefs.length > 0) {
+        prefsDesc = `\n【必须融入的私人口味与梗】：${appData.libraryData.selectedPrefs.join('、')}。请让剧情往这些梗的方向发展！\n`;
+    }
+    let qualityHint = (cat.id === 'cat_recommend') ? "【最高文笔警告】：本文必须展现出极其优秀的网文大神级文笔！情感描写细腻动人直击人心！\n" : "";
+
+    const systemPrompt = `你现在是一位文笔登峰造极的小说作者。
+${qualityHint}
+【本文基调/底层逻辑（绝对核心）】：${cat.desc}
+（⚠️ 警告：你必须严格遵守此时空和世界观设定，绝不可偏离！如果是古代穿越，必定是身处古代；如果是末世，绝不会出现校园日常！）
+${wbDesc}
+${writerPersona}
+${charsDesc}
+${interactionHint}
+${keywordDesc}
+${prefsDesc}
+【你的任务】：
+生成 ${cat.genCount} 篇截然不同的短文章，每篇约 ${cat.wordCount} 字。
+必须严格输出纯 JSON 数组，严禁 markdown 标记。
+格式要求：[{"id": "随机唯一ID如art_123", "title": "标题", "tags":["Tag1"], "snippet": "摘要40字", "content": "正文\\n换行"}]`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[ {role: "system", content: systemPrompt}, {role: "user", content: "开始生成纯 JSON 数组。"} ], temperature: 0.8 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let articles = JSON.parse(rawText);
+        articles.forEach((a, i) => { 
+            if(!a.id) a.id = 'art_' + Date.now() + '_' + i;
+            a.author = getAuthorForArticle(a.title); // 初始化随机作者
+            a.chapters =[{ title: "第一章：楔子", content: a.content }];
+        });
+        
+        cat.articles = articles;
+        await saveData(); 
+        renderDynamicArticles();
+    } catch (e) {
+        alert("生成失败，API异常或内容不符合规范: " + e.message);
+        renderDynamicArticles(); 
+    }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.querySelector('.lib-search-input');
     const searchIcon = document.querySelector('.lib-search-icon');
-    
     const executeSearch = () => {
         const keywords = searchInput.value.trim();
-        // 允许空关键词执行，此时就当成以前的“召唤灵感”
-        switchLibTab('discover');
-        generateCategoryArticles(keywords);
-        searchInput.value = ''; 
+        if (appData.libraryData.currentTab === 'bookshelf') {
+            appData.libraryData.shelfSearchKeyword = keywords.toLowerCase();
+            renderBookshelf();
+        } else {
+            switchLibTab('discover');
+            generateCategoryArticles(keywords);
+            searchInput.value = ''; 
+        }
         searchInput.blur();
     };
-
-    if(searchInput) searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') executeSearch(); });
+    if(searchInput) {
+        searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') executeSearch(); });
+        searchInput.addEventListener('input', (e) => {
+            if (appData.libraryData.currentTab === 'bookshelf') {
+                appData.libraryData.shelfSearchKeyword = e.target.value.trim().toLowerCase();
+                renderBookshelf();
+            }
+        });
+    }
     if(searchIcon) {
         searchIcon.style.pointerEvents = 'auto'; 
         searchIcon.style.cursor = 'pointer';
@@ -7315,7 +7812,392 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-</script>
+// ==========================================
+// [查阅 AI 手机] 完美防覆盖版交互逻辑
+// ==========================================
 
+let currentPhoneContactId = null;
+
+// 定义默认图片（只保留四张相册卡片，App图标已彻底转入纯CSS，不再受数据干扰！）
+const CP_DEFAULTS = {
+    images: {
+        'cp-img-1': 'https://images.unsplash.com/photo-1516477287739-16a8581e6462?auto=format&fit=crop&w=150&q=80',
+        'cp-img-2': 'https://images.unsplash.com/photo-1514115165842-b0e25867d730?auto=format&fit=crop&w=150&q=80',
+        'cp-img-3': 'https://images.unsplash.com/photo-1610444585141-86375c3f305e?auto=format&fit=crop&w=150&q=80',
+        'cp-img-rabbit': 'https://images.unsplash.com/photo-1585110396000-c9fd4e4e5080?auto=format&fit=crop&w=200&q=80'
+    },
+    texts: {
+        'cp-text-search': '⟳ ⊹♡┈┈ 𓏴 𝒫𝒾𝓃𝓀 𝒱𝑒𝓁𝓋𝑒𝓉 𓏴 ┈┈♡ ⊹🤍',
+        'cp-text-topwidget-header': '[☆₊⋆행복이 찾아오다🐰💬⋆*☆ ]',
+        'cp-text-img1-label': '🫧•͈ᴗ⁃͈★',
+        'cp-text-img2-label': '𝙸♥︎..',
+        'cp-text-img3-label': '🌨☃︎ *･ﾟ',
+        'cp-text-widgetlabel-1': 'Top Widgets⁺',
+        'cp-text-rabbit-date': 'together 520 day',
+        'cp-text-widgetlabel-2': 'Top Widgets⁺',
+        'cp-text-app-1': '备忘录', 'cp-text-app-2': '音乐', 'cp-text-app-3': '邮件', 'cp-text-app-4': '淘宝',
+        'cp-text-app-5': '天气', 'cp-text-app-6': '时钟', 'cp-text-app-7': '设置', 'cp-text-app-8': '微信',
+        'cp-text-widgetlabel-3': 'Colorful Widget'
+    }
+};
+
+window.openCharPhoneSelect = () => {
+    if(!appData.chatData) appData.chatData = { contacts:[] };
+    const listContainer = document.getElementById('cp-contact-list');
+    listContainer.innerHTML = '';
+
+    if(appData.chatData.contacts.length === 0) {
+        listContainer.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">还没有添加任何好友哦。</div>';
+    } else {
+        appData.chatData.contacts.forEach(contact => {
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.setAttribute('onclick', `openCharPhoneDesktop('${contact.id}')`);
+            item.innerHTML = `
+                <div style="display:flex;align-items:center;flex:1">
+                    <img src="${getRealImgSrc(contact.avatar)}" class="list-img-preview">
+                    <div style="font-weight:600">${contact.name}</div>
+                </div>
+                <i class="ri-arrow-right-s-line" style="font-size:20px; color:#ccc;"></i>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+    openPage('page-char-phone-select');
+};
+
+window.openCharPhoneDesktop = (contactId) => {
+    const contact = appData.chatData.contacts.find(c => c.id === contactId);
+    if (!contact) return;
+    currentPhoneContactId = contactId;
+
+    if (!contact.desktopData) contact.desktopData = { images: {}, texts: {} };
+    const desktopData = contact.desktopData;
+
+    // 1. 加载基本信息（头像、名字、心声）
+    document.getElementById('cp-dynamic-avatar').style.backgroundImage = `url('${getRealImgSrc(contact.avatar)}')`;
+    document.getElementById('cp-dynamic-name').innerText = contact.note || contact.name;
+    document.getElementById('cp-dynamic-status').innerText = contact.latestMind?.exp_text || 'only temporary 2 u';
+
+    // 2. 加载允许定制的图片（仅限相册大卡片）
+    const EDITABLE_IMAGES =['cp-img-1', 'cp-img-2', 'cp-img-3', 'cp-img-rabbit'];
+    EDITABLE_IMAGES.forEach(id => {
+        const el = document.getElementById(id);
+        if (desktopData.images[id]) {
+            el.style.backgroundImage = `url('${getRealImgSrc(desktopData.images[id])}')`;
+        } else {
+            el.style.backgroundImage = `url('${CP_DEFAULTS.images[id]}')`;
+        }
+    });
+
+    // 3. 加载定制文字
+    Object.keys(CP_DEFAULTS.texts).forEach(id => {
+        const el = document.getElementById(id);
+        if (desktopData.texts[id]) {
+            el.innerText = desktopData.texts[id];
+        } else {
+            el.innerText = CP_DEFAULTS.texts[id];
+        }
+    });
+
+    openPage('page-char-phone-desktop');
+};
+
+// --- 修改文字 ---
+window.editCharPhoneText = async (elementId, promptMessage, event) => {
+    if (event) event.stopPropagation(); 
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const el = document.getElementById(elementId);
+    const newValue = prompt(promptMessage, el.innerText);
+
+    if (newValue !== null && newValue.trim() !== '') {
+        el.innerText = newValue;
+        contact.desktopData.texts[elementId] = newValue;
+        await saveData();
+    }
+};
+
+// --- 修改图片与图标：调用上传面板 ---
+window.openUploadForCharPhone = (elementId) => {
+    currentUploadId = `cpi|${currentPhoneContactId}|${elementId}`;
+    document.getElementById('url-core').value = '';
+    document.getElementById('modal-upload').classList.add('show');
+};
+
+// --- 无冲突劫持图片上传逻辑 ---
+const originalSystemHandleImage = window.handleImage;
+window.handleImage = async (src) => {
+    if (currentUploadId && currentUploadId.startsWith('cpi|')) {
+        const parts = currentUploadId.split('|');
+        const contactId = parts[1];    
+        const elementId = parts[2];    
+
+        const contact = appData.chatData.contacts.find(c => c.id === contactId);
+        if(contact) {
+            const imageKey = `cp_${Date.now()}`; 
+            try { await idbHelper.saveImage(imageKey, src); } catch(e){}
+            appData.images[imageKey] = src;
+
+            if (!contact.desktopData) contact.desktopData = { images: {}, texts: {} };
+            contact.desktopData.images[elementId] = imageKey;
+            
+            await saveData();
+
+            const el = document.getElementById(elementId);
+            if(el) el.style.backgroundImage = `url('${src}')`;
+            
+            document.getElementById('modal-upload').classList.remove('show');
+            currentUploadId = null; 
+        }
+        return; 
+    }
+    
+    if(originalSystemHandleImage) {
+        originalSystemHandleImage(src);
+    }
+};
+
+
+// ==========================================
+// [查阅手机 - 备忘录 APP] 核心逻辑 & AI 生成
+// ==========================================
+let currentCpNoteId = null;
+
+// 1. 打开应用
+window.openCpNotes = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) {
+        alert("请先选择监视的对象");
+        return;
+    }
+    // 数据初始化
+    if (!contact.notes) contact.notes =[];
+    
+    renderCpNotesList();
+    openPage('page-cp-notes');
+};
+
+// 2. 渲染列表
+window.renderCpNotesList = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+    
+    const listEl = document.getElementById('cp-notes-list-content');
+    listEl.innerHTML = '';
+    
+    const notes = contact.notes ||[];
+    
+    // 按照时间倒序排列
+    [...notes].sort((a,b) => b.id - a.id).forEach(note => {
+        const el = document.createElement('div');
+        el.className = 'cp-note-item';
+        el.onclick = () => openCpNote(note.id);
+        
+        const displayTitle = note.title.trim() ? note.title : '新备忘录';
+        
+        // 提取纯文本做摘要（过滤掉AI生成的HTML标签）
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = note.content;
+        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+        const displayContent = textContent.trim() ? textContent : '无附加文本';
+
+        el.innerHTML = `
+            <div class="cp-note-item-title">${displayTitle}</div>
+            <div class="cp-note-item-desc">
+                <span style="margin-right: 8px;">${note.date}</span>
+                <span style="color: #8e8e93; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${displayContent}</span>
+            </div>
+            <div class="cp-note-item-folder">
+                <i class="ri-folder-2-line"></i> ${note.folder || '备忘录'}
+            </div>
+        `;
+        listEl.appendChild(el);
+    });
+
+    document.getElementById('cp-notes-count').innerText = `${notes.length}个备忘录`;
+};
+
+// 3. 打开详情页
+window.openCpNote = (id) => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    currentCpNoteId = id;
+    const note = contact.notes.find(n => n.id === id);
+    
+    document.getElementById('cp-note-title').value = note.title || '';
+    // 注意：使用的是 innerHTML，以确保 AI 生成的气泡和待办正常渲染
+    document.getElementById('cp-note-content').innerHTML = note.content || '';
+    
+    document.getElementById('page-cp-notes').classList.add('detail-active');
+};
+
+// 4. 保存并返回列表
+window.closeCpNote = () => {
+    if (currentCpNoteId !== null) {
+        const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+        const note = contact.notes.find(n => n.id === currentCpNoteId);
+        if (note) {
+            note.title = document.getElementById('cp-note-title').value;
+            note.content = document.getElementById('cp-note-content').innerHTML; // 保存 HTML
+            saveData();
+        }
+    }
+    currentCpNoteId = null;
+    renderCpNotesList();
+    document.getElementById('page-cp-notes').classList.remove('detail-active');
+};
+
+// 5. 手动新建
+window.createNewCpNote = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if(currentCpNoteId !== null) closeCpNote(); // 如果正在编辑，先保存
+
+    const today = new Date();
+    const dateStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+    
+    const newNote = {
+        id: Date.now(),
+        title: '',
+        content: '',
+        date: dateStr,
+        folder: '备忘录'
+    };
+    
+    contact.notes.push(newNote);
+    saveData();
+    renderCpNotesList();
+    openCpNote(newNote.id);
+    
+    setTimeout(() => document.getElementById('cp-note-title').focus(), 350);
+};
+
+// 6. 删除当前笔记
+window.deleteCurrentCpNote = () => {
+    if (currentCpNoteId === null) return;
+    if (confirm('确定删除此备忘录吗？不可恢复。')) {
+        const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+        contact.notes = contact.notes.filter(n => n.id !== currentCpNoteId);
+        saveData();
+        currentCpNoteId = null;
+        renderCpNotesList();
+        document.getElementById('page-cp-notes').classList.remove('detail-active');
+    }
+};
+
+// ==========================================
+// 🚀 核心：通过大模型一键生成 5 篇动态手机备忘录 (带精准时间感知 - 完整版)
+// ==========================================
+window.generateCpNotes = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { 
+        alert("请先去 API 页面配置 API 服务器与 Key！"); 
+        return; 
+    }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    // 按钮转圈状态
+    const btn = document.querySelector('#cp-notes-list-view .ri-magic-line').parentNode;
+    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; font-size:22px;"></i>';
+    btn.disabled = true;
+
+    // 1. 获取准确的现实时间
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const todayStr = `${dd}/${mm}/${yyyy}`; // 苹果备忘录格式：31/03/2026
+    const fullDateStr = `${yyyy}年${mm}月${dd}日`;
+
+    // 2. 提取近期聊天记录，并强制加上真实的时间戳，防止AI时间错乱
+    const historyMsgs = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-30);
+    let historyText = historyMsgs.map(m => {
+        let msgTime = new Date(m.timestamp).toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+        return `[${msgTime}] ${m.sender === 'me' ? 'User' : contact.name}: ${m.content}`;
+    }).join('\n');
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    const prompt = `你现在正在扮演“${contact.name}”。你的任务是为你手机里的“备忘录APP”生成至少 5 篇全新的笔记。
+    
+【时间与环境规则】（极其重要！！！）：
+现实现在的真实时间是：${fullDateStr}。
+你生成的这5篇备忘录，时间跨度必须合理分布在【最近的一两周内】到【今天】。
+**绝对、绝对不要生成 ${yyyy - 1} 年或更早（比如2024年、2025年）的记录！所有笔记的年份必须是 ${yyyy} 年！**
+
+【你的人设】：${contact.prompt}
+【正在和你聊天的人】：${myName} (${myPersona})
+【最近你们的聊天记录 (带时间戳，供你参考推演时间线)】：
+${historyText || "(你们暂时还没聊过天，请脑补你自己的单方面日记或心情)"}
+
+【生成要求】：
+1. 内容必须高度契合你的人设。必须包含：对用户的吐槽/暗恋/秘密、待办事项(购物单/计划)、或者心情发泄。并且要和你们刚刚聊过的话题产生联动！
+2. 必须要带有 iOS 备忘录的高级排版风格！请在 "content" 字段中使用以下 HTML 标签来实现好看的模块动效：
+   - 待办事项：<div style="margin:5px 0;"><input type="checkbox"> 洗衣服</div>
+   - 苹果灰色气泡/小组件：<div style="background:#e5e5ea; padding:12px 16px; border-radius:18px; width:fit-content; color:#000; margin:10px 0; font-size:15px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">写在气泡里的话</div>
+   - 手绘涂鸦/强调：<div style="border: 3px dashed #ff9999; padding:15px; border-radius:16px; background:#fff0f0; color:#d93838; font-weight:bold; transform:rotate(-2deg); width:fit-content; font-family: cursive;">心情极差！！🤬</div>
+   - 荧光笔高亮：<span style="background-color: #ffe066; padding: 0 4px; border-radius:4px;">重点标出</span>
+3. 请输出严格的 JSON 数组格式，绝对不要有任何 Markdown (如 \`\`\`json)：[
+  { "title": "购物清单", "content": "<input type='checkbox'> 买牛奶<br><input type='checkbox'> 买花", "date": "像 ${todayStr} 这样的格式或者'昨天'", "folder": "日常" },
+  { "title": "关于他", "content": "<div style='background:#e5e5ea;...'>其实我...</div>", "date": "具体的日期，年份必须是${yyyy}", "folder": "秘密" }
+]
+注意：必须生成且刚好 5 篇笔记。`;
+
+    try {
+        const model = appData.lastApi.model || (appData.cachedModels.length > 0 ? appData.cachedModels[0] : "gpt-3.5-turbo");
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: 0.85 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let generatedNotes = JSON.parse(rawText);
+        
+        if(!contact.notes) contact.notes = [];
+
+        // 将新生成的笔记添加到列表的最前面
+        generatedNotes.forEach((note, index) => {
+            contact.notes.unshift({
+                id: Date.now() + index, // 赋予一个唯一的 ID
+                title: note.title || '无标题',
+                content: note.content || '',
+                date: note.date,
+                folder: note.folder || '备忘录'
+            });
+        });
+
+        await saveData();
+        renderCpNotesList();
+        showToast(`${generatedNotes.length}篇新备忘录已生成`);
+
+    } catch (e) {
+        alert("AI 生成失败，可能是返回格式错误或网络问题:\n" + e.message);
+        console.error(e);
+    } finally {
+        // 恢复按钮状态
+        btn.innerHTML = '<i class="ri-magic-line" style="font-size:22px;"></i>';
+        btn.disabled = false;
+    }
+};
+// 查阅手机桌面实时时间
+function updateCpTime() {
+    const el = document.getElementById('cp-live-time');
+    if (!el) return;
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2, '0');
+    const m = now.getMinutes().toString().padStart(2, '0');
+    el.textContent = h + ':' + m;
+}
+updateCpTime();
+setInterval(updateCpTime, 1000);
+</script>
 </body>
 </html>
