@@ -63,10 +63,9 @@
         }
         
         body {
-    /* 使用 max() 确保就算安卓安全区计算为0，顶部也至少有 25px 的内边距，不会顶破天际 */
-    padding-top: max(env(safe-area-inset-top), 25px);
-    padding-bottom: max(env(safe-area-inset-bottom), 15px);
-}
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
 
         /* 额外修复：如果是聊天室页面，确保底部输入框不被小白条遮挡 */
         .input-area {
@@ -3620,11 +3619,14 @@ function bindLongPress(element, content, type) {
 
         window.onload = async () => {
         await loadData(); 
+
         startClock();
         renderDOM(); 
         setupInputs();
         setupFileUpload();
         renderFontList();
+        
+        // 👇 加上这一句，拖拽功能就激活了！
         initStickerDragSystem(); 
     };
 
