@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover">
-    <title>My Phone - 虚拟手机</title>
+    <title>PockAI</title>
     <!-- PWA 配置：让网页变身 APP -->
     
     <!-- 1. 链接配置文件 -->
@@ -32,8 +32,81 @@
     <!-- 👇 新增：状态卡片专属英文字体和中文手写体 -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Noto+Serif+SC:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    
+    
     <style id="global-font-style"></style>
     <style>
+    
+/* ================= PockAI 开场动画专属样式 ================= */
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+  #splash-screen {
+    position: fixed; inset: 0;
+    width: 100vw; height: 100vh;
+    background-color: #FDFDFB; 
+    display: flex; justify-content: center; align-items: center;
+    overflow: hidden;
+    font-family: 'Cormorant Garamond', serif;
+    z-index: 999999; /* 保证在最最最上层，遮住所有东西 */
+    transition: opacity 1s ease-in-out; /* 用于最后淡出的动画 */
+  }
+
+  .splash-ripple {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 2px; height: 2px; border-radius: 50%;
+    border: 1px solid rgba(220, 212, 226, 0); z-index: 1;
+    animation: soulRipple 3s cubic-bezier(0.24, 1, 0.32, 1) forwards;
+  }
+  .splash-ripple-2 {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 2px; height: 2px; border-radius: 50%;
+    border: 1px solid rgba(220, 212, 226, 0); z-index: 1;
+    animation: soulRipple 3.5s cubic-bezier(0.24, 1, 0.32, 1) 0.8s forwards;
+  }
+  .splash-logo-container {
+    position: relative; z-index: 10; display: flex; align-items: baseline;
+    justify-content: center; color: #383636; 
+  }
+  .splash-brand-text {
+    font-size: 3.5rem; font-weight: 400; letter-spacing: 0.2em;
+    opacity: 0; filter: blur(10px);
+    animation: textFocusReveal 2s cubic-bezier(0.3, 0.9, 0.4, 1) 1.2s forwards;
+  }
+  .splash-text-ai { font-style: italic; font-weight: 300; }
+  .splash-the-dot {
+    position: absolute; right: 5px; top: -50px;
+    width: 7px; height: 7px; border-radius: 50%; background-color: #D3C3DD;
+    box-shadow: 0 0 15px rgba(211, 195, 221, 0.8); opacity: 0;
+    animation: dotDescend 1s cubic-bezier(0.34, 1.56, 0.64, 1) 2.2s forwards;
+  }
+  .splash-dot-glow-effect {
+    position: absolute; top: -15px; right: -5px;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(211,195,221,0.6) 0%, rgba(211,195,221,0) 60%);
+    opacity: 0; pointer-events: none;
+    animation: thinkingBreathe 4s infinite ease-in-out 3s; 
+  }
+
+  @keyframes soulRipple {
+    0% { width: 0; height: 0; border: 1px solid rgba(220, 212, 226, 0.8); opacity: 1; }
+    100% { width: 600px; height: 600px; border: 2px solid rgba(220, 212, 226, 0); opacity: 0; }
+  }
+  @keyframes textFocusReveal {
+    0% { opacity: 0; filter: blur(12px); letter-spacing: 0.3em; transform: scale(0.96) translateY(5px); }
+    100% { opacity: 1; filter: blur(0px); letter-spacing: 0.05em; transform: scale(1) translateY(0); }
+  }
+  @keyframes dotDescend {
+    0% { top: -60px; opacity: 0; transform: scale(0.5); }
+    60% { top: 15px; opacity: 1; transform: scale(1.1); }
+    100% { top: 7px; opacity: 1; transform: scale(1); }
+  }
+  @keyframes thinkingBreathe {
+    0%   { opacity: 0; transform: scale(0.6); }
+    50%  { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(0.6); }
+  }
+  /* ======================================================= */
+  
         :root {
             --bg-color: #000;
             --text-main: #070707;
@@ -1608,6 +1681,22 @@
     <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
 </head>
 <body>
+
+
+<body>
+    <!-- 👇 新增：PockAI 沉浸式开场动画层 👇 -->
+    <div id="splash-screen">
+      <div class="splash-ripple"></div>
+      <div class="splash-ripple-2"></div>
+      <div class="splash-logo-container">
+        <div class="splash-brand-text">
+          <span>Pock</span><span class="splash-text-ai">Aı</span>
+        </div>
+        <div class="splash-the-dot"></div>
+        <div class="splash-dot-glow-effect"></div>
+      </div>
+    </div>
+    <!-- 👆 开场动画结束 👆 -->
 
     <div id="toast">Saved</div>
     <div id="wallpaper-layer"></div>
@@ -3618,16 +3707,24 @@ function bindLongPress(element, content, type) {
 }
 
         window.onload = async () => {
+        // 1. 静默加载底层数据，用户此时正在看 PockAI 开屏动画
         await loadData(); 
-
         startClock();
         renderDOM(); 
         setupInputs();
         setupFileUpload();
         renderFontList();
-        
-        // 👇 加上这一句，拖拽功能就激活了！
         initStickerDragSystem(); 
+        
+        // 2. 定时器：4.5秒后，让开屏动画优雅地淡出消失
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if(splash) {
+                splash.style.opacity = '0'; // 触发 CSS 里的 transition 渐隐
+                // 等待渐隐动画（1秒）结束后，把这个 DOM 节点彻底删掉，不占内存不挡点击
+                setTimeout(() => splash.remove(), 1000);
+            }
+        }, 4500); 
     };
 
 
@@ -8500,17 +8597,15 @@ window.openCpWechat = () => {
     openPage('page-cp-wechat');
 };
 
-// 1. 渲染微信列表（全部由 AI 生成的数据驱动）
+// 1. 渲染微信列表（极致性能优化版）
 window.renderCpWechatList = () => {
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
     if (!contact) return;
 
     const listEl = document.getElementById('cp-wx-list-content');
-    listEl.innerHTML = '';
-
     const npcs = contact.wechatNpcs ||[];
 
-    // 空白态提示（刚打开微信，还没刷新时）
+    // 空白态提示
     if (npcs.length === 0) {
         listEl.innerHTML = `
             <div style="text-align:center; color:#b2b2b2; padding: 60px 20px;">
@@ -8521,22 +8616,30 @@ window.renderCpWechatList = () => {
         return;
     }
 
-    // 渲染列表
+    // 🌟 性能优化 1：不要用 filter 遍历全局几千条消息，从后往前找最后一条即可！
+    const allMsgs = appData.chatData.messages ||[];
+    let lastUserMsg = null;
+    for (let i = allMsgs.length - 1; i >= 0; i--) {
+        if (allMsgs[i].chatId === contact.id) {
+            lastUserMsg = allMsgs[i];
+            break;
+        }
+    }
+
+    // 🌟 性能优化 2：使用 DocumentFragment 防止列表回流闪烁
+    const fragment = document.createDocumentFragment();
+
     npcs.forEach(npc => {
         let lastMsg = "暂无消息";
         let displayTime = npc.time || "";
 
-        // 如果是“你”（user），抓取真实的最新聊天记录和时间
         if (npc.id === 'user') {
-            const realHistory = appData.chatData.messages.filter(m => m.chatId === contact.id);
-            if (realHistory.length > 0) {
-                const m = realHistory[realHistory.length - 1];
-                lastMsg = m.sticker ? "[表情包]" : (m.content.replace(/<[^>]+>/g, '') || "[图片/文件]");
-                const d = new Date(m.timestamp);
+            if (lastUserMsg) {
+                lastMsg = lastUserMsg.sticker ? "[表情包]" : (lastUserMsg.content.replace(/<[^>]+>/g, '') || "[图片/文件]");
+                const d = new Date(lastUserMsg.timestamp);
                 displayTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
             }
         } else {
-            // 如果是 NPC，取假数据的最后一条
             if (npc.messages && npc.messages.length > 0) {
                 const m = npc.messages[npc.messages.length - 1];
                 lastMsg = m.content.replace(/<[^>]+>/g, '');
@@ -8547,7 +8650,6 @@ window.renderCpWechatList = () => {
         el.className = 'cp-wx-item';
         el.onclick = () => openCpWechatChat(npc.id);
         
-        // 头像处理：如果是 user，强制使用全局设置里的头像
         let avatarSrc = npc.id === 'user' ? getRealImgSrc(appData.images['user-avatar']) : npc.avatar;
 
         el.innerHTML = `
@@ -8560,54 +8662,60 @@ window.renderCpWechatList = () => {
                 <div class="cp-wx-msg-preview">${lastMsg}</div>
             </div>
         `;
-        listEl.appendChild(el);
+        fragment.appendChild(el);
     });
+
+    listEl.innerHTML = '';
+    listEl.appendChild(fragment); // 碎片一次性注入 DOM
 };
 
-// 2. 打开聊天室
+// 2. 打开聊天室（极致性能优化版）
 window.openCpWechatChat = (id) => {
     currentCpWxChatId = id;
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
     const bodyEl = document.getElementById('cp-wx-chat-content');
-    bodyEl.innerHTML = '';
+    
+    // 🌟 性能优化 3：使用字符串缓冲池，绝对禁止在循环里使用 innerHTML +=
+    let htmlBuffer = ''; 
 
-    const charAvatar = getRealImgSrc(contact.avatar); // Char 的头像（右侧）
+    const charAvatar = getRealImgSrc(contact.avatar); 
     const npcData = contact.wechatNpcs.find(n => n.id === id);
     if (!npcData) return;
 
-    // 名字显示 AI 生成的备注名
     document.getElementById('cp-wx-chat-title').innerText = npcData.name;
 
     if (id === 'user') {
         // --- 渲染与你（User）的真实对话记录 ---
         let myAvatar = getRealImgSrc(appData.images['user-avatar']);
+        let myName = appData.customTexts['display-name'] || "我";
+        if(contact.userMaskId && appData.userMasks) {
+            const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+            if(mask) { myName = mask.name; myAvatar = getRealImgSrc(mask.avatar); }
+        }
 
-        const realHistory = appData.chatData.messages.filter(m => m.chatId === contact.id);
+        // 🌟 性能优化 4：只截取最近 50 条记录！几百条带 Base64 的消息同时渲染绝对卡死
+        const realHistory = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-50);
+        
         realHistory.forEach(msg => {
             if (msg.isRecalled) {
-                bodyEl.innerHTML += `<div class="cp-wx-sys-msg">" ${msg.sender === 'me' ? npcData.name : '我'} " 撤回了一条消息</div>`;
+                htmlBuffer += `<div class="cp-wx-sys-msg">" ${msg.sender === 'me' ? npcData.name : '我'} " 撤回了一条消息</div>`;
                 return;
             }
 
-            // 在对方手机里，发件人是 bot 代表自己(右侧)，发件人是 me 代表用户(左侧)
             const isMe = msg.sender === 'bot'; 
             const wrapClass = isMe ? 'me' : 'them';
             const avatarSrc = isMe ? charAvatar : myAvatar;
 
-            // 纯表情包判断：如果没有文字只有贴纸
             const isOnlySticker = (!msg.content || msg.content.trim() === '') && msg.sticker;
             const bubbleClass = isOnlySticker ? 'cp-wx-bubble no-bg' : 'cp-wx-bubble';
 
-            // 拼装内容
             let contentHtml = msg.content.replace(/\n/g, '<br>');
             if (msg.quote) contentHtml = `<div style="font-size:12px; color:#888; border-left:2px solid #ccc; padding-left:4px; margin-bottom:4px;">${msg.quote}</div>` + contentHtml;
             
             if (msg.sticker) {
-                // 如果不仅有贴纸还有字，换个行
                 contentHtml += (isOnlySticker ? '' : '<br>') + `<img src="${getRealImgSrc(msg.sticker.src)}" style="max-width:130px; display:block;">`;
             }
             
-            // QQ 贴纸(漂浮特效)
             let peeledHtml = '';
             if (msg.peeledStickers) {
                 msg.peeledStickers.forEach(s => {
@@ -8617,7 +8725,8 @@ window.openCpWechatChat = (id) => {
                 });
             }
 
-            bodyEl.innerHTML += `
+            // 拼装进缓冲池
+            htmlBuffer += `
                 <div class="cp-wx-bubble-wrap ${wrapClass}">
                     ${isMe ? '' : `<img src="${avatarSrc}" class="cp-wx-chat-ava">`}
                     <div class="${bubbleClass}">${contentHtml}${peeledHtml}</div>
@@ -8629,15 +8738,14 @@ window.openCpWechatChat = (id) => {
     } else {
         // --- 渲染 AI 生成的 NPC 假聊天 ---
         npcData.messages.forEach(msg => {
-            const isMe = msg.sender === 'me'; // NPC消息中，me就是Char自己(右)，them是NPC(左)
+            const isMe = msg.sender === 'me'; 
             const wrapClass = isMe ? 'me' : 'them';
             const avatarSrc = isMe ? charAvatar : npcData.avatar;
 
-            // 智能判断 NPC 发的是不是纯 HTML 图片（为了做到假表情包透明底）
             const isOnlyImg = /^<img[^>]+>$/.test(msg.content.trim());
             const bubbleClass = isOnlyImg ? 'cp-wx-bubble no-bg' : 'cp-wx-bubble';
 
-            bodyEl.innerHTML += `
+            htmlBuffer += `
                 <div class="cp-wx-bubble-wrap ${wrapClass}">
                     ${isMe ? '' : `<img src="${avatarSrc}" class="cp-wx-chat-ava">`}
                     <div class="${bubbleClass}">${msg.content}</div>
@@ -8647,8 +8755,15 @@ window.openCpWechatChat = (id) => {
         });
     }
 
+    // 一次性渲染到页面上，彻底消灭循环回流卡顿
+    bodyEl.innerHTML = htmlBuffer; 
     document.getElementById('page-cp-wechat').classList.add('chat-active');
-    setTimeout(() => bodyEl.scrollTop = bodyEl.scrollHeight, 50);
+    
+    // 使用 requestAnimationFrame 保证渲染帧完成后再滚动到底部，彻底消除闪烁和卡顿
+    requestAnimationFrame(() => {
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+        setTimeout(() => bodyEl.scrollTop = bodyEl.scrollHeight, 50);
+    });
 };
 
 window.closeCpWechatChat = () => {
@@ -8877,7 +8992,7 @@ window.jumpToRealWeb = () => {
         window.open(fullUrl, '_blank');
     }
 };
-// 5. 核心魔法1：批量生成搜索历史 (完美多样性 + 弹性内心OS + 全局温度)
+// 5. 核心魔法1：批量生成搜索历史 (强制多样性 + 情感留白 + 视角锁定)
 window.generateCpBrowserPages = async () => {
     if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先配置 API！"); return; }
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
@@ -8896,36 +9011,39 @@ window.generateCpBrowserPages = async () => {
 
     const historyMsgs = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-20);
     let historyText = historyMsgs.map(m => `${m.sender === 'me' ? myName : contact.name}: ${m.content}`).join('\n');
-
-    // 重点：从全局配置读取你的温度设定，如果没有则默认 0.8
     const userTemp = parseFloat(appData.lastApi.temp) || 0.8;
 
-    const prompt = `【角色与场景】：
-你现在的身份是：“${contact.name}”（人设：${contact.prompt}）。“${myName}”（人设：${myPersona || '普通网友'}）正在偷看你的手机浏览器历史。
-【近期聊天参考】：${historyText || "(暂无，请脑补)"}
+    const prompt = `【情景设定：绝对视角】
+你现在是“${contact.name}”（你的人设：${contact.prompt}）。
+你的私人手机正被“${myName}”（对方人设：${myPersona || '普通网友'}）偷偷拿在手里翻看！你的所有隐私（浏览器历史）都暴露在 Ta 的眼前。
+你必须完全代入你自己的角色，生成你的真实浏览记录。
 
-【任务：生成 5 个极其多样化的网页记录】
-请务必发挥你的创造力，生成 5 篇【截然不同】的网页。绝不能全是同一种类型！
-你可以从以下丰富的场景中随机抽取 5 种进行混合搭配（不要局限于例子，自由发挥）：
-1. 纯文本长文类：知乎情感问答、匿名树洞吐槽、豆瓣影评、个人私密博客、心理测试结果、冷知识科普百科。
-2. 真实生活UI类：淘宝购物车、下厨房菜谱、同城外卖订单、12306车票、GitHub代码库、地图路线规划、旅游攻略卡片。
+【任务：生成 5 个完全不同的网页记录】
+请从下面的【网页多样性灵感库】中来做参考生成5 种**不同类型**的场景！要有创造力和想象力，要有多样性！
+【网页多样性灵感库】：
+- 论坛求助：在知乎/贴吧搜索：“如何判断一个人是不是喜欢你？”、“送XX座的礼物推荐”。
+- 社交动态：在微博/小红书搜索：“${myName}可能喜欢的东西”、“（${myName}家乡）旅游攻略”。
+- 生活服务：12306订票记录（目的地是${myName}的城市）、美团外卖订单（点了${myName}爱吃的菜）、电影票订单（是你俩都提过的电影）。
+- 购物记录：淘宝/京东商品详情（是${myName}想要的东西）、购物车截图。
+- 代码与技术：GitHub代码库（比如一个叫 "love-confession-timer.js" 的项目，计划在某个纪念日给${myName}惊喜）。
+- 私密日志：在类似“语雀”或私密博客上写的、关于你和${myName}之间某件事的真实想法（这可以是纯文本）。
+- 音乐或视频：网易云音乐里建了一个歌单，歌名能连成一句情话；B站的观看历史（比如“恋爱教程”）。
+- 以上都只是参考！！你要自主发挥想象力生成多样化的记录
 
-【排版与“内心OS”的正确做法】：
-1. 如果是【纯文本长文类】，请使用 <p> 标签进行长篇大论的排版。这类网页本身就充满了文字，你的“内心想法”可以自然地融入到浏览的文章内容中，或者在网页最后加一句简短的内心吐槽。
-2. 如果是【真实生活UI类】，请使用 <sandbox> 标签和内联 CSS 渲染出逼真的 UI 卡片（如商品图、价格、二维码占位）。在这类网页里，你可以通过“目的地”、“购买的商品”来体现你在乎 ${myName}，也可以偶尔在角落贴一个红色的“私人便签/OS”。
-3. 动态弹性：不要死板！有的网页可以有长长的内心OS，有的网页可以只有精美的UI卡片而没有任何OS，有的可以全是文字。保持随机性和自然感！
+
+3【高仿UI排版】：如果是票务、商品、代码等有界面的网页，必须用 <sandbox> 标签和内联CSS，手写出带圆角、阴影、图文混排的精美高仿UI卡片！如果是论坛、博客，则直接用 <p> 输出长篇文字，可以带适当ui美化仿论坛等格式。
 
 【输出格式】：严格返回 JSON 数组！[
   {
     "id": "随机字符串",
-    "urlPrefix": "真实域名(如 zhihu.com/, taobao.com/, douban.com/)",
-    "urlSuffix": "真实路径",
-    "meta": "网页类型标签(如: 情感问答 / 订单详情 / 私密博客)",
-    "title": "网页标题",
-    "authorLeft": "来源/作者",
-    "authorRight": "时间/价格/数据",
-    "content": "（HTML代码：长文用<p>，UI界面用<sandbox>。根据网页类型自然决定是否附带内心OS）",
-    "relatedTitle": "相关推荐区标题",
+    "urlPrefix": "（真实域名，如 zhihu.com/, taobao.com/）",
+    "urlSuffix": "（真实路径）",
+    "meta": "（网页类型标签，如: 情感问答 / 订单详情）",
+    "title": "（网页标题）",
+    "authorLeft": "（来源/作者/店铺名）",
+    "authorRight": "（时间/价格/数据）",
+    "content": "（HTML代码：长文用<p>，UI界面用<sandbox>。完全模拟真实的网页内容）",
+    "relatedTitle": "（相关推荐区标题）",
     "related":[ { "title": "推荐标题", "url": "短网址", "theme": "icon-purple", "icon": "✦" } ]
   }
 ]`;
@@ -8935,7 +9053,7 @@ window.generateCpBrowserPages = async () => {
         const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: userTemp }) // 使用你设置的全局温度
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: userTemp })
         });
         const data = await res.json();
         if(data.error) throw new Error(data.error.message);
@@ -8947,7 +9065,7 @@ window.generateCpBrowserPages = async () => {
         await saveData();
         closeCpBrowserArticle();
         renderCpBrowserHome();
-        showToast(`已成功抓取 5 份全新浏览记录`);
+        showToast(`已刷新 5 份全新浏览记录`);
 
     } catch (e) {
         alert("网络或数据解析失败，请重试:\n" + e.message);
@@ -8957,14 +9075,14 @@ window.generateCpBrowserPages = async () => {
     }
 };
 
-// 6. 核心魔法2：无限下钻阅读 (遵循同样的弹性规则)
+// 6. 核心魔法2：无限下钻阅读 (同样应用 UI 多样性原则)
 window.generateSingleBrowserPage = async (targetTitle) => {
     if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先配置 API！"); return; }
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
     if (!contact) return;
 
     document.getElementById('cp-browser-title').innerText = "网页解析中...";
-    document.getElementById('cp-browser-content').innerHTML = '<div style="text-align:center; padding: 50px 0;"><i class="ri-loader-4-line" style="font-size:30px; color:#007AFF; animation: spin 1s linear infinite; display:inline-block;"></i><br><span style="font-size:12px; color:#999; margin-top:10px; display:block;">正在渲染网页与宿主念想...</span></div>';
+    document.getElementById('cp-browser-content').innerHTML = '<div style="text-align:center; padding: 50px 0;"><i class="ri-loader-4-line" style="font-size:30px; color:#007AFF; animation: spin 1s linear infinite; display:inline-block;"></i><br><span style="font-size:12px; color:#999; margin-top:10px; display:block;">正在渲染网页与前端UI模块...</span></div>';
     document.getElementById('cp-browser-related-links').innerHTML = '';
 
     let myName = appData.customTexts['display-name'] || "User";
@@ -8977,12 +9095,12 @@ window.generateSingleBrowserPage = async (targetTitle) => {
     const userTemp = parseFloat(appData.lastApi.temp) || 0.8;
 
     const prompt = `你现在的身份是：“${contact.name}”（人设：${contact.prompt}）。
-对方是“${myName}”（人设：${myPersona}），正在偷看你的手机浏览器。
+对方是“${myName}”，正在偷看你的手机浏览器。
 你刚才点击了一个链接，标题是：“${targetTitle}”。请为其生成这篇网页的详细内容！
 
 【排版与内容要求】：
-1. 灵活判断网页类型！如果是资讯、问答、博客等文字类网页，请输出长篇大论的 <p> 文本；如果是车票、商品、代码等工具类网页，请使用 <sandbox> 渲染出对应的高仿 UI 卡片。
-2. 情感表达要自然！不要像机器人一样每次都在结尾写“内心OS”。你可以选择把对 ${myName} 的感情写进长篇文字里，或者在 UI 卡片的细节中体现，或者甚至什么OS都不加，就单纯展示网页内容。
+1. 根据网页标题的性质（可能是车票、代码仓库、购物、外卖、攻略或论坛），必须用 HTML 的 <sandbox> 标签和内联 CSS 渲染出【逼真的、对应类型的高级 UI 界面】。
+2. 【极其重要】：你是一个有审美的美化代码大师，要逼真地扮演一个“网页渲染器”要有创造力，想象力，生成不同模块。
 
 【输出格式约束】：严格返回一个 JSON 对象：
 {
@@ -8993,7 +9111,7 @@ window.generateSingleBrowserPage = async (targetTitle) => {
     "title": "${targetTitle}",
     "authorLeft": "作者名或平台",
     "authorRight": "数据或状态",
-    "content": "（必须包含 <p> 或者 <sandbox> 排版的高级 HTML 代码）",
+    "content": "（必须包含 <p> 帖子正文 或者 <sandbox> 排版的高级 HTML UI）",
     "relatedTitle": "相关推荐",
     "related":[ { "title": "推荐的标题", "url": "短网址", "theme": "icon-dark", "icon": "⌘" } ]
 }`;
@@ -9003,7 +9121,7 @@ window.generateSingleBrowserPage = async (targetTitle) => {
         const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: userTemp }) // 使用全局温度
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: userTemp })
         });
         const data = await res.json();
         if(data.error) throw new Error(data.error.message);
