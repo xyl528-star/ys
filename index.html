@@ -20,8 +20,11 @@
     <!-- 4. 移动端视口设置 (禁止缩放，像APP一样固定) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- 5. Android/Chrome 主题色 -->
-    <meta name="theme-color" content="#000000">
+    <!-- 5. Android/Chrome 主题色 (双端锁死，防止变白) -->
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <!-- 强迫安卓识别为全屏 Web App -->
+    <meta name="mobile-web-app-capable" content="yes">
 <!-- 引入 Remix Icon 打造高级感图标 -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
@@ -60,9 +63,10 @@
         }
         
         body {
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+    /* 增加 10px 的保底边距，并叠加刘海安全区 */
+    padding-top: calc(10px + env(safe-area-inset-top));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
 
         /* 额外修复：如果是聊天室页面，确保底部输入框不被小白条遮挡 */
         .input-area {
@@ -3616,15 +3620,26 @@ function bindLongPress(element, content, type) {
 
         window.onload = async () => {
         await loadData(); 
-
         startClock();
         renderDOM(); 
         setupInputs();
         setupFileUpload();
         renderFontList();
-        
-        // 👇 加上这一句，拖拽功能就激活了！
         initStickerDragSystem(); 
+        
+        // 👇 新增：用户首次点击屏幕任意位置时，自动请求浏览器沉浸式全屏
+        document.body.addEventListener('click', function enterFullScreen() {
+            let elem = document.documentElement;
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen(); // Safari兼容
+                }
+            }
+            // 触发一次后就移除监听，避免干扰后续点击
+            document.body.removeEventListener('click', enterFullScreen);
+        });
     };
 
 
