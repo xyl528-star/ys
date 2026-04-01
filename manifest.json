@@ -1,6 +1,6 @@
 {
-  "name": "Atelier",
-  "short_name": "Atelier",
+  "name": "PockAI",
+  "short_name": "PockAI",
   "start_url": "./index.html",
   "display": "fullscreen",
   "background_color": "#000000",
