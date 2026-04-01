@@ -63,9 +63,9 @@
         }
         
         body {
-    /* 增加 10px 的保底边距，并叠加刘海安全区 */
-    padding-top: calc(10px + env(safe-area-inset-top));
-    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    /* 使用 max() 确保就算安卓安全区计算为0，顶部也至少有 25px 的内边距，不会顶破天际 */
+    padding-top: max(env(safe-area-inset-top), 25px);
+    padding-bottom: max(env(safe-area-inset-bottom), 15px);
 }
 
         /* 额外修复：如果是聊天室页面，确保底部输入框不被小白条遮挡 */
@@ -3626,23 +3626,7 @@ function bindLongPress(element, content, type) {
         setupFileUpload();
         renderFontList();
         initStickerDragSystem(); 
-        
-        // 👇 新增：用户首次点击屏幕任意位置时，自动请求浏览器沉浸式全屏
-        document.body.addEventListener('click', function enterFullScreen() {
-            let elem = document.documentElement;
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen(); // Safari兼容
-                }
-            }
-            // 触发一次后就移除监听，避免干扰后续点击
-            document.body.removeEventListener('click', enterFullScreen);
-        });
-    };
-
-
+       
     async function loadAllImagesFromDB() {
         if(!idbHelper.db) await idbHelper.init();
         return new Promise((resolve) => {
