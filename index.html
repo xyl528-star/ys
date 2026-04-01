@@ -3626,7 +3626,9 @@ function bindLongPress(element, content, type) {
         setupFileUpload();
         renderFontList();
         initStickerDragSystem(); 
-       
+    };
+
+
     async function loadAllImagesFromDB() {
         if(!idbHelper.db) await idbHelper.init();
         return new Promise((resolve) => {
