@@ -1458,6 +1458,176 @@
 #cp-icon-safari { background-image: url("https://i.postimg.cc/Prq3g3dB/Safari-i-OS-512x512.png"); }
 #cp-icon-camera { background-image: url("https://i.postimg.cc/7P9tQ8rd/照片_i_OS_512x512.png"); }  
 
+
+/* ==============================================
+   [查阅手机 - 时钟 APP] 专属样式
+============================================== */
+.cp-clock-container {
+    background-color: #000000;
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-variant-numeric: tabular-nums; 
+    color: #FFFFFF;
+    user-select: none; 
+}
+.cp-clock-container.visible { display: flex; }
+
+.cp-clock-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    background-color: #000000;
+}
+
+.clock-top-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: calc(env(safe-area-inset-top) + 10px) 16px 10px;
+    height: 44px; flex-shrink: 0;
+}
+.clock-nav-btn { color: #FF9500; font-size: 17px; font-weight: 400; cursor: pointer; }
+.clock-nav-add { font-size: 32px; line-height: 1; font-weight: 200; padding-bottom: 4px; }
+
+.clock-large-title { font-size: 28px; font-weight: 700; padding: 2px 16px 12px; letter-spacing: 0.4px; margin: 0; flex-shrink: 0;}
+
+.clock-list { list-style: none; flex: 1; overflow-y: auto; margin: 0; padding: 0; }
+.clock-item {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-left: 16px; padding: 10px 16px 10px 0;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.15);
+    transition: opacity 0.2s;
+}
+.clock-item:active { opacity: 0.4; }
+
+.clock-item-info { display: flex; flex-direction: column; justify-content: center; }
+.clock-info-offset { color: #8E8E93; font-size: 12px; margin-bottom: 3px; }
+.clock-info-city { font-size: 22px; font-weight: 400; line-height: 1.1; }
+
+/* 字体已调小，保持和谐 */
+.clock-item-time { font-weight: 200; font-size: 48px; letter-spacing: -1px; line-height: 1; }
+
+.clock-bottom-tabbar {
+    background-color: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border-top: 0.5px solid rgba(255,255,255,0.1);
+    display: flex; justify-content: space-around;
+    padding-top: 6px;
+    /* 核心：底部留出 24px 给小白条，绝不遮挡图标 */
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    z-index: 100; flex-shrink: 0;
+}
+.clock-tab-item { display: flex; flex-direction: column; align-items: center; color: #8E8E93; width: 25%; }
+.clock-tab-item.active { color: #FF9500; }
+.clock-tab-icon { width: 24px; height: 24px; margin-bottom: 2px; }
+.clock-tab-icon svg { width: 100%; height: 100%; display: block; }
+.clock-tab-text { font-size: 10px; font-weight: 500; }
+
+/* ==============================================
+   [查阅手机 - 邮件 APP] 专属样式
+============================================== */
+.cp-mail-container {
+    background-color: #F2F2F7;
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    --box-bg: #FFFFFF;
+    --ios-blue: #007AFF;
+    --ios-text: #000000;
+    --ios-gray: #8E8E93;
+    --ios-chevron: #C7C7CC;
+    --ios-divider: #C6C6C8;
+}
+.cp-mail-container.visible { display: flex; }
+
+.cp-mail-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; background: #F2F2F7;
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    will-change: transform;
+}
+#cp-mail-home-view { transform: translateX(0); z-index: 1; }
+#cp-mail-list-view { transform: translateX(100%); z-index: 2; background: #fff; }
+#cp-mail-detail-view { transform: translateX(100%); z-index: 3; background: #fff; }
+
+.cp-mail-container.list-active #cp-mail-home-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-mail-container.list-active #cp-mail-list-view { transform: translateX(0); box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+
+.cp-mail-container.detail-active #cp-mail-list-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-mail-container.detail-active #cp-mail-detail-view { transform: translateX(0); box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+
+.mail-top-navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: calc(env(safe-area-inset-top) + 10px) 20px 8px;
+    flex-shrink: 0;
+}
+.mail-nav-btn { color: var(--ios-blue); font-size: 17px; cursor: pointer; display: flex; align-items: center; }
+.mail-edit-btn { color: var(--ios-blue); font-size: 17px; cursor: pointer; }
+
+.mail-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+
+.mail-large-title { font-size: 34px; font-weight: 700; letter-spacing: 0.3px; margin: 0 0 10px 0; padding: 0 20px; color: var(--ios-text); }
+
+.mail-list-card { background: var(--box-bg); border-radius: 12px; margin: 10px 20px; overflow: hidden; }
+.mail-list-item { display: flex; align-items: center; padding-left: 16px; min-height: 48px; transition: background-color 0.2s; cursor: pointer; }
+.mail-list-item:active { background-color: #E5E5EA; }
+
+.mail-list-item-content { display: flex; flex: 1; align-items: center; justify-content: space-between; padding: 12px 16px 12px 0; border-bottom: 0.5px solid var(--ios-divider); }
+.mail-list-item:last-child .mail-list-item-content { border-bottom: none; }
+
+.mail-item-left { display: flex; align-items: center; }
+.mail-icon { width: 24px; height: 24px; margin-right: 14px; display: flex; align-items: center; justify-content: center; color: var(--ios-blue); font-size: 22px; }
+.mail-icon-star { color: #FF9500 !important; }
+
+.mail-item-text-group { display: flex; flex-direction: column; justify-content: center; }
+.mail-item-title { font-size: 17px; font-weight: 400; color: var(--ios-text); }
+
+.mail-item-right { display: flex; align-items: center; gap: 8px; }
+.mail-count { font-size: 17px; color: var(--ios-gray); }
+.mail-info-icon { color: var(--ios-blue); font-size: 20px; }
+.mail-chevron { color: var(--ios-chevron); font-size: 20px; }
+
+/* 调整底部独立项的间距：padding 缩小，增加底边框分割 */
+.mail-large-standalone { margin: 20px 20px 0; }
+.mail-standalone-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; border-bottom: 0.5px solid var(--ios-divider); }
+.mail-standalone-item:last-child { border-bottom: none; }
+.mail-standalone-item .mail-item-title { font-size: 17px; font-weight: 600; color: var(--ios-text); }
+.mail-standalone-item .mail-chevron { color: var(--ios-chevron); font-size: 20px; }
+
+.mail-bottom-toolbar {
+    position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: flex-start; justify-content: center;
+    padding: 10px 20px calc(10px + env(safe-area-inset-bottom)); min-height: 44px;
+    background-color: rgba(246, 246, 246, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border-top: 0.5px solid rgba(0,0,0,0.15); z-index: 99;
+}
+.mail-toolbar-text { font-size: 12px; color: #333; margin-top: 5px; }
+.mail-compose-btn { position: absolute; right: 20px; top: 10px; color: var(--ios-blue); cursor: pointer; }
+
+/* 邮件列表页样式 */
+.mail-search-bar-wrap { padding: 0 20px 10px; }
+.mail-search-box { background: #E3E3E8; border-radius: 10px; padding: 8px 12px; color: #8E8E93; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+.mail-emails-container { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+.mail-email-row { padding: 12px 20px; border-bottom: 0.5px solid var(--ios-divider); cursor: pointer; position: relative; }
+.mail-email-row:active { background: #E5E5EA; }
+.mail-email-row.unread .mail-email-sender { font-weight: 700; color: var(--ios-text); }
+.mail-email-row.unread .mail-email-subject { font-weight: 700; color: var(--ios-text); }
+.mail-email-row.unread::before { content: ''; position: absolute; left: 8px; top: 20px; width: 10px; height: 10px; background: var(--ios-blue); border-radius: 50%; }
+.mail-email-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+.mail-email-sender { font-size: 16px; font-weight: 400; color: var(--ios-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+.mail-email-date { font-size: 15px; color: var(--ios-gray); }
+.mail-email-subject { font-size: 15px; font-weight: 400; color: var(--ios-text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mail-email-preview { font-size: 15px; color: var(--ios-gray); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+
+/* 邮件详情页样式 */
+.mail-detail-scroll { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+.mail-detail-header { padding: 15px 20px; border-bottom: 0.5px solid var(--ios-divider); }
+.mail-detail-subject { font-size: 22px; font-weight: 700; color: var(--ios-text); margin-bottom: 15px; line-height: 1.3; }
+.mail-detail-sender-row { display: flex; align-items: center; gap: 12px; }
+.mail-detail-avatar { width: 40px; height: 40px; border-radius: 50%; background: #ccc; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; flex-shrink: 0; }
+.mail-detail-sender-info { flex: 1; min-width: 0; }
+.mail-detail-sender-name { font-size: 16px; font-weight: 600; color: var(--ios-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mail-detail-date { font-size: 14px; color: var(--ios-gray); }
+.mail-detail-receiver { font-size: 14px; color: var(--ios-gray); margin-top: 2px; }
+.mail-detail-body { padding: 20px; font-size: 16px; line-height: 1.6; color: var(--ios-text); word-wrap: break-word; }
+
 /* ==============================================[查阅手机 - 备忘录 APP] 专属样式
 ============================================== */
 .cp-notes-container {
@@ -1514,6 +1684,280 @@
 #cp-note-content[placeholder]:empty:before { content: attr(placeholder); color: #c7c7cc; }
 #cp-note-content input[type="checkbox"] { transform: scale(1.3); margin-right: 10px; accent-color: #d4a311; }
 
+
+/* ==============================================
+   [查阅手机 - iMessage 信息 APP] 专属样式
+============================================== */
+.cp-msg-container {
+    --ios-blue: #007aff;
+    --ios-bg: #ffffff;
+    --ios-text: #000000;
+    --ios-gray: #8e8e93;
+    --list-bg-active: #e5e5ea;
+    --border-color: #c6c6c8;
+    --header-bg: rgba(255, 255, 255, 0.85);
+    --search-bg: rgba(118, 118, 128, 0.12);
+    --gray-bubble: #e9e9eb;
+    
+    background-color: var(--ios-bg);
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+}
+.cp-msg-container.visible { display: flex; }
+
+.cp-msg-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--ios-bg);
+    transition: transform 0.4s cubic-bezier(0.36, 0.66, 0.04, 1);
+    will-change: transform; display: flex; flex-direction: column;
+}
+#cp-msg-list-view { transform: translateX(0); z-index: 10; }
+#cp-msg-chat-view { transform: translateX(100%); z-index: 20; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+
+/* 页面切换动画类 */
+.cp-msg-container.chat-active #cp-msg-list-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-msg-container.chat-active #cp-msg-chat-view { transform: translateX(0); }
+
+/* --- 列表页 --- */
+.cp-msg-top-nav { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; flex-shrink: 0; }
+.cp-msg-nav-btn { color: var(--ios-blue); font-size: 17px; cursor: pointer; }
+.cp-msg-compose svg { width: 24px; height: 24px; fill: var(--ios-blue); cursor: pointer; }
+
+.cp-msg-scroll { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+.cp-msg-title { font-size: 34px; font-weight: 700; padding: 5px 16px 10px; color: var(--ios-text); margin: 0; }
+.cp-msg-search-wrap { padding: 0 16px 12px 16px; }
+.cp-msg-search { display: flex; align-items: center; background-color: var(--search-bg); border-radius: 10px; padding: 8px 10px; color: var(--ios-gray); }
+.cp-msg-search svg { width: 16px; height: 16px; fill: #8e8e93; margin-right: 6px; }
+.cp-msg-search input { flex: 1; border: none; background: transparent; font-size: 17px; outline: none; color: var(--ios-text); }
+
+.cp-msg-list-item { display: flex; align-items: center; padding: 12px 16px 12px 4px; margin-left:12px; border-bottom: 0.5px solid var(--border-color); cursor: pointer; transition: 0.15s; }
+.cp-msg-list-item:active { margin-left: 0; padding-left: 16px; background-color: var(--list-bg-active); }
+.cp-msg-unread-dot { width: 10px; height: 10px; background-color: var(--ios-blue); border-radius: 50%; margin-right: 2px; margin-left: -12px; opacity: 0; }
+.cp-msg-list-item.unread .cp-msg-unread-dot { opacity: 1; }
+
+.cp-msg-avatar { flex-shrink: 0; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; margin-right: 12px; font-weight: 500; background: #abacba; }
+.cp-msg-content { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.cp-msg-row-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+.cp-msg-name { font-size: 17px; font-weight: 600; color: var(--ios-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-msg-time { font-size: 15px; color: var(--ios-gray); flex-shrink: 0; margin-left: 8px; }
+.cp-msg-preview { font-size: 15px; color: var(--ios-gray); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* --- 聊天详情页 --- */
+.cp-msg-chat-header { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border-color); z-index: 30; flex-shrink: 0;}
+/* 1. 修复：增大返回按钮的点击热区，让它极其灵敏 */
+.cp-msg-header-left { display: flex; align-items: center; color: var(--ios-blue); font-size: 17px; cursor: pointer; letter-spacing: -0.5px; padding: 10px 15px 10px 0; margin-left: -5px; }
+.cp-msg-header-left svg { width: 22px; height: 22px; fill: var(--ios-blue); margin-right: -4px; }
+.cp-msg-unread-badge { background-color: var(--ios-blue); color: white; font-size: 12px; font-weight: 600; padding: 2px 6px; border-radius: 10px; margin-left: 2px; }
+
+/* 2. 新增：右上角视频通话图标的样式 */
+.cp-msg-header-right { display: flex; align-items: center; gap: 15px; color: var(--ios-blue); padding-right: 5px; }
+.cp-msg-header-right svg { width: 24px; height: 24px; fill: currentColor; cursor: pointer; }
+
+/* 3. 修复：“已送达”被气泡遮挡的问题 (把原来的 -8px 改为正数) */
+.cp-msg-status { font-size: 11px; color: var(--ios-gray); font-weight: 600; text-align: right; padding-right: 4px; margin-top: 2px; margin-bottom: 2px; }
+
+/* 4. 修复：底部输入框超长被切断，➕号变成椭圆的问题 */
+.cp-msg-footer { 
+    display: flex; align-items: flex-end; padding: 8px 15px calc(10px + env(safe-area-inset-bottom)); 
+    background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+    border-top: 1px solid var(--border-color); flex-shrink: 0; 
+    box-sizing: border-box; width: 100%; /* 强制限制在屏幕宽度内 */
+}
+.cp-msg-plus { 
+    width: 30px; height: 30px; background: #e9e9eb; border-radius: 50%; 
+    display: flex; justify-content: center; align-items: center; 
+    margin-right: 12px; margin-bottom: 2px; flex-shrink: 0; /* 强制不被挤压，保持正圆 */
+}
+.cp-msg-plus svg { width:16px; height:16px; fill:#8e8e93; }
+.cp-msg-input-bar { 
+    flex: 1; display: flex; align-items: center; background: #ffffff; 
+    border: 1px solid #d1d1d6; border-radius: 18px; padding: 6px 8px 6px 14px; 
+    min-width: 0; /* 允许 flex 子项缩小，防止撑爆屏幕 */
+}
+.cp-msg-input-bar input { flex: 1; height: 22px; border: none; outline: none; font-size: 16px; background: transparent; min-width: 0; }
+.cp-msg-input-bar input::placeholder { color: #a5a5a7; }
+.cp-msg-mic { margin-left: 8px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+.cp-msg-mic svg { width:20px; height:20px; fill:var(--ios-gray); }
+.cp-msg-header-center { display: flex; flex-direction: column; align-items: center; flex:1; }
+.cp-msg-chat-ava { width: 36px; height: 36px; border-radius: 50%; background: #abacba; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; margin-bottom: 2px; }
+.cp-msg-chat-name { font-size: 11px; font-weight: 500; color: var(--ios-text); text-align: center; display: flex; align-items: center; }
+.cp-msg-chat-name::after { content: ""; display: inline-block; width: 4.5px; height: 4.5px; border-right: 1.5px solid #abacba; border-bottom: 1.5px solid #abacba; transform: rotate(-45deg); margin-left: 4px; margin-bottom: 1px; }
+
+.cp-msg-chat-main { flex: 1; overflow-y: auto; padding: 15px 15px 20px 15px; display: flex; flex-direction: column; }
+.cp-msg-chat-main::-webkit-scrollbar { display: none; }
+.cp-msg-timestamp { text-align: center; font-size: 11px; font-weight: bold; color: var(--ios-gray); margin: 20px 0 10px 0; }
+/* 1. 修复：连续消息的间距，拉开到 4px，打破粘连感 */
+.cp-msg-row { display: flex; margin-bottom: 4px; position: relative; flex-direction: column; width: 100%; }
+.cp-msg-row.last-in-group { margin-bottom: 16px; } /* 组末尾（换人说话时）留出大间距 */
+.cp-msg-row-inner { display: flex; width: 100%; }
+.cp-msg-row.received .cp-msg-row-inner { justify-content: flex-start; }
+.cp-msg-row.sent .cp-msg-row-inner { justify-content: flex-end; }
+
+/* 1. 恢复所有气泡四个角完全一样的圆润弧度！ */
+.cp-msg-bubble { 
+    max-width: 75%; 
+    padding: 6px 13px;  
+    font-size: 16px;    
+    line-height: 1.4;   
+    letter-spacing: -0.3px; 
+    word-wrap: break-word; 
+    position: relative; 
+    /* 👇 强制所有气泡的四个角永远是完美的 18px 圆弧，不会再缺一块了 👇 */
+    border-radius: 18px !important; 
+}
+
+/* Sent (char) 颜色设定 */
+.cp-msg-row.sent .cp-msg-bubble { color: #fff; background: #8AB8E1; }
+/* Received (对方) 颜色设定 */
+.cp-msg-row.received .cp-msg-bubble { color: var(--ios-text); background: #EAEAEA; }
+
+/* 隐藏纯CSS旧尾巴 */
+.cp-msg-row.sent .cp-msg-bubble::before,
+.cp-msg-row.received .cp-msg-bubble::before { display: none !important; }
+
+/* =====================================================
+   2. 你的专属图片小尾巴 (默认帮你放大了！)
+   ===================================================== */
+
+/* Sent (char) 的右侧尾巴 */
+.cp-msg-row.sent.last-in-group .cp-msg-bubble::after {
+    content: '';
+    display: block !important;
+    position: absolute;
+    background-image: url('https://i.postimg.cc/k5ktthVw/Image-1775130608515-921.png');
+    /* 强制图片填满你设置的宽高，不会被限制缩放 */
+    background-size: 150% 150%; 
+    background-repeat: no-repeat;
+    
+    /* 🛠️ 【傻瓜式微调区】 🛠️ */
+    width: 24px;     /* 【调胖瘦】数字越大，尾巴越胖/越宽 */
+    height: 18px;    /* 【调长短】数字越大，尾巴越高 */
+    
+    bottom: -1px;    /* 【上下挪】数字越小(如 -5px)尾巴越往下掉，越大(如 3px)越往上飘 */
+    right: 0px;    /* 【左右挪】负数越大(如 -18px)尾巴越往右边飞出去，离气泡越远 */
+    
+    z-index: 1;
+}
+
+/* Received (对方) 的左侧尾巴 */
+.cp-msg-row.received.last-in-group .cp-msg-bubble::after {
+    content: '';
+    display: block !important;
+    position: absolute;
+    background-image: url('https://i.postimg.cc/yNwSSrJt/Image-1775130605519-920.png');
+    background-size: 150% 150%; 
+    background-repeat: no-repeat;
+    
+    /* 🛠️ 【傻瓜式微调区】 🛠️ */
+    width: 24px;     /* 【调胖瘦】数字越大，尾巴越胖/越宽 */
+    height: 18px;    /* 【调长短】数字越大，尾巴越高 */
+    
+    bottom: 2px;    /* 【上下挪】数字越小(如 -5px)尾巴越往下掉，越大(如 3px)越往上飘 */
+    left: -14px;     /* 【左右挪】负数越大(如 -18px)尾巴越往左边飞出去，离气泡越远 */
+    
+    z-index: 1;
+}
+
+/* ==============================================[查阅手机 - 相册 APP] 专属样式
+============================================== */
+.cp-photo-container {
+    --p-blue: #007aff;
+    --p-bg-light: #ffffff;
+    --p-text-dark: #000000;
+    --p-text-gray: #8e8e93;
+    --p-text-light-gray: #aeaeb2;
+    --p-header-bg: rgba(255,255,255,0.85);
+    --p-border-line: rgba(60,60,67,0.18);
+    --p-viewer-bg: #000000;
+    
+    background-color: var(--p-bg-light);
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+}
+.cp-photo-container.visible { display: flex; }
+
+.cp-photo-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--p-bg-light);
+    transition: transform 0.4s cubic-bezier(0.36, 0.66, 0.04, 1);
+    will-change: transform; display: flex; flex-direction: column;
+}
+#cp-photo-albums-view { transform: translateX(0); z-index: 10; }
+#cp-photo-grid-view { transform: translateX(100%); z-index: 20; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+#cp-photo-detail-view { transform: translateX(100%); z-index: 30; background-color: var(--p-viewer-bg); }
+
+.cp-photo-container.grid-active #cp-photo-albums-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-photo-container.grid-active #cp-photo-grid-view { transform: translateX(0); }
+.cp-photo-container.detail-active #cp-photo-grid-view { transform: translateX(-30%); opacity: 0.5; }
+.cp-photo-container.detail-active #cp-photo-detail-view { transform: translateX(0); }
+
+/* 头部导航（修复了右侧溢出切边的问题） */
+.cp-photo-nav {
+    box-sizing: border-box; /* 核心修复点 */
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px 15px;
+    background: var(--p-header-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border-bottom: 0.5px solid var(--p-border-line); z-index: 100; flex-shrink: 0;
+}
+.cp-photo-nav-btn { color: var(--p-blue); font-size: 17px; cursor: pointer; display: flex; align-items: center;}
+.cp-photo-nav-btn svg { width: 14px; height: 22px; fill: var(--p-blue); margin-right: 4px; transform: scaleX(1.1); }
+.cp-photo-nav-title { font-size: 17px; font-weight: 600; color: var(--p-text-dark); position: absolute; left: 50%; transform: translateX(-50%); }
+
+/* 视图1：相簿列表 */
+.cp-photo-scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+.cp-photo-large-title { font-size: 34px; font-weight: 700; letter-spacing: 0.3px; padding: 10px 15px; margin:0;}
+.cp-photo-sec-row { box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-end; padding: 15px 15px 10px; border-top: 0.5px solid var(--p-border-line); }
+.cp-photo-sec-title { font-size: 20px; font-weight: 700; color:#111;}
+.cp-photo-sec-action { color: var(--p-blue); font-size: 17px; cursor: pointer; }
+
+.cp-photo-albums-grid { display: grid; padding: 0 15px; grid-template-columns: repeat(2, 1fr); gap: 15px 12px; }
+.cp-photo-album-card { display: flex; flex-direction: column; cursor: pointer; }
+.cp-photo-cover-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); background:#eee;}
+.cp-photo-album-name { font-size: 15px; font-weight: 500; color: var(--p-text-dark); margin-top: 8px; margin-bottom: 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cp-photo-album-count { font-size: 15px; color: var(--p-text-gray); }
+
+/* 视图2：照片网格 */
+.cp-photo-media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding-bottom:max(80px, env(safe-area-inset-bottom)); }
+.cp-photo-media-item { width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: pointer; background: #eee; }
+
+/* 视图3：详情大图与卡片 */
+#cp-photo-detail-view .cp-photo-nav { background: rgba(0,0,0,0.85); border-bottom: none; color:#fff;}
+#cp-photo-detail-view .cp-photo-nav-btn, #cp-photo-detail-view .cp-photo-nav-title { color: #fff; }
+#cp-photo-detail-view .cp-photo-nav-btn svg { fill: #fff; }
+
+.cp-photo-viewer-content { flex: 1; position: relative; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+.cp-photo-main-frame { height: clamp(50vh, 65vh, 75vh); width: 100%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; margin-top:20px; position:relative;}
+.cp-photo-fullscreen { max-width: 100%; max-height: 100%; object-fit: contain; }
+.cp-photo-pull-up { width: 36px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 4px; position:absolute; top: -15px; left:50%; transform:translateX(-50%); pointer-events: none;}
+
+.cp-photo-info-card { background-color: #1c1c1e; border-radius: 12px; margin: 5px 15px 30px 15px; padding: 16px 14px; display: flex; flex-direction: column; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.cp-photo-meta-desc { font-size: 15px; font-weight: 400; color: #fff; padding-bottom: 12px; border-bottom: 0.5px solid rgba(255,255,255,0.1); line-height:1.5;}
+.cp-photo-meta-time { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.cp-photo-meta-date { font-weight: 600; font-size: 14px; color: #fff; margin-bottom:2px;}
+.cp-photo-meta-stamp { font-size: 13px; color: #8e8e93; font-weight: 500;}
+.cp-photo-meta-exif { display: flex; flex-direction: column; margin-top: 15px; color: #8e8e93; font-size: 13px; line-height: 1.4; gap: 4px; }
+.cp-photo-meta-exif .model { color: #fff; font-weight:600;}
+
+/* 底部功能栏 (相簿首页 & 大图页通用) */
+.cp-photo-tab-bar { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(249, 249, 249, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 0.5px solid var(--p-border-line); display: flex; justify-content: space-around; padding-top:8px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 100; box-sizing: border-box;}
+.cp-photo-tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--p-text-light-gray); }
+.cp-photo-tab-item svg { width: 26px; height: 26px; fill: currentColor; margin-bottom: 3px;}
+.cp-photo-tab-item span { font-size: 10px; font-weight: 500; }
+.cp-photo-tab-item.active { color: var(--p-blue); }
+
+/* 修复了右侧删除按钮越界的致命问题 */
+.cp-photo-viewer-bottom { 
+    box-sizing: border-box; /* 核心防溢出 */
+    position: absolute; bottom: 0; width: 100%; z-index: 10; 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 15px 24px max(20px, calc(10px + env(safe-area-inset-bottom))); /* 安全的内边距 */
+    background: linear-gradient(transparent, rgba(0,0,0,0.8) 40%, #000); 
+    pointer-events: none; 
+}
+.cp-photo-v-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor:pointer;}
+.cp-photo-v-icon i { font-size: 24px; color: #fff; } /* 换成了更完美的内置字体图标 */
 
 /* ==============================================
    [查阅手机 - 微信 APP] 专属样式
@@ -1599,6 +2043,86 @@
         #app-library-root { position: fixed; inset: 0; overflow: hidden; display: none; flex-direction: column; }
         #app-library-root.visible { display: flex; }
         
+        
+/* ==============================================
+   [查阅手机 - 电话/语音留言 APP] 专属样式
+============================================== */
+.cp-ph-container {
+    --ph-bg: #000000;
+    --ph-text: #ffffff;
+    --ph-gray: #8e8e93;
+    --ph-border: #2c2c2e;
+    --ph-blue: #0a84ff;
+    --ph-nav: rgba(30, 30, 30, 0.85);
+    --ph-keypad: #333333;
+    --ph-keypad-act: #555555;
+    --ph-green: #34c759;
+    --ph-tag: #3a3a3c;
+    
+    background-color: var(--ph-bg);
+    position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    color: var(--ph-text);
+}
+.cp-ph-container.visible { display: flex; }
+
+.cp-ph-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--ph-bg); opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: scale(0.98); display: flex; flex-direction: column;
+}
+.cp-ph-view.active { opacity: 1; pointer-events: auto; transform: scale(1); z-index: 10; }
+
+/* 头部 */
+.cp-ph-header { display: flex; justify-content: space-between; align-items: center; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--ph-bg); position: sticky; top: 0; z-index: 100; opacity: 0.95; }
+.cp-ph-header-btn { font-size: 14px; color: var(--ph-blue); font-weight: 500; background: #1c1c1e; padding: 6px 12px; border-radius: 14px; cursor: pointer; }
+.cp-ph-header-title { font-size: 17px; font-weight: 600; letter-spacing: 0.5px; }
+.cp-ph-header-action { width: 32px; height: 32px; background-color: #1e3a5f; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+.cp-ph-header-action i { font-size: 18px; color: var(--ph-blue); }
+
+/* 列表 (留言/通讯录) */
+.cp-ph-list { flex: 1; overflow-y: auto; padding-bottom: 120px; }
+.cp-ph-list::-webkit-scrollbar { display: none; }
+.cp-ph-item { display: flex; align-items: flex-start; padding: 12px 18px; transition: background 0.2s; cursor: pointer; border-bottom: 0.5px solid var(--ph-border); }
+.cp-ph-item:active { background: #1c1c1e; }
+.cp-ph-avatar-wrap { position: relative; display: flex; align-items: center; margin-right: 14px; }
+.cp-ph-avatar { width: 45px; height: 45px; background-color: #4a4a4c; border-radius: 50%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+.cp-ph-avatar svg { width: 28px; height: 28px; fill: #d1d1d6; margin-top: 6px;}
+.cp-ph-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.cp-ph-unread-dot { width: 9px; height: 9px; border-radius: 50%; background-color: var(--ph-blue); position: absolute; left: -14px; top: 50%; transform: translateY(-50%); opacity: 0; }
+.cp-ph-item.unread .cp-ph-unread-dot { opacity: 1; }
+
+.cp-ph-text-content { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0;}
+.cp-ph-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.cp-ph-phone-num { font-size: 17px; font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.cp-ph-time { font-size: 13px; color: var(--ph-gray); flex-shrink: 0; margin-left: 8px;}
+.cp-ph-bottom-row { display: flex; align-items: flex-start; font-size: 14px; }
+.cp-ph-label { background-color: var(--ph-tag); color: #d1d1d6; font-size: 11px; padding: 2px 4px; border-radius: 4px; font-weight: 500; margin-right: 6px; margin-top: 1px; flex-shrink: 0; }
+.cp-ph-desc { color: var(--ph-gray); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* 拨号盘 */
+.cp-ph-keypad-wrap { display: flex; flex-direction: column; height: 100%; padding-top: calc(env(safe-area-inset-top) + 20px); }
+.cp-ph-display { flex: 1; display: flex; align-items: flex-end; justify-content: center; font-size: 34px; font-weight: 300; letter-spacing: 2px; min-height: 80px; padding-bottom: 20px; word-break: break-all; padding: 0 30px 20px; text-align: center; }
+.cp-ph-grid { display: grid; grid-template-columns: repeat(3, 70px); grid-gap: 15px 25px; justify-content: center; padding-bottom: 120px; }
+.cp-ph-key { width: 70px; height: 70px; border-radius: 50%; background: var(--ph-keypad); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; user-select: none; }
+.cp-ph-key:active { background: var(--ph-keypad-act); }
+.cp-ph-key-num { font-size: 30px; font-weight: 400; line-height: 1; margin-top: 4px; }
+.cp-ph-key-char { font-size: 10px; font-weight: 600; color: #a5a5a7; margin-top: 2px; letter-spacing: 1px;}
+.cp-ph-call-row { display: flex; justify-content: center; align-items: center; margin-top: 5px; position: relative; width: 100%; grid-column: 1 / 4; }
+.cp-ph-call-btn { width: 70px; height: 70px; border-radius: 50%; background: var(--ph-green); display: flex; justify-content: center; align-items: center; }
+.cp-ph-call-btn svg { width: 32px; height: 32px; fill: #fff; }
+.cp-ph-del-btn { position: absolute; right: 20px; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.2s; }
+.cp-ph-del-btn.show { opacity: 1; pointer-events: auto; }
+
+/* 悬浮底栏 */
+.cp-ph-dock-wrap { position: absolute; bottom: calc(25px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; z-index: 100; }
+.cp-ph-dock { background: rgba(45, 45, 45, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 35px; display: flex; align-items: center; justify-content: space-evenly; padding: 6px; width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.cp-ph-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 46px; border-radius: 16px; color: var(--ph-gray); cursor: pointer; transition: 0.2s; }
+.cp-ph-nav-item i { font-size: 20px; margin-bottom: 2px; }
+.cp-ph-nav-item span { font-size: 10px; font-weight: 500;}
+.cp-ph-nav-item.active { background: #1e3a5f; color: var(--ph-blue); }
 /* ==============================================[查阅手机 - 专属浏览器 (Safari)] 沉浸式高级私密版 V2
 ============================================== */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Outfit:wght@400;500&display=swap');
@@ -2181,7 +2705,7 @@
                     <!-- 所有 App 图标锁定，点击触发未来开发的弹窗，不再触发换图 -->
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-notes" onclick="openCpNotes()"></div><span id="cp-text-app-1" onclick="editCharPhoneText('cp-text-app-1', '输入App名称', event)">备忘录</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-music" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-2" onclick="editCharPhoneText('cp-text-app-2', '输入App名称', event)">音乐</span></div>
-                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-mail" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-3" onclick="editCharPhoneText('cp-text-app-3', '输入App名称', event)">邮件</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-mail" onclick="openCpMail()"></div><span id="cp-text-app-3" onclick="editCharPhoneText('cp-text-app-3', '输入App名称', event)">邮件</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-taobao" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-4" onclick="editCharPhoneText('cp-text-app-4', '输入App名称', event)">淘宝</span></div>
                 </div>
             </div>
@@ -2190,7 +2714,7 @@
             <div class="cp-section-row">
                 <div class="cp-section-col cp-app-grid">
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-weather" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-5" onclick="editCharPhoneText('cp-text-app-5', '输入App名称', event)">天气</span></div>
-                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-clock" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-6" onclick="editCharPhoneText('cp-text-app-6', '输入App名称', event)">时钟</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-clock" onclick="openCpClock()"></div><span id="cp-text-app-6" onclick="editCharPhoneText('cp-text-app-6', '输入App名称', event)">时钟</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-settings" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-7" onclick="editCharPhoneText('cp-text-app-7', '输入App名称', event)">设置</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-wechat" onclick="openCpWechat()"></div><span id="cp-text-app-8" onclick="editCharPhoneText('cp-text-app-8', '输入App名称', event)">微信</span></div>
                 </div>
@@ -2210,13 +2734,12 @@
 
       <!-- 底部 Dock 栏（四款原生iOS级图标）锁定点击 -->
         <div class="cp-dock">
-            <div class="cp-app-icon" id="cp-icon-messages" onclick="alert('即将开发：进入该APP界面')"></div>
-            <div class="cp-app-icon" id="cp-icon-phone" onclick="alert('即将开发：进入该APP界面')"></div>
+            <div class="cp-app-icon" id="cp-icon-messages" onclick="openCpMessages()"></div>
+            <div class="cp-app-icon" id="cp-icon-phone" onclick="openCpPhoneApp()"></div>
             <div class="cp-app-icon" id="cp-icon-safari" onclick="openCpBrowser()"></div>
-            <div class="cp-app-icon" id="cp-icon-camera" onclick="alert('即将开发：进入该APP界面')"></div>
+            <div class="cp-app-icon" id="cp-icon-camera" onclick="openCpPhotos()"></div>
         </div>
         <div class="cp-home-indicator" onclick="closePage('page-char-phone-desktop')" style="cursor:pointer;"></div>
-    </div>
         </div>
     </div>
     
@@ -2287,6 +2810,151 @@
     </div>
 </div>
 
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：iMessage 信息 APP -->
+<!-- ============================================== -->
+<div id="page-cp-messages" class="page-layer cp-msg-container">
+    
+    <!-- 视图1：列表页 -->
+    <div id="cp-msg-list-view" class="cp-msg-view">
+        <div class="cp-msg-top-nav">
+            <div class="cp-msg-nav-btn">编辑</div>
+            <!-- 右上角：魔法生成按钮 -->
+            <div class="cp-msg-compose" onclick="generateCpMessages()">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.86 14.1l-2.85-.81.82-2.81L14.7 6.88l2.06 2.06-8.62 8.16zM17.18 8.6l-2.07-2.06.63-.63c.31-.31.81-.31 1.12 0l1.24 1.25c.31.31.31.81 0 1.12l-.92.32z"/></svg>
+            </div>
+        </div>
+        
+        <div class="cp-msg-scroll">
+            <h1 class="cp-msg-title">信息</h1>
+            <div class="cp-msg-search-wrap">
+                <div class="cp-msg-search">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 14z"/></svg>
+                    <input type="text" placeholder="搜索">
+                </div>
+            </div>
+            <div id="cp-msg-list-content">
+                <!-- 动态生成的列表插入这里 -->
+            </div>
+            <div style="height: 60px;"></div>
+        </div>
+        <!-- 底部退出小白条 -->
+        <div class="cp-home-indicator" onclick="closePage('page-cp-messages')" style="cursor:pointer; z-index: 9999; background: rgba(0,0,0,0.2);"></div>
+    </div>
+
+    <!-- 视图2：聊天详情页 -->
+    <div id="cp-msg-chat-view" class="cp-msg-view">
+        <div class="cp-msg-chat-header">
+            <div class="cp-msg-header-left" onclick="closeCpMsgChat()">
+                <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                <div class="cp-msg-unread-badge" id="cp-msg-badge">0</div>
+            </div>
+            <div class="cp-msg-header-center">
+                <div class="cp-msg-chat-ava" id="cp-msg-chat-avatar"></div>
+                <div class="cp-msg-chat-name" id="cp-msg-chat-name">名字</div>
+            </div>
+            
+            <!-- 新增：右上角的视频通话图标 -->
+            <div class="cp-msg-header-right">
+                <svg viewBox="0 0 24 24" onclick="alert('视频通话功能开发中...')"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+            </div>
+        </div>
+        <!-- 下面的 main 和 footer 保持不变 -->
+
+        <div class="cp-msg-chat-main" id="cp-msg-chat-content">
+            <!-- 动态生成的聊天气泡插入这里 -->
+        </div>
+
+        <div class="cp-msg-footer">
+            <div class="cp-msg-plus"><svg viewBox="0 0 24 24"><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"/></svg></div>
+            <div class="cp-msg-input-bar">
+                <input type="text" placeholder="iMessage 信息">
+                <div class="cp-msg-mic"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.91.39-.91.89V12c0 2.76-2.24 5-5 5s-5-2.24-5-5v-.11c0-.5-.42-.89-.91-.89s-.91.39-.91.89V12c0 3.33 2.5 6.08 5.72 6.44v2.7h-3.8c-.5 0-.91.41-.91.91 0 .5.41.91.91.91h9.6c.5 0 .91-.41.91-.91 0-.5-.41-.91-.91-.91h-3.8v-2.7c3.22-.36 5.72-3.11 5.72-6.44v-.11c0-.5-.41-.89-.91-.89z"/></svg></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：电话 / 语音留言 APP -->
+<!-- ============================================== -->
+<div id="page-cp-phone" class="page-layer cp-ph-container">
+    
+    <!-- 视图1：语音留言 -->
+    <div id="cp-ph-view-voicemail" class="cp-ph-view active">
+        <div class="cp-ph-header">
+            <div class="cp-ph-header-btn">编辑</div>
+            <div class="cp-ph-header-title">语音留言</div>
+            <div class="cp-ph-header-action" onclick="generateCpPhoneLogs()">
+                <i class="ri-magic-line"></i>
+            </div>
+        </div>
+        <div class="cp-ph-list" id="cp-ph-voicemail-list">
+            <!-- JS 动态渲染留言 -->
+        </div>
+    </div>
+
+    <!-- 视图2：通讯录 -->
+    <div id="cp-ph-view-contacts" class="cp-ph-view">
+        <div class="cp-ph-header">
+            <div class="cp-ph-header-btn">群组</div>
+            <div class="cp-ph-header-title">所有联系人</div>
+            <div class="cp-ph-header-action" style="background:transparent;"><i class="ri-add-line" style="font-size:24px;"></i></div>
+        </div>
+        <div class="cp-ph-list" id="cp-ph-contacts-list">
+            <!-- JS 动态渲染通讯录 -->
+        </div>
+    </div>
+
+    <!-- 视图3：拨号盘 -->
+    <div id="cp-ph-view-keypad" class="cp-ph-view">
+        <div class="cp-ph-keypad-wrap">
+            <div class="cp-ph-display" id="cp-ph-dial-screen"></div>
+            <div class="cp-ph-grid">
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('1')"><div class="cp-ph-key-num" style="margin-top: 10px;">1</div><div class="cp-ph-key-char">&nbsp;</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('2')"><div class="cp-ph-key-num">2</div><div class="cp-ph-key-char">ABC</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('3')"><div class="cp-ph-key-num">3</div><div class="cp-ph-key-char">DEF</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('4')"><div class="cp-ph-key-num">4</div><div class="cp-ph-key-char">GHI</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('5')"><div class="cp-ph-key-num">5</div><div class="cp-ph-key-char">JKL</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('6')"><div class="cp-ph-key-num">6</div><div class="cp-ph-key-char">MNO</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('7')"><div class="cp-ph-key-num">7</div><div class="cp-ph-key-char">PQRS</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('8')"><div class="cp-ph-key-num">8</div><div class="cp-ph-key-char">TUV</div></div>
+                <div class="cp-ph-key" onclick="pressCpPhoneKey('9')"><div class="cp-ph-key-num">9</div><div class="cp-ph-key-char">WXYZ</div></div>
+                <div class="cp-ph-key icon-only" onclick="pressCpPhoneKey('*')"><div class="cp-ph-key-num" style="line-height:50px; font-size:40px;">＊</div></div>
+                <div class="cp-ph-key no-char" onclick="pressCpPhoneKey('0')"><div class="cp-ph-key-num" style="margin-top:8px;">0</div><div class="cp-ph-key-char" style="font-size:12px;">+</div></div>
+                <div class="cp-ph-key icon-only" onclick="pressCpPhoneKey('#')"><div class="cp-ph-key-num" style="font-size:28px;">#</div></div>
+                
+                <div class="cp-ph-call-row">
+                    <div class="cp-ph-call-btn">
+                        <svg viewBox="0 0 24 24"><path d="M19.49 14.93c-1.42-.47-2.9-.7-4.41-.71-.4 0-.79.14-1.12.42l-1.39 1.15c-2.31-1.17-4.14-2.95-5.32-5.2l1.17-1.31c.29-.33.45-.73.45-1.14 0-1.5-.23-2.99-.7-4.41-.22-.68-.86-1.14-1.57-1.15H4.29C3.58 2.6.93 5.25.93 6.04c-.01 5.38 2.08 10.55 5.86 14.37s8.99 5.92 14.39 5.95c.79 0 3.44-2.67 3.44-3.38v-2.32c-.01-.72-.48-1.35-1.13-1.58z"/></svg>
+                    </div>
+                    <div class="cp-ph-del-btn" id="cp-ph-del-btn" onclick="deleteCpPhoneKey()">
+                        <svg viewBox="0 0 24 24"><path d="M21 4H8.48c-.64 0-1.25.31-1.63.84L2.4 12l4.45 7.16c.38.53.99.84 1.63.84H21c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM10.19 14.86c-.2.2-.5.2-.7 0s-.2-.5 0-.7l2.81-2.81-2.81-2.81c-.2-.2-.2-.5 0-.7s.5-.2.7 0L13 10.65l2.81-2.81c.2-.2.5-.2.7 0s.2.5 0 .7L13.7 11.35l2.81 2.81c.2.2.2.5 0 .7s-.5.2-.7 0L13 12.06l-2.81 2.8z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮底栏与原生退出条 -->
+    <div class="cp-ph-dock-wrap">
+        <div class="cp-ph-dock" id="cp-ph-bottom-dock">
+            <div class="cp-ph-nav-item active" onclick="switchCpPhoneTab('voicemail')">
+                <i class="ri-voicemail-fill"></i><span>语音留言</span>
+            </div>
+            <div class="cp-ph-nav-item" onclick="switchCpPhoneTab('contacts')">
+                <i class="ri-contacts-book-2-fill"></i><span>通讯录</span>
+            </div>
+            <div class="cp-ph-nav-item" onclick="switchCpPhoneTab('keypad')">
+                <i class="ri-grid-fill"></i><span>拨号键盘</span>
+            </div>
+        </div>
+    </div>
+    <!-- 退出 APP 的小白条 (放底栏下方) -->
+    <div class="cp-home-indicator" onclick="closePage('page-cp-phone')" style="cursor:pointer; z-index: 9999; background: rgba(255,255,255,0.3);"></div>
+</div>
+
 <!-- ============================================== -->
 <!-- 查阅 AI 手机：微信 APP (带底部退出小白条版) -->
 <!-- ============================================== -->
@@ -2338,6 +3006,224 @@
 </div>
 
 
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：邮件 APP -->
+<!-- ============================================== -->
+<div id="page-cp-mail" class="page-layer cp-mail-container">
+    
+    <!-- 视图1：邮箱首页 (收件箱列表) -->
+    <div id="cp-mail-home-view" class="cp-mail-view">
+        <div class="mail-top-navbar">
+            <span class="mail-nav-btn" onclick="closePage('page-cp-mail')"><i class="ri-arrow-left-s-line" style="font-size:24px; vertical-align:middle;"></i> 桌面</span>
+            <span class="mail-edit-btn" onclick="generateCpEmails()">编辑(刷新)</span>
+        </div>
+
+        <div class="mail-scroll-area">
+            <h1 class="mail-large-title">邮箱</h1>
+
+            <div class="mail-list-card">
+                <div class="mail-list-item" onclick="openCpMailList('all', '所有收件箱')">
+                    <div class="mail-item-left"><div class="mail-icon"><i class="ri-inbox-archive-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">所有收件箱</span></div>
+                        <div class="mail-item-right"><span class="mail-count" id="mail-count-all">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+                <div class="mail-list-item" onclick="openCpMailList('qq', 'QQ 邮箱')">
+                    <div class="mail-item-left"><div class="mail-icon"><i class="ri-mail-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">QQ 邮箱</span></div>
+                        <div class="mail-item-right"><span class="mail-count" id="mail-count-qq">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+                <div class="mail-list-item" onclick="openCpMailList('163', '163 邮箱')">
+                    <div class="mail-item-left"><div class="mail-icon"><i class="ri-mail-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">163 邮箱</span></div>
+                        <div class="mail-item-right"><span class="mail-count" id="mail-count-163">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+                <div class="mail-list-item" onclick="openCpMailList('icloud', 'iCloud')">
+                    <div class="mail-item-left"><div class="mail-icon"><i class="ri-cloud-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">iCloud</span></div>
+                        <div class="mail-item-right"><span class="mail-count" id="mail-count-icloud">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+                <div class="mail-list-item" onclick="openCpMailList('vip', 'VIP')">
+                    <div class="mail-item-left"><div class="mail-icon mail-icon-star"><i class="ri-star-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">VIP</span></div>
+                        <div class="mail-item-right"><i class="ri-information-line mail-info-icon"></i><span class="mail-count" id="mail-count-vip">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+                <div class="mail-list-item" onclick="openCpMailList('sent', '已发送')">
+                    <div class="mail-item-left"><div class="mail-icon"><i class="ri-send-plane-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">已发送</span></div>
+                        <div class="mail-item-right"><span class="mail-count" id="mail-count-sent">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+                <div class="mail-list-item" onclick="openCpMailList('unread', '未读')">
+                    <div class="mail-item-left"><div class="mail-icon"><i class="ri-mail-unread-line"></i></div></div>
+                    <div class="mail-list-item-content">
+                        <div class="mail-item-text-group"><span class="mail-item-title">未读</span></div>
+                        <div class="mail-item-right"><span class="mail-count" id="mail-count-unread">0</span><i class="ri-arrow-right-s-line mail-chevron"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部的大号账户区块 (已缩短间距) -->
+            <div class="mail-large-standalone">
+                <div class="mail-standalone-item" onclick="openCpMailList('qq', 'QQ 邮箱')">
+                    <span class="mail-item-title">QQ 邮箱</span>
+                    <i class="ri-arrow-right-s-line mail-chevron"></i>
+                </div>
+                <div class="mail-standalone-item" onclick="openCpMailList('163', '163 邮箱')">
+                    <span class="mail-item-title">163 邮箱</span>
+                    <i class="ri-arrow-right-s-line mail-chevron"></i>
+                </div>
+                <div class="mail-standalone-item" onclick="openCpMailList('icloud', 'iCloud')">
+                    <span class="mail-item-title">iCloud</span>
+                    <i class="ri-arrow-right-s-line mail-chevron"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="mail-bottom-toolbar">
+            <span class="mail-toolbar-text" id="mail-sync-status">刚刚更新</span>
+            <div class="mail-compose-btn"><i class="ri-edit-box-line" style="font-size:24px;"></i></div>
+        </div>
+    </div>
+
+    <!-- 视图2：邮件列表页 -->
+    <div id="cp-mail-list-view" class="cp-mail-view">
+        <div class="mail-top-navbar" style="justify-content: space-between;">
+            <span class="mail-nav-btn" onclick="closeCpMailList()"><i class="ri-arrow-left-s-line" style="font-size:24px; vertical-align:middle;"></i> 邮箱</span>
+            <span class="mail-edit-btn">编辑</span>
+        </div>
+        <h1 class="mail-large-title" id="mail-list-title">收件箱</h1>
+        <div class="mail-search-bar-wrap">
+            <div class="mail-search-box"><i class="ri-search-line"></i> 搜索</div>
+        </div>
+        <div class="mail-emails-container" id="mail-emails-list">
+            <!-- 动态渲染邮件列表 -->
+        </div>
+        <div class="mail-bottom-toolbar">
+            <div class="mail-compose-btn" style="left:20px; right:auto;"><i class="ri-filter-3-line" style="font-size:24px;"></i></div>
+            <span class="mail-toolbar-text" id="mail-list-count">0 封邮件</span>
+            <div class="mail-compose-btn"><i class="ri-edit-box-line" style="font-size:24px;"></i></div>
+        </div>
+    </div>
+
+    <!-- 视图3：邮件详情页 -->
+    <div id="cp-mail-detail-view" class="cp-mail-view">
+        <div class="mail-top-navbar" style="justify-content: space-between; border-bottom: 0.5px solid var(--ios-divider); padding-bottom: 10px;">
+            <span class="mail-nav-btn" onclick="closeCpMailDetail()"><i class="ri-arrow-left-s-line" style="font-size:24px; vertical-align:middle;"></i> 返回</span>
+            <div style="display:flex; gap:20px; color:var(--ios-blue);">
+                <i class="ri-arrow-up-s-line" style="font-size:24px;"></i>
+                <i class="ri-arrow-down-s-line" style="font-size:24px;"></i>
+            </div>
+        </div>
+        <div class="mail-detail-scroll">
+            <div class="mail-detail-header">
+                <div class="mail-detail-subject" id="mail-detail-subject">主题</div>
+                <div class="mail-detail-sender-row">
+                    <div class="mail-detail-avatar" id="mail-detail-avatar">A</div>
+                    <div class="mail-detail-sender-info">
+                        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                            <span class="mail-detail-sender-name" id="mail-detail-sender">发件人</span>
+                            <span class="mail-detail-date" id="mail-detail-date">昨天</span>
+                        </div>
+                        <div class="mail-detail-receiver">收件人: 我 ></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mail-detail-body" id="mail-detail-body">
+                <!-- 邮件正文 -->
+            </div>
+        </div>
+        <div class="mail-bottom-toolbar" style="justify-content: space-between; padding: 10px 20px calc(10px + env(safe-area-inset-bottom));">
+            <i class="ri-reply-line" style="font-size:24px; color:var(--ios-blue);"></i>
+            <i class="ri-folder-add-line" style="font-size:24px; color:var(--ios-blue);"></i>
+            <i class="ri-delete-bin-line" style="font-size:24px; color:var(--ios-blue);"></i>
+            <i class="ri-share-forward-line" style="font-size:24px; color:var(--ios-blue);"></i>
+            <i class="ri-edit-box-line" style="font-size:24px; color:var(--ios-blue);"></i>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：时钟 APP (动态暗黑系) -->
+<!-- ============================================== -->
+<div id="page-cp-clock" class="page-layer cp-clock-container">
+    <div class="cp-clock-view">
+        <!-- 顶部导航 -->
+        <div class="clock-top-nav">
+            <div class="clock-nav-btn">编辑</div>
+            <div class="clock-nav-btn clock-nav-add">+</div>
+        </div>
+        
+        <h1 class="clock-large-title">世界时钟</h1>
+
+        <!-- 时钟列表 (仅保留北京时间) -->
+        <ul class="clock-list">
+            <li class="clock-item">
+                <div class="clock-item-info">
+                    <div class="clock-info-offset">今天 +0小时</div>
+                    <div class="clock-info-city">北京</div>
+                </div>
+                <div class="clock-item-time" id="time-beijing">21:40</div>
+            </li>
+        </ul>
+
+        <!-- 底部四大件图标 -->
+        <div class="clock-bottom-tabbar">
+            <div class="clock-tab-item active">
+                <div class="clock-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                </div>
+                <span class="clock-tab-text">世界时钟</span>
+            </div>
+            <div class="clock-tab-item">
+                <div class="clock-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                        <circle cx="12" cy="13" r="8"/>
+                        <path d="M12 9v4l2 2" />
+                        <path d="M5 3L2 6" stroke-width="2.5"/><path d="M19 3l3 3" stroke-width="2.5"/>
+                    </svg>
+                </div>
+                <span class="clock-tab-text">闹钟</span>
+            </div>
+            <div class="clock-tab-item">
+                <div class="clock-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="13" r="8"/>
+                        <polyline points="12 13 12 8" />
+                        <line x1="12" y1="2" x2="12" y2="4"/>
+                        <line x1="18" y1="4" x2="18" y2="6"/>
+                    </svg>
+                </div>
+                <span class="clock-tab-text">秒表</span>
+            </div>
+            <div class="clock-tab-item">
+                <div class="clock-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                        <path d="M12 21a9 9 0 1 0-9-9" />
+                        <path d="M12 4v8l3 3" />
+                    </svg>
+                </div>
+                <span class="clock-tab-text">计时器</span>
+            </div>
+        </div>
+        
+        <!-- 底部退出小白条 (设为半透明白色以适配黑底) -->
+        <div class="cp-home-indicator" onclick="closePage('page-cp-clock')" style="cursor:pointer; z-index: 9999; background: rgba(255,255,255,0.5);"></div>
+    </div>
+</div>
 <!-- ============================================== -->
 <!-- 查阅 AI 手机：浏览器 (Safari) 纯净排版修复版 -->
 <!-- ============================================== -->
@@ -2421,6 +3307,103 @@
         </div>
     </div>
 </div>
+
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：相册 APP (高定重构版) -->
+<!-- ============================================== -->
+<div id="page-cp-photos" class="page-layer cp-photo-container">
+    
+    <!-- 视图1：相簿列表页 -->
+    <div id="cp-photo-albums-view" class="cp-photo-view">
+        <div class="cp-photo-nav" style="background:transparent; border:none; padding-bottom:0;">
+            <div class="cp-photo-nav-btn"></div>
+            <!-- 神奇的 AI 刷新生成按钮 -->
+            <div class="cp-photo-nav-btn" onclick="generateCpPhotos()">
+                <i class="ri-magic-line" style="font-size:24px;"></i>
+            </div>
+        </div>
+        
+        <div class="cp-photo-scroll">
+            <h1 class="cp-photo-large-title">相簿</h1>
+            <div class="cp-photo-sec-row">
+                <div class="cp-photo-sec-title">我的相簿</div>
+                <div class="cp-photo-sec-action">查看全部</div>
+            </div>
+            
+            <!-- 动态相簿渲染区 -->
+            <div class="cp-photo-albums-grid" id="cp-photo-albums-list"></div>
+            
+            <div class="cp-photo-sec-row" style="margin-top: 20px;">
+                <div class="cp-photo-sec-title">媒体类型</div>
+            </div>
+            <div style="height: 60px;"></div>
+        </div>
+
+        <div class="cp-photo-tab-bar">
+            <div class="cp-photo-tab-item"><svg viewBox="0 0 24 24"><path d="M22 6h-7V4c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-9-2h6v2h-6V4zM3 18V6h6v12H3zm17 0H11V8h9v10z"/></svg><span>图库</span></div>
+            <div class="cp-photo-tab-item active"><svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg><span>相簿</span></div>
+            <div class="cp-photo-tab-item"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>搜索</span></div>
+        </div>
+        
+        <!-- 退出 APP 的小白条 -->
+        <div class="cp-home-indicator" onclick="closePage('page-cp-photos')" style="cursor:pointer; z-index: 9999; background: rgba(0,0,0,0.3);"></div>
+    </div>
+
+    <!-- 视图2：相簿内网格页 -->
+    <div id="cp-photo-grid-view" class="cp-photo-view">
+        <div class="cp-photo-nav">
+            <div class="cp-photo-nav-btn" onclick="closeCpPhotoGrid()">
+                 <svg viewBox="0 0 12 24"><path d="M11 2L2 11l9 9" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>相簿
+            </div>
+            <div class="cp-photo-nav-title" id="cp-photo-grid-title">分类</div>
+            <div class="cp-photo-nav-btn">选择</div>
+        </div>
+        <div class="cp-photo-scroll" style="padding-bottom:0;">
+            <div class="cp-photo-media-grid" id="cp-photo-grid-content"></div>
+        </div>
+    </div>
+
+    <!-- 视图3：详情大图阅读面 -->
+    <div id="cp-photo-detail-view" class="cp-photo-view">
+        <div class="cp-photo-nav">
+            <div class="cp-photo-nav-btn" onclick="closeCpPhotoDetail()">
+                 <svg viewBox="0 0 12 24"><path d="M11 2L2 11l9 9" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>返回
+            </div>
+            <div class="cp-photo-nav-title" id="cp-photo-detail-title">今天 下午 10:00</div>
+            <div class="cp-photo-nav-btn" style="color:#007aff">编辑</div>
+        </div>
+
+        <div class="cp-photo-viewer-content">
+            <div class="cp-photo-main-frame">
+                <div class="cp-photo-pull-up"></div>
+                <img src="" id="cp-photo-detail-img" class="cp-photo-fullscreen">
+            </div>
+            
+            <div class="cp-photo-info-card">
+                <div class="cp-photo-meta-desc" id="cp-photo-meta-desc">照片描述</div>
+                <div class="cp-photo-meta-time">
+                    <div style="display:flex; flex-direction:column; gap:2px">
+                       <span class="cp-photo-meta-date" id="cp-photo-meta-date">2026年4月2日 周四</span>
+                       <span class="cp-photo-meta-stamp" id="cp-photo-meta-stamp">下午 14:20:15</span>
+                    </div>
+                </div>
+                <div class="cp-photo-meta-exif" id="cp-photo-meta-exif">
+                    <!-- 相机参数 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 修复版：完美对齐的四个操作图标 -->
+        <div class="cp-photo-viewer-bottom">
+            <div class="cp-photo-v-icon"><i class="ri-share-forward-line"></i></div>
+            <div class="cp-photo-v-icon"><i class="ri-heart-3-line"></i></div>
+            <div class="cp-photo-v-icon"><i class="ri-information-line"></i></div>
+            <div class="cp-photo-v-icon"><i class="ri-delete-bin-line"></i></div>
+        </div>
+    </div>
+</div>
+
 
     <!-- 弹窗 1：创建好友 (Create Character) -->
     <div id="modal-ins-char" class="ins-sheet-mask">
@@ -8354,7 +9337,253 @@ window.handleImage = async (src) => {
     }
 };
 
+// ==========================================
+//[查阅手机 - 时钟 APP] 核心逻辑
+// ==========================================
+window.openCpClock = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) {
+        alert("请先选择监视的对象");
+        return;
+    }
+    openPage('page-cp-clock');
+    updateCpClockLive(); // 打开时立刻刷新一次时间
+};
 
+function updateCpClockLive() {
+    const el = document.getElementById('time-beijing');
+    if (!el) return;
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    el.textContent = `${h}:${m}`;
+}
+
+// 挂载定时器，每分钟自动跳动
+setInterval(updateCpClockLive, 1000 * 60);
+
+// ==========================================
+// [查阅手机 - 邮件 APP] 核心逻辑 & AI 生成
+// ==========================================
+let currentCpMailFolder = 'all';
+let currentCpMailId = null;
+
+window.openCpMail = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) { alert("请先选择监视的对象"); return; }
+    
+    // 初始化邮箱数据结构
+    if (!contact.mails) contact.mails =[];
+    
+    renderCpMailHome();
+    openPage('page-cp-mail');
+};
+
+// 渲染邮件首页（带数量统计）
+window.renderCpMailHome = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+    
+    const mails = contact.mails ||[];
+    
+    const counts = {
+        all: mails.filter(m => !m.isSent).length, // 收件箱不包含已发送
+        qq: mails.filter(m => m.folder === 'qq' && !m.isSent).length,
+        '163': mails.filter(m => m.folder === '163' && !m.isSent).length,
+        icloud: mails.filter(m => m.folder === 'icloud' && !m.isSent).length,
+        vip: mails.filter(m => m.isVip && !m.isSent).length,
+        sent: mails.filter(m => m.isSent).length,
+        unread: mails.filter(m => !m.isRead && !m.isSent).length
+    };
+
+    document.getElementById('mail-count-all').innerText = counts.all || '';
+    document.getElementById('mail-count-qq').innerText = counts.qq || '';
+    document.getElementById('mail-count-163').innerText = counts['163'] || '';
+    document.getElementById('mail-count-icloud').innerText = counts.icloud || '';
+    document.getElementById('mail-count-vip').innerText = counts.vip || '';
+    document.getElementById('mail-count-sent').innerText = counts.sent || '';
+    document.getElementById('mail-count-unread').innerText = counts.unread || '';
+};
+
+// 打开某个具体的邮件列表（如 "QQ邮箱"）
+window.openCpMailList = (folder, title) => {
+    currentCpMailFolder = folder;
+    document.getElementById('mail-list-title').innerText = title;
+    renderCpMailList();
+    document.getElementById('page-cp-mail').classList.add('list-active');
+};
+
+// 从邮件列表页返回首页
+window.closeCpMailList = () => {
+    document.getElementById('page-cp-mail').classList.remove('list-active');
+    renderCpMailHome();
+};
+
+// 渲染邮件列表
+window.renderCpMailList = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+    
+    const listEl = document.getElementById('mail-emails-list');
+    listEl.innerHTML = '';
+    
+    let filteredMails = contact.mails ||[];
+    if (currentCpMailFolder === 'qq') filteredMails = filteredMails.filter(m => m.folder === 'qq' && !m.isSent);
+    else if (currentCpMailFolder === '163') filteredMails = filteredMails.filter(m => m.folder === '163' && !m.isSent);
+    else if (currentCpMailFolder === 'icloud') filteredMails = filteredMails.filter(m => m.folder === 'icloud' && !m.isSent);
+    else if (currentCpMailFolder === 'vip') filteredMails = filteredMails.filter(m => m.isVip && !m.isSent);
+    else if (currentCpMailFolder === 'sent') filteredMails = filteredMails.filter(m => m.isSent);
+    else if (currentCpMailFolder === 'unread') filteredMails = filteredMails.filter(m => !m.isRead && !m.isSent);
+    else if (currentCpMailFolder === 'all') filteredMails = filteredMails.filter(m => !m.isSent);
+
+    // 按时间倒序排列
+    filteredMails.sort((a, b) => b.timestamp - a.timestamp);
+
+    document.getElementById('mail-list-count').innerText = `${filteredMails.length} 封邮件`;
+
+    if (filteredMails.length === 0) {
+        listEl.innerHTML = '<div style="text-align:center; padding: 50px 20px; color:#8E8E93;">无邮件</div>';
+        return;
+    }
+
+    filteredMails.forEach(mail => {
+        const el = document.createElement('div');
+        el.className = `mail-email-row ${mail.isRead ? '' : 'unread'}`;
+        el.onclick = () => openCpMailDetail(mail.id);
+        
+        const dateStr = new Date(mail.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = mail.content;
+        const previewText = tempDiv.textContent || tempDiv.innerText || '';
+
+        el.innerHTML = `
+            <div class="mail-email-header">
+                <div class="mail-email-sender">${mail.sender}</div>
+                <div class="mail-email-date">${dateStr} ></div>
+            </div>
+            <div class="mail-email-subject">${mail.subject}</div>
+            <div class="mail-email-preview">${previewText}</div>
+        `;
+        listEl.appendChild(el);
+    });
+};
+
+// 打开邮件详情页
+window.openCpMailDetail = (id) => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const mail = contact.mails.find(m => m.id === id);
+    if (!mail) return;
+    
+    currentCpMailId = id;
+    
+    // 点击后标记为已读
+    if (!mail.isRead) {
+        mail.isRead = true;
+        saveData();
+        renderCpMailList(); // 后台更新列表UI
+    }
+
+    document.getElementById('mail-detail-subject').innerText = mail.subject;
+    document.getElementById('mail-detail-sender').innerText = mail.sender;
+    document.getElementById('mail-detail-avatar').innerText = mail.sender.charAt(0).toUpperCase();
+    
+    const dateStr = new Date(mail.timestamp).toLocaleString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    document.getElementById('mail-detail-date').innerText = dateStr;
+    
+    document.getElementById('mail-detail-body').innerHTML = mail.content;
+
+    document.getElementById('page-cp-mail').classList.add('detail-active');
+};
+
+// 从邮件详情页返回列表
+window.closeCpMailDetail = () => {
+    document.getElementById('page-cp-mail').classList.remove('detail-active');
+    currentCpMailId = null;
+};
+
+// AI 生成邮件
+window.generateCpEmails = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { 
+        alert("请先去 API 页面配置 API 服务器与 Key！"); 
+        return; 
+    }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const btn = document.querySelector('.mail-edit-btn');
+    const oldText = btn.innerText;
+    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; display:inline-block;"></i>';
+    btn.style.pointerEvents = 'none';
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    const prompt = `你现在正在扮演“${contact.name}”。你的任务是为你手机里的“邮箱APP”生成至少 6 封全新的邮件。
+    
+【你的人设】：${contact.prompt}
+【正在查阅你手机的人】：${myName} (${myPersona})
+
+【生成要求】：
+1. 邮件内容必须符合你的人设和生活轨迹。可以包含：工作通知、购物订单、社交平台提醒、垃圾广告、或者某个特定人物发来的私密邮件。
+2. 必须生成至少 6 封邮件，并将它们合理分配到不同的邮箱账户中（"qq", "163", "icloud"）。
+3. 随机设置一些邮件为未读（isRead: false），一些为 VIP（isVip: true）。
+4. 邮件正文 (content) 可以使用 HTML 标签进行排版（如 <br>, <b>, <div style="..."> 等），使其看起来像真实的富文本邮件。
+5. 严格输出 JSON 数组格式，绝对不要有任何 Markdown (如 \`\`\`json)：[
+  {
+    "sender": "发件人名称 (如: Apple, 淘宝, HR, 某个朋友)",
+    "subject": "邮件主题",
+    "content": "邮件正文HTML",
+    "folder": "qq 或 163 或 icloud",
+    "isRead": true 或 false,
+    "isVip": true 或 false,
+    "isSent": false (如果是你发出的邮件设为true)
+  }
+]`;
+
+    try {
+        const model = appData.lastApi.model || (appData.cachedModels.length > 0 ? appData.cachedModels[0] : "gpt-3.5-turbo");
+        const temp = parseFloat(appData.lastApi.temp) || 0.8;
+        
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: temp })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let generatedEmails = JSON.parse(rawText);
+        
+        if(!contact.mails) contact.mails = [];
+
+        // 给每个邮件加上唯一ID和时间戳
+        generatedEmails.forEach((mail, index) => {
+            mail.id = 'mail_' + Date.now() + index;
+            // 让时间戳在最近一周内随机分布
+            mail.timestamp = Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000);
+        });
+        
+        // 替换掉旧的邮件
+        contact.mails = generatedEmails;
+        await saveData();
+        
+        renderCpMailHome();
+        showToast(`已生成 ${generatedEmails.length} 封新邮件`);
+
+    } catch (e) {
+        alert("AI 生成失败，可能是返回格式错误或网络问题:\n" + e.message);
+        console.error(e);
+    } finally {
+        btn.innerText = oldText;
+        btn.style.pointerEvents = 'auto';
+    }
+};
 // ==========================================
 // [查阅手机 - 备忘录 APP] 核心逻辑 & AI 生成
 // ==========================================
@@ -8580,6 +9809,473 @@ ${historyText || "(你们暂时还没聊过天，请脑补你自己的单方面�
         // 恢复按钮状态
         btn.innerHTML = '<i class="ri-magic-line" style="font-size:22px;"></i>';
         btn.disabled = false;
+    }
+};
+
+
+// ==========================================
+// [查阅手机 - iMessage 信息 APP] 核心逻辑 & AI 生成
+// ==========================================
+let currentCpMsgChatId = null;
+
+// iOS 默认头像颜色池
+const IOS_COLORS =['#abacba', '#32ade6', '#ff9500', '#ff2d55', '#34c759', '#007aff'];
+function getIosColor(name) {
+    let hash = 0;
+    for(let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return IOS_COLORS[Math.abs(hash) % IOS_COLORS.length];
+}
+
+// 打开应用
+window.openCpMessages = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+    if (!contact.iMessages) contact.iMessages =[]; 
+
+    renderCpMsgList();
+    openPage('page-cp-messages');
+};
+
+// 渲染列表
+window.renderCpMsgList = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const listEl = document.getElementById('cp-msg-list-content');
+    const msgs = contact.iMessages ||[];
+
+    if (msgs.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; color:#b2b2b2; padding: 60px 20px;">暂无信息<br><span style="font-size:12px;">点击右上角编辑图标，魔法生成 6 位联系人</span></div>`;
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    let totalUnread = 0;
+
+    msgs.forEach(npc => {
+        if (npc.unread) totalUnread += npc.unread;
+        
+        let lastMsg = "暂无消息";
+        if (npc.messages && npc.messages.length > 0) {
+            lastMsg = npc.messages[npc.messages.length - 1].content.replace(/<[^>]+>/g, '');
+        }
+
+        const el = document.createElement('div');
+        el.className = `cp-msg-list-item ${npc.unread > 0 ? 'unread' : ''}`;
+        el.onclick = () => openCpMsgChat(npc.id);
+        
+        const avatarLetter = npc.name.charAt(0).toUpperCase();
+        const bgColor = getIosColor(npc.name);
+
+        el.innerHTML = `
+            <div class="cp-msg-unread-dot"></div>
+            <div class="cp-msg-avatar" style="background: ${bgColor};">${avatarLetter}</div>
+            <div class="cp-msg-content">
+                <div class="cp-msg-row-top">
+                    <span class="cp-msg-name">${npc.name}</span>
+                    <span class="cp-msg-time" style="${npc.unread > 0 ? 'color:var(--ios-blue);' : ''}">${npc.time}</span>
+                </div>
+                <div class="cp-msg-preview" style="${npc.unread > 0 ? 'color:var(--ios-text); font-weight:500;' : ''}">${lastMsg}</div>
+            </div>
+        `;
+        fragment.appendChild(el);
+    });
+
+    listEl.innerHTML = '';
+    listEl.appendChild(fragment);
+    
+    // 更新未读角标
+    document.getElementById('cp-msg-badge').innerText = totalUnread || '';
+    document.getElementById('cp-msg-badge').style.display = totalUnread > 0 ? 'block' : 'none';
+};
+
+// 打开聊天室
+window.openCpMsgChat = (id) => {
+    currentCpMsgChatId = id;
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const npcData = contact.iMessages.find(n => n.id === id);
+    if (!npcData) return;
+
+    // 清除未读
+    if (npcData.unread > 0) {
+        npcData.unread = 0;
+        saveData();
+        renderCpMsgList(); // 后台刷新列表红点
+    }
+
+    document.getElementById('cp-msg-chat-name').innerText = npcData.name;
+    document.getElementById('cp-msg-chat-avatar').innerText = npcData.name.charAt(0).toUpperCase();
+    document.getElementById('cp-msg-chat-avatar').style.background = getIosColor(npcData.name);
+
+    const bodyEl = document.getElementById('cp-msg-chat-content');
+    let htmlBuffer = `<div class="cp-msg-timestamp">今天 ${npcData.time}</div>`; 
+
+    npcData.messages.forEach((msg, index) => {
+        const isMe = msg.sender === 'me'; 
+        const wrapClass = isMe ? 'sent' : 'received';
+
+        // 核心判断：如果这是最后一条消息，或者下一条消息的发件人变了，它就是这组连发的“最后一条”
+        const isLastInGroup = (index === npcData.messages.length - 1) || (npcData.messages[index + 1].sender !== msg.sender);
+        
+        // 追加 class
+        const groupClass = isLastInGroup ? 'last-in-group' : '';
+
+        htmlBuffer += `
+            <div class="cp-msg-row ${wrapClass} ${groupClass}">
+                <div class="cp-msg-row-inner">
+                    <div class="cp-msg-bubble">${msg.content}</div>
+                </div>
+                ${(isMe && isLastInGroup) ? `<div class="cp-msg-status">已送达</div>` : ''}
+            </div>
+        `;
+    });
+
+    bodyEl.innerHTML = htmlBuffer; 
+    document.getElementById('page-cp-messages').classList.add('chat-active');
+    
+    requestAnimationFrame(() => {
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+    });
+};
+
+window.closeCpMsgChat = () => {
+    document.getElementById('page-cp-messages').classList.remove('chat-active');
+    currentCpMsgChatId = null;
+};
+
+// 魔法生成大模型数据 (修复版：强感知加载 + 长对话生成)
+window.generateCpMessages = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { 
+        alert("请先去 API 页面配置 API 服务器与 Key！"); return; 
+    }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    // --- 修复点 1：极其明显的刷新视觉反馈 ---
+    const btn = document.querySelector('.cp-msg-compose');
+    btn.style.pointerEvents = 'none'; // 禁用按钮防连点
+    
+    const listEl = document.getElementById('cp-msg-list-content');
+    listEl.innerHTML = `
+        <div style="text-align:center; padding: 100px 20px; color:#8E8E93;">
+            <i class="ri-loader-4-line" style="font-size:45px; color:var(--ios-blue); animation: spin 1s linear infinite; display:inline-block; margin-bottom:20px;"></i>
+            <div style="font-size:15px; font-weight:600; color:var(--ios-text);">正在窃取短信记录...</div>
+            <div style="font-size:12px; margin-top:8px; opacity:0.6;">AI 正在伪造长篇对话，请稍候几秒钟</div>
+        </div>
+    `;
+    // ----------------------------------------
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    // --- 修复点 2：在 Prompt 里严厉要求 AI 生成多回合长对话 ---
+    const prompt = `你正在扮演“${contact.name}”。请为你手机里的“iMessage 信息 APP”伪造一个逼真的聊天列表。
+【你的人设】：${contact.prompt}
+【正在查阅你手机的人】：名字叫 ${myName}，人设是 ${myPersona || '普通网友'}。
+
+【生成要求】（极其重要）：
+1. 必须生成 6 个联系人！第一个必须是正在查阅手机的“我”（User），id必须是 "user"。剩下的5个联系人根据你的社交圈生成。
+2. 聊天内容要非常生活化，简短，就像发短信一样。
+3. 【极度重要】：每个联系人的 messages 数组中，必须包含 5 到 8 条对话记录！！体现出你一言我一语来回拉扯的真实聊天过程，千万不要只有两三句话。
+4. 严格输出 JSON 数组，绝不要 Markdown！格式如下：[
+  {
+    "id": "user",
+    "name": "臭宝",
+    "time": "下午 2:17",
+    "unread": 0,
+    "messages":[
+      {"sender": "me", "content": "你在干嘛呢"},
+      {"sender": "them", "content": "刚吃完饭"},
+      {"sender": "me", "content": "吃啥了这么晚才吃"},
+      {"sender": "them", "content": "点了个外卖，一直没送来"},
+      {"sender": "me", "content": "太惨了吧哈哈"},
+      {"sender": "them", "content": "等一下，我有电话进来了"}
+    ]
+  }
+]`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: 0.85 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let generatedNPCs = JSON.parse(rawText);
+        
+        contact.iMessages = generatedNPCs;
+        await saveData();
+        renderCpMsgList();
+        showToast(`已成功获取大量短信记录`);
+
+    } catch (e) {
+        alert("信息刷新失败，可能是网络异常或AI格式错误:\n" + e.message);
+        console.error(e);
+        renderCpMsgList(); // 失败后恢复旧列表
+    } finally {
+        btn.style.pointerEvents = 'auto'; // 恢复按钮可点击
+    }
+};
+
+// ==========================================
+// [查阅手机 - 电话/语音留言 APP] 核心逻辑 & AI 生成
+// ==========================================
+let currentDialNumber = "";
+
+window.openCpPhoneApp = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+    
+    if (!contact.phoneLogs) contact.phoneLogs =[];
+    
+    // 初始化时清空拨号盘
+    currentDialNumber = "";
+    updateCpPhoneScreen();
+    
+    switchCpPhoneTab('voicemail');
+    openPage('page-cp-phone');
+};
+
+// 1. Tab 切换逻辑
+window.switchCpPhoneTab = (tabName) => {
+    document.querySelectorAll('.cp-ph-view').forEach(el => el.classList.remove('active'));
+    document.getElementById('cp-ph-view-' + tabName).classList.add('active');
+
+    const dockItems = document.getElementById('cp-ph-bottom-dock').querySelectorAll('.cp-ph-nav-item');
+    dockItems.forEach(el => el.classList.remove('active'));
+    
+    if (tabName === 'voicemail') {
+        dockItems[0].classList.add('active');
+        renderCpVoicemails();
+    } else if (tabName === 'contacts') {
+        dockItems[1].classList.add('active');
+        renderCpContacts();
+    } else if (tabName === 'keypad') {
+        dockItems[2].classList.add('active');
+    }
+};
+
+// 2. 渲染语音留言列表
+window.renderCpVoicemails = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const listEl = document.getElementById('cp-ph-voicemail-list');
+    listEl.innerHTML = '';
+
+    const logs = contact.phoneLogs ||[];
+    if (logs.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; padding:60px 20px; color:#8e8e93;">暂无语音留言<br><span style="font-size:12px;">点击右上角魔法棒生成通讯记录</span></div>`;
+        return;
+    }
+
+    logs.forEach((item, index) => {
+        const el = document.createElement('div');
+        el.className = `cp-ph-item ${item.unread ? 'unread' : ''}`;
+        
+        // 点击消除未读状态
+        el.onclick = () => {
+            if (item.unread) {
+                item.unread = false;
+                saveData();
+                renderCpVoicemails();
+            }
+        };
+
+        const hasQuote = item.text.includes('“') ? "font-family: 'PingFang SC';" : "";
+        
+        // 匹配头像 (如果是 User)
+        let avatarHtml = `<div class="cp-ph-avatar"><svg viewBox="0 0 24 24"><path d="M12 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0 2c-4.42 0-8 2.24-8 4v2h16v-2c0-1.76-3.58-4-8-4z"/></svg></div>`;
+        if (item.isUser) {
+            let myAvatar = appData.images['user-avatar'];
+            if(contact.userMaskId && appData.userMasks) {
+                const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+                if(mask) myAvatar = mask.avatar;
+            }
+            avatarHtml = `<div class="cp-ph-avatar"><img src="${getRealImgSrc(myAvatar)}"></div>`;
+        }
+
+        el.innerHTML = `
+            <div class="cp-ph-unread-dot"></div>
+            <div class="cp-ph-avatar-wrap">${avatarHtml}</div>
+            <div class="cp-ph-text-content">
+                <div class="cp-ph-top-row">
+                    <span class="cp-ph-phone-num">${item.num}</span>
+                    <span class="cp-ph-time">${item.time}</span>
+                </div>
+                <div class="cp-ph-bottom-row">
+                    <span class="cp-ph-label">${item.type || '主号'}</span>
+                    <span class="cp-ph-desc" style="${hasQuote}">${item.text}</span>
+                </div>
+            </div>
+        `;
+        listEl.appendChild(el);
+    });
+};
+
+// 3. 渲染通讯录 (整合我 + NPC)
+window.renderCpContacts = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const listEl = document.getElementById('cp-ph-contacts-list');
+    listEl.innerHTML = '';
+
+    // 确定我的身份
+    let myName = appData.customTexts['display-name'] || "我";
+    let myAvatar = appData.images['user-avatar'];
+    let myNote = "手机主人";
+    
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myAvatar = mask.avatar; myNote = mask.note || "特别关心"; }
+    }
+
+    // --- 强制插入“我” ---
+    const myEl = document.createElement('div');
+    myEl.className = 'cp-ph-item';
+    myEl.innerHTML = `
+        <div class="cp-ph-avatar-wrap"><div class="cp-ph-avatar"><img src="${getRealImgSrc(myAvatar)}"></div></div>
+        <div class="cp-ph-text-content">
+            <div class="cp-ph-phone-num">${myName}</div>
+            <div class="cp-ph-bottom-row"><span class="cp-ph-desc">${myNote}</span></div>
+        </div>
+    `;
+    listEl.appendChild(myEl);
+
+    // --- 渲染微信列表里的 NPC 作为联系人 ---
+    if (contact.wechatNpcs && contact.wechatNpcs.length > 0) {
+        contact.wechatNpcs.forEach(npc => {
+            if (npc.id === 'user') return; // 跳过重复的User
+            const el = document.createElement('div');
+            el.className = 'cp-ph-item';
+            el.innerHTML = `
+                <div class="cp-ph-avatar-wrap"><div class="cp-ph-avatar"><img src="${npc.avatar}"></div></div>
+                <div class="cp-ph-text-content">
+                    <div class="cp-ph-phone-num">${npc.name}</div>
+                    <div class="cp-ph-bottom-row"><span class="cp-ph-desc">移动电话</span></div>
+                </div>
+            `;
+            listEl.appendChild(el);
+        });
+    } else {
+        listEl.innerHTML += `<div style="text-align:center; padding:30px; font-size:12px; color:#555;">通讯录空空如也，去微信点一下魔法棒生成社交圈吧。</div>`;
+    }
+};
+
+// 4. 拨号盘逻辑
+window.pressCpPhoneKey = (char) => {
+    if(currentDialNumber.length < 20) {
+        currentDialNumber += char;
+        updateCpPhoneScreen();
+    }
+};
+
+window.deleteCpPhoneKey = () => {
+    currentDialNumber = currentDialNumber.slice(0, -1);
+    updateCpPhoneScreen();
+};
+
+function updateCpPhoneScreen() {
+    const screen = document.getElementById('cp-ph-dial-screen');
+    const delBtn = document.getElementById('cp-ph-del-btn');
+    
+    // 简单格式化号码 123 4567 8900
+    let formatted = currentDialNumber;
+    let cleaned = currentDialNumber.replace(/\D/g, ''); 
+    if(!currentDialNumber.startsWith('*') && !currentDialNumber.startsWith('#')) {
+        if (cleaned.length > 3 && cleaned.length < 8) formatted = cleaned.slice(0,3) + ' ' + cleaned.slice(3);
+        else if (cleaned.length >= 8 && cleaned.length <= 11) formatted = cleaned.slice(0,3) + ' ' + cleaned.slice(3,7) + ' ' + cleaned.slice(7);
+    }
+
+    screen.innerText = formatted;
+    screen.style.fontSize = currentDialNumber.length > 10 ? '24px' : '34px'; 
+    
+    if (currentDialNumber.length > 0) delBtn.classList.add('show');
+    else delBtn.classList.remove('show');
+}
+
+// 5. 魔法生成真实的语音留言 (时间感知)
+window.generateCpPhoneLogs = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先配置 API！"); return; }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const btn = document.querySelector('.cp-ph-header-action i');
+    btn.className = 'ri-loader-4-line';
+    btn.style.animation = 'spin 1s linear infinite';
+
+    // 提取我和他最近的聊天记录作为上下文推演
+    const historyMsgs = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-15);
+    let historyText = historyMsgs.map(m => `${m.sender === 'me' ? 'User' : contact.name}: ${m.content}`).join('\n');
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    const now = new Date();
+    const timeStr = `${now.getMonth()+1}月${now.getDate()}日 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    const prompt = `你现在正在扮演“${contact.name}”。你的任务是为你手机里的“语音信箱/通话记录”生成 6 条逼真的留言。
+    
+【时间规则】：现实现在的时间是 ${timeStr}。留言的时间必须分布在今天、昨天或最近几天内。
+【你的人设】：${contact.prompt}
+【查看手机的人】：${myName} (${myPersona})
+【近期聊天参考】：\n${historyText || '暂无聊天'}
+
+【生成要求】：
+1. 必须生成 6 条记录。
+2. 至少有一条是 ${myName} (正在看手机的人) 打来的。如果你们刚好吵架/热恋，留言内容要有连贯性！
+3. 其他几条必须是你社交圈的 NPC 打来的（比如外卖、快递、房东、推销、某个特定关系的人）。
+4. 留言文本(text) 要非常口语化，如果是对方说话，需要加上中文双引号，比如：“喂，外卖放前台了哈”。如果是没有听清的，就写 "语音留言" 4个字。
+5. 严格输出 JSON 数组格式，不要 Markdown：[
+  {
+    "isUser": true, 
+    "num": "${myName} 的专属昵称或真实号码",
+    "time": "12:45 或 昨天",
+    "text": "“你到底去哪了？接电话！”",
+    "type": "主号",
+    "unread": true
+  },
+  {
+    "isUser": false, 
+    "num": "+86 138 4455 6677",
+    "time": "星期四",
+    "text": "“外卖到了，出来拿一下”",
+    "type": "未知",
+    "unread": false
+  }
+]`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: 0.85 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        contact.phoneLogs = JSON.parse(rawText);
+        
+        await saveData();
+        renderCpVoicemails();
+        showToast('语音信箱已刷新');
+
+    } catch (e) {
+        alert("生成失败:\n" + e.message);
+    } finally {
+        btn.className = 'ri-magic-line';
+        btn.style.animation = 'none';
     }
 };
 
@@ -9138,6 +10834,236 @@ window.generateSingleBrowserPage = async (targetTitle) => {
     } catch (e) {
         alert("页面加载失败:\n" + e.message);
         closeCpBrowserArticle();
+    }
+};
+
+
+// ==========================================
+// [查阅手机 - 相册 APP] 核心交互与 AI 生成逻辑
+// ==========================================
+
+const TARGET_PHOTO_URL = "https://i.postimg.cc/TP34wxpW/IMG-20260402-220042.jpg";
+let currentCpAlbumId = null;
+
+// 1. 打开相册 APP
+window.openCpPhotos = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) { alert("请先选择监视的对象"); return; }
+    
+    // 初始化数据结构
+    if (!contact.photoAlbums || contact.photoAlbums.length === 0) {
+        contact.photoAlbums =[
+            {
+                id: 'album_default', name: '最近项目',
+                photos:[
+                    {
+                        id: 'p_1', desc: '随手拍的一张。',
+                        date: '2026年4月2日 周四', stamp: '晚上 22:00:42',
+                        exifModel: 'Apple iPhone 15 Pro Max',
+                        exifSpecs: '48 MP 主摄机相 · 24 mm · f/1.78\n12.5 MB · 4032 × 3024', hue: 0
+                    }
+                ]
+            },
+            {
+                id: 'album_hidden', name: '已隐藏',
+                photos:[
+                    {
+                        id: 'p_2', desc: '不想被任何人看到的秘密。',
+                        date: '2026年3月15日 周日', stamp: '凌晨 02:14:00',
+                        exifModel: 'Apple iPhone 15 Pro',
+                        exifSpecs: '12 MP 超广角 · 13 mm · f/2.2\n4.5 MB · 4032 × 3024', hue: 120
+                    }
+                ]
+            }
+        ];
+    }
+    
+    renderCpPhotoAlbums();
+    openPage('page-cp-photos');
+};
+
+// 2. 渲染首页相簿列表 (核心逻辑：锁定并模糊“已隐藏”相册)
+window.renderCpPhotoAlbums = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const listEl = document.getElementById('cp-photo-albums-list');
+    listEl.innerHTML = '';
+    
+    contact.photoAlbums.forEach((album, idx) => {
+        const el = document.createElement('div');
+        el.className = 'cp-photo-album-card';
+        el.onclick = () => openCpPhotoGrid(album.id);
+        
+        let filter = `filter: hue-rotate(${idx * 45}deg) brightness(0.95);`;
+        let countHtml = album.photos.length;
+
+        // 如果是隐藏相册，强制施加高斯模糊和锁定文字
+        if (album.name.includes('隐藏')) {
+            filter += ' blur(12px) grayscale(0.5);';
+            countHtml = '🔒 锁定';
+        }
+
+        el.innerHTML = `
+            <img src="${TARGET_PHOTO_URL}" class="cp-photo-cover-img" style="${filter}">
+            <div class="cp-photo-album-name">${album.name}</div>
+            <div class="cp-photo-album-count">${countHtml}</div>
+        `;
+        listEl.appendChild(el);
+    });
+};
+
+// 3. 打开某个相簿的网格流
+window.openCpPhotoGrid = (albumId) => {
+    currentCpAlbumId = albumId;
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const album = contact.photoAlbums.find(a => a.id === albumId);
+    if(!album) return;
+
+    document.getElementById('cp-photo-grid-title').innerText = album.name;
+    const gridEl = document.getElementById('cp-photo-grid-content');
+    gridEl.innerHTML = '';
+
+    album.photos.forEach(photo => {
+        const img = document.createElement('img');
+        img.className = 'cp-photo-media-item';
+        img.src = TARGET_PHOTO_URL;
+        img.style.filter = `hue-rotate(${photo.hue || 0}deg) brightness(0.9)`;
+        img.onclick = () => openCpPhotoDetail(photo.id);
+        gridEl.appendChild(img);
+    });
+
+    document.getElementById('page-cp-photos').classList.add('grid-active');
+};
+
+window.closeCpPhotoGrid = () => {
+    document.getElementById('page-cp-photos').classList.remove('grid-active');
+    currentCpAlbumId = null;
+};
+
+// 4. 打开大图详情与暗黑信息卡
+window.openCpPhotoDetail = (photoId) => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const album = contact.photoAlbums.find(a => a.id === currentCpAlbumId);
+    const photo = album.photos.find(p => p.id === photoId);
+    if(!photo) return;
+
+    document.getElementById('cp-photo-detail-title').innerText = photo.stamp || '详情';
+    
+    const bigImg = document.getElementById('cp-photo-detail-img');
+    bigImg.src = TARGET_PHOTO_URL;
+    bigImg.style.filter = `hue-rotate(${photo.hue || 0}deg)`;
+
+    document.getElementById('cp-photo-meta-desc').innerText = photo.desc;
+    document.getElementById('cp-photo-meta-date').innerText = photo.date;
+    document.getElementById('cp-photo-meta-stamp').innerText = photo.stamp;
+
+    const specs = (photo.exifSpecs || '').split('\n').map(s => `<span>${s}</span>`).join('');
+    document.getElementById('cp-photo-meta-exif').innerHTML = `
+        <span class="model">${photo.exifModel || 'Apple iPhone'}</span>
+        ${specs}
+    `;
+
+    document.getElementById('page-cp-photos').classList.add('detail-active');
+};
+
+window.closeCpPhotoDetail = () => {
+    document.getElementById('page-cp-photos').classList.remove('detail-active');
+};
+
+// 5. 核心引擎：召唤 AI 生成精准时间逻辑的相册矩阵
+window.generateCpPhotos = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先去 API 页面配置 API 服务器与 Key！"); return; }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    const btn = document.querySelector('#cp-photo-albums-view .ri-magic-line').parentNode;
+    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; font-size:24px;"></i>';
+    btn.style.pointerEvents = 'none';
+
+    // 提取聊天记录
+    const historyMsgs = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-20);
+    let historyText = historyMsgs.map(m => `${m.sender === 'me' ? 'User' : contact.name}: ${m.content}`).join('\n');
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    // 🔥 核心时间处理：告诉 AI 此时此刻的精确时间，严禁越界！
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = now.getMonth() + 1;
+    const dd = now.getDate();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const timeStr = `${yyyy}年${mm}月${dd}日 ${hh}:${min}`;
+
+    const prompt = `你正在扮演“${contact.name}”。请为你手机里的“相册APP”生成数据。
+【你的人设】：${contact.prompt}
+【正在翻看你相册的人】：${myName} (${myPersona})
+【近期聊天参考】：\n${historyText || '暂无聊天'}
+
+【生成任务与严格规则】：
+1. 必须生成 4 到 5 个相册合集。
+2. 极其重要：其中必须强制包含一个名为“已隐藏”的相册，里面放几张最私密的、跟 ${myName} 有关的心事或秘密照片记录。
+3. **时间流逝法则（绝对红线）**：
+   现在的真实时间是：${timeStr}。
+   你生成的所有的照片拍摄时间，必须早于这个时间！也就是过去发生的事情！绝对不能生成未来的时间！
+   - date 格式："${yyyy}年X月X日 周X"
+   - stamp 格式："上午/下午/晚上 XX:XX:XX"
+4. **照片描述 (desc)**：极其重要！必须符合你的内心独白。记录生活的碎碎念，或暗藏对 ${myName} 情感的私密记录。
+5. **设备参数 (exifModel/exifSpecs)**：必须要逼真、极客风。
+   - exifModel 例子："Apple iPhone 15 Pro Max", "Sony A7M4"
+   - exifSpecs 例子："48 MP 主摄 · 24 mm · f/1.78\\n12.5 MB · 4032 × 3024" （中间用 \\n 换行）
+6. 严格输出 JSON 数组格式，绝不能有 Markdown 标记：[
+  {
+    "name": "已隐藏",
+    "photos":[
+      {
+        "desc": "趁 ${myName} 睡着的时候偷偷拍的，真好看。",
+        "date": "2026年4月1日 周三",
+        "stamp": "晚上 23:45:12",
+        "exifModel": "Apple iPhone 15 Pro",
+        "exifSpecs": "12 MP 长焦 · 77 mm · f/2.8\\n2.2 MB · 4032 × 3024",
+        "hue": 220 
+      }
+    ]
+  }
+]
+注意："hue" 请在 0 到 360 之间随机给一个整数。`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: 0.9 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let generatedAlbums = JSON.parse(rawText);
+        
+        generatedAlbums.forEach((album, aIdx) => {
+            album.id = 'album_' + Date.now() + '_' + aIdx;
+            album.photos.forEach((photo, pIdx) => {
+                photo.id = 'p_' + Date.now() + '_' + aIdx + '_' + pIdx;
+            });
+        });
+
+        contact.photoAlbums = generatedAlbums;
+        await saveData();
+        renderCpPhotoAlbums();
+        showToast(`相册数据已更新`);
+
+    } catch (e) {
+        alert("AI 生成失败，请检查网络或模型返回格式:\n" + e.message);
+        console.error(e);
+    } finally {
+        btn.innerHTML = '<i class="ri-magic-line" style="font-size:24px;"></i>';
+        btn.style.pointerEvents = 'auto';
     }
 };
 
