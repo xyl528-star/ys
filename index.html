@@ -1958,6 +1958,71 @@
 }
 .cp-photo-v-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor:pointer;}
 .cp-photo-v-icon i { font-size: 24px; color: #fff; } /* 换成了更完美的内置字体图标 */
+/* --- 修复新增：相册专属吸顶状态栏与居中文字浮层 --- */
+/* ==================================================
+   [终极修复] 全局统一 iOS 状态栏 (防遮挡、绝对固定)
+================================================== */
+.cp-unified-status-bar {
+    position: absolute; top: 0; left: 0; width: 100%;
+    height: calc(env(safe-area-inset-top) + 24px); 
+    padding: env(safe-area-inset-top) 18px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    box-sizing: border-box;
+    z-index: 99999;
+    pointer-events: none; /* 核心修复：绝对不阻挡下方的任何返回按钮点击！ */
+    color: #111;
+    transition: color 0.3s;
+}
+/* 暗黑模式下自动变白 */
+.cp-clock-container .cp-unified-status-bar,
+.cp-photo-container.detail-active .cp-unified-status-bar,
+.cp-ph-container .cp-unified-status-bar {
+    color: #fff !important;
+}
+
+/* ==================================================
+   [相册专属] 点击照片切换为纯文字描述的特效
+================================================== */
+.cp-photo-main-frame {
+    cursor: pointer; /* 提示可点击 */
+}
+.cp-photo-content-layer {
+    position: absolute; inset: 0;
+    background: #000; color: #fff;
+    display: flex; justify-content: center; align-items: center;
+    padding: 30px; font-size: 16px; line-height: 1.6; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    font-weight: 500; z-index: 5;
+}
+/* 当点击主框架时，激活文本模式，隐藏图片 */
+.cp-photo-main-frame.show-text .cp-photo-fullscreen {
+    opacity: 0; 
+}
+.cp-photo-main-frame.show-text .cp-photo-content-layer {
+    opacity: 1; pointer-events: auto; 
+}
+.cp-photo-sys-bar {
+    position: absolute; top: 0; left: 0; width: 100%; z-index: 9999;
+    color: #111; padding-top: calc(env(safe-area-inset-top) + 6px) !important;
+    transition: color 0.3s;
+}
+.cp-photo-container.detail-active .cp-photo-sys-bar { color: #ffffff !important; }
+
+/* 导航栏避让状态栏 */
+.cp-photo-nav {
+    padding-top: calc(env(safe-area-inset-top) + 30px) !important;
+}
+
+/* 图片正中央的文字描述浮层 */
+.cp-photo-desc-overlay {
+    position: absolute; inset: 0;
+    display: flex; justify-content: center; align-items: center;
+    padding: 30px; font-size: 16px; color: #fff;
+    text-align: center; font-weight: 500;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.25); /* 微微压暗图片衬托文字 */
+    pointer-events: none; line-height: 1.6;
+}
 
 /* ==============================================
    [查阅手机 - 微信 APP] 专属样式
@@ -2200,6 +2265,37 @@
 .ui-action:active { opacity: 0.3; }
 .ui-action.off-duty svg { stroke: rgba(142, 142, 147, 0.4); }
 .ui-action svg { stroke: #007AFF; stroke-width: 1.5; fill: none; width: 26px; height: 26px; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ==================================================
+   [安卓/iOS 完美适配] 状态栏防重叠与吸顶终极修复
+================================================== */
+.cp-unified-status-bar {
+    position: absolute; top: 0; left: 0; width: 100%;
+    /* 强制与桌面的状态栏保持一模一样的内边距，安卓绝不乱跑！ */
+    padding: 8px 18px 4px !important;
+    height: auto !important;
+    display: flex; justify-content: space-between; align-items: center;
+    box-sizing: border-box; z-index: 99999;
+    pointer-events: none; color: #111;
+    transition: color 0.3s;
+}
+
+/* 强制把所有 APP 的顶部导航栏往下推，留出安全距离，绝对不挡住状态栏和返回键！ */
+.cp-msg-top-nav, .cp-msg-chat-header, 
+.clock-top-nav, 
+.mail-top-navbar, 
+.cp-notes-nav, 
+.cp-wx-header, 
+.cp-photo-nav,
+.top-search-bar,
+.cp-ph-header {
+    padding-top: calc(env(safe-area-inset-top) + 32px) !important;
+}
+
+/* Safari 主页大标题稍作特调，防止重叠 */
+.cp-browser-home-header {
+    padding-top: calc(env(safe-area-inset-top) + 38px) !important;
+}
     </style>
     <!-- 引入 Buttplug 底层蓝牙驱动库 (预留) -->
     <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
@@ -3330,10 +3426,7 @@
                 <div class="cp-photo-sec-title">我的相簿</div>
                 <div class="cp-photo-sec-action">查看全部</div>
             </div>
-            
-            <!-- 动态相簿渲染区 -->
             <div class="cp-photo-albums-grid" id="cp-photo-albums-list"></div>
-            
             <div class="cp-photo-sec-row" style="margin-top: 20px;">
                 <div class="cp-photo-sec-title">媒体类型</div>
             </div>
@@ -3346,7 +3439,6 @@
             <div class="cp-photo-tab-item"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>搜索</span></div>
         </div>
         
-        <!-- 退出 APP 的小白条 -->
         <div class="cp-home-indicator" onclick="closePage('page-cp-photos')" style="cursor:pointer; z-index: 9999; background: rgba(0,0,0,0.3);"></div>
     </div>
 
@@ -3375,13 +3467,17 @@
         </div>
 
         <div class="cp-photo-viewer-content">
-            <div class="cp-photo-main-frame">
+            <!-- 🎯 点击切换图文的交互容器 -->
+            <div class="cp-photo-main-frame" id="cp-photo-main-frame" onclick="this.classList.toggle('show-text')">
                 <div class="cp-photo-pull-up"></div>
-                <img src="" id="cp-photo-detail-img" class="cp-photo-fullscreen">
+                <img src="" id="cp-photo-detail-img" class="cp-photo-fullscreen" style="transition: opacity 0.3s;">
+                <!-- 这层是全新的纯黑底色客观文字描述，默认隐藏 -->
+                <div class="cp-photo-content-layer" id="cp-photo-content-desc">客观画面描述...</div>
             </div>
             
             <div class="cp-photo-info-card">
-                <div class="cp-photo-meta-desc" id="cp-photo-meta-desc">照片描述</div>
+                <!-- 🎯 恢复底部的碎碎念/主观点评 -->
+                <div class="cp-photo-meta-desc" id="cp-photo-meta-desc">底部碎碎念描述</div>
                 <div class="cp-photo-meta-time">
                     <div style="display:flex; flex-direction:column; gap:2px">
                        <span class="cp-photo-meta-date" id="cp-photo-meta-date">2026年4月2日 周四</span>
@@ -3394,7 +3490,6 @@
             </div>
         </div>
 
-        <!-- 修复版：完美对齐的四个操作图标 -->
         <div class="cp-photo-viewer-bottom">
             <div class="cp-photo-v-icon"><i class="ri-share-forward-line"></i></div>
             <div class="cp-photo-v-icon"><i class="ri-heart-3-line"></i></div>
@@ -3403,7 +3498,6 @@
         </div>
     </div>
 </div>
-
 
     <!-- 弹窗 1：创建好友 (Create Character) -->
     <div id="modal-ins-char" class="ins-sheet-mask">
@@ -10893,25 +10987,25 @@ window.renderCpPhotoAlbums = () => {
         el.className = 'cp-photo-album-card';
         el.onclick = () => openCpPhotoGrid(album.id);
         
-        let filter = `filter: hue-rotate(${idx * 45}deg) brightness(0.95);`;
+        // 修正：将滤镜属性正确拼装，绝不能在中间带有分号
+        let filterVals = `hue-rotate(${idx * 45}deg) brightness(0.95)`;
         let countHtml = album.photos.length;
 
         // 如果是隐藏相册，强制施加高斯模糊和锁定文字
         if (album.name.includes('隐藏')) {
-            filter += ' blur(12px) grayscale(0.5);';
+            filterVals += ' blur(15px) grayscale(0.5)';
             countHtml = '🔒 锁定';
         }
 
         el.innerHTML = `
-            <img src="${TARGET_PHOTO_URL}" class="cp-photo-cover-img" style="${filter}">
+            <img src="${TARGET_PHOTO_URL}" class="cp-photo-cover-img" style="filter: ${filterVals};">
             <div class="cp-photo-album-name">${album.name}</div>
             <div class="cp-photo-album-count">${countHtml}</div>
         `;
         listEl.appendChild(el);
     });
 };
-
-// 3. 打开某个相簿的网格流
+// 3. 打开某个相簿的网格流 (之前漏掉的致命关键！！！)
 window.openCpPhotoGrid = (albumId) => {
     currentCpAlbumId = albumId;
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
@@ -10938,7 +11032,6 @@ window.closeCpPhotoGrid = () => {
     document.getElementById('page-cp-photos').classList.remove('grid-active');
     currentCpAlbumId = null;
 };
-
 // 4. 打开大图详情与暗黑信息卡
 window.openCpPhotoDetail = (photoId) => {
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
@@ -10946,13 +11039,21 @@ window.openCpPhotoDetail = (photoId) => {
     const photo = album.photos.find(p => p.id === photoId);
     if(!photo) return;
 
+    // 每次打开新照片，默认显示图片（移除纯文字模式）
+    document.getElementById('cp-photo-main-frame').classList.remove('show-text');
+
     document.getElementById('cp-photo-detail-title').innerText = photo.stamp || '详情';
     
     const bigImg = document.getElementById('cp-photo-detail-img');
     bigImg.src = TARGET_PHOTO_URL;
     bigImg.style.filter = `hue-rotate(${photo.hue || 0}deg)`;
 
-    document.getElementById('cp-photo-meta-desc').innerText = photo.desc;
+    // 🎯 分配双重描述
+    // 1. 中间的客观画面描述（代替图片）
+    document.getElementById('cp-photo-content-desc').innerText = photo.contentDesc || '一张随手拍的照片。';
+    // 2. 底部的碎碎念点评
+    document.getElementById('cp-photo-meta-desc').innerText = photo.desc || '没有留下任何评价。';
+    
     document.getElementById('cp-photo-meta-date').innerText = photo.date;
     document.getElementById('cp-photo-meta-stamp').innerText = photo.stamp;
 
@@ -10969,7 +11070,7 @@ window.closeCpPhotoDetail = () => {
     document.getElementById('page-cp-photos').classList.remove('detail-active');
 };
 
-// 5. 核心引擎：召唤 AI 生成精准时间逻辑的相册矩阵
+// 5. 核心引擎：召唤 AI 生成双重描述的相册矩阵
 window.generateCpPhotos = async () => {
     if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先去 API 页面配置 API 服务器与 Key！"); return; }
     const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
@@ -10979,7 +11080,6 @@ window.generateCpPhotos = async () => {
     btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite; font-size:24px;"></i>';
     btn.style.pointerEvents = 'none';
 
-    // 提取聊天记录
     const historyMsgs = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-20);
     let historyText = historyMsgs.map(m => `${m.sender === 'me' ? 'User' : contact.name}: ${m.content}`).join('\n');
 
@@ -10990,7 +11090,6 @@ window.generateCpPhotos = async () => {
         if(mask) { myName = mask.name; myPersona = mask.prompt; }
     }
 
-    // 🔥 核心时间处理：告诉 AI 此时此刻的精确时间，严禁越界！
     const now = new Date();
     const yyyy = now.getFullYear();
     const mm = now.getMonth() + 1;
@@ -10999,30 +11098,27 @@ window.generateCpPhotos = async () => {
     const min = String(now.getMinutes()).padStart(2, '0');
     const timeStr = `${yyyy}年${mm}月${dd}日 ${hh}:${min}`;
 
+    // 🎯 核心改动：要求 AI 输出 contentDesc 和 desc 两个字段！
     const prompt = `你正在扮演“${contact.name}”。请为你手机里的“相册APP”生成数据。
 【你的人设】：${contact.prompt}
 【正在翻看你相册的人】：${myName} (${myPersona})
 【近期聊天参考】：\n${historyText || '暂无聊天'}
 
 【生成任务与严格规则】：
-1. 必须生成 4 到 5 个相册合集。
-2. 极其重要：其中必须强制包含一个名为“已隐藏”的相册，里面放几张最私密的、跟 ${myName} 有关的心事或秘密照片记录。
-3. **时间流逝法则（绝对红线）**：
-   现在的真实时间是：${timeStr}。
-   你生成的所有的照片拍摄时间，必须早于这个时间！也就是过去发生的事情！绝对不能生成未来的时间！
-   - date 格式："${yyyy}年X月X日 周X"
-   - stamp 格式："上午/下午/晚上 XX:XX:XX"
-4. **照片描述 (desc)**：极其重要！必须符合你的内心独白。记录生活的碎碎念，或暗藏对 ${myName} 情感的私密记录。
-5. **设备参数 (exifModel/exifSpecs)**：必须要逼真、极客风。
-   - exifModel 例子："Apple iPhone 15 Pro Max", "Sony A7M4"
-   - exifSpecs 例子："48 MP 主摄 · 24 mm · f/1.78\\n12.5 MB · 4032 × 3024" （中间用 \\n 换行）
-6. 严格输出 JSON 数组格式，绝不能有 Markdown 标记：[
+1. 生成 4 到 5 个相册合集。其中必须强制包含一个名为“已隐藏”的私密相册。
+2. **时间流逝法则**：现在的真实时间是：${timeStr}。你生成的所有拍摄时间必须在这个时间之前，年份必须是 ${yyyy}。
+3. **双重描述机制 (极其重要)**：每张照片需要提供两个完全不同的描述字段！
+   - "contentDesc"：【客观的画面内容描述】。用平铺直叙的语言描述这是一张什么样的照片。例如："一张夜景赛博朋克风的霓虹灯街拍" 或 "一张模糊的坐在副驾驶视角的偷拍侧脸"。
+   - "desc"：【主观的心声碎碎念/点评】。这是写在照片底部的日记/心事，表达你对这张照片背后的那个人（${myName}）的情感。
+4. **设备参数**：必须要逼真。例如："Apple iPhone 15 Pro Max"。
+5. 严格输出 JSON 数组格式，绝不能有 Markdown 标记：[
   {
     "name": "已隐藏",
     "photos":[
       {
-        "desc": "趁 ${myName} 睡着的时候偷偷拍的，真好看。",
-        "date": "2026年4月1日 周三",
+        "contentDesc": "一张极其模糊的偷拍，画面中是坐在咖啡馆窗边的侧脸，阳光刚好打在头发上。",
+        "desc": "趁 ${myName} 没发现偷偷拍的，今天也特别好看。",
+        "date": "${yyyy}年4月1日 周三",
         "stamp": "晚上 23:45:12",
         "exifModel": "Apple iPhone 15 Pro",
         "exifSpecs": "12 MP 长焦 · 77 mm · f/2.8\\n2.2 MB · 4032 × 3024",
@@ -11030,8 +11126,7 @@ window.generateCpPhotos = async () => {
       }
     ]
   }
-]
-注意："hue" 请在 0 到 360 之间随机给一个整数。`;
+]`;
 
     try {
         const model = appData.lastApi.model || "gpt-3.5-turbo";
@@ -11059,25 +11154,60 @@ window.generateCpPhotos = async () => {
         showToast(`相册数据已更新`);
 
     } catch (e) {
-        alert("AI 生成失败，请检查网络或模型返回格式:\n" + e.message);
-        console.error(e);
+        alert("AI 生成失败，请检查网络:\n" + e.message);
     } finally {
         btn.innerHTML = '<i class="ri-magic-line" style="font-size:24px;"></i>';
         btn.style.pointerEvents = 'auto';
     }
 };
 
-// 查阅手机桌面实时时间
-function updateCpTime() {
-    const el = document.getElementById('cp-live-time');
-    if (!el) return;
+// =========================================================================
+// 🎯 全网终极解决方案：统一给所有 Char Phone APP 注入标准、不遮挡的悬浮状态栏
+// =========================================================================
+function injectUnifiedStatusBar() {
+    // 找到除了桌面以外的所有查阅手机的子应用
+    const apps = document.querySelectorAll('.cp-mail-container, .cp-notes-container, .cp-msg-container, .cp-ph-container, .cp-wx-container, .cp-clock-container, .cp-browser-container, .cp-photo-container');
+    
+    const statusBarHTML = `
+        <div class="cp-unified-status-bar">
+            <div class="cp-live-time-sync" style="font-size:13px; font-weight:600; letter-spacing:0.5px; min-width:50px;"></div>
+            <div class="cp-status-icons" style="display:flex; gap:4px; align-items:center;">
+                <svg viewBox="0 0 18 12" width="16" height="10"><path d="M1 9h3v3H1zM6 6h3v6H6zM11 3h3v9h-3zM16 0h2v12h-2z" fill="currentColor"/></svg>
+                <span style="font-family:-apple-system; font-weight:700; font-size:11px; margin:0 2px;">5G</span>
+                <svg viewBox="0 0 25 12" width="25" height="12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-width="1"/><rect x="2" y="2" width="15" height="8" rx="2" fill="currentColor"/><path d="M23 4h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1V4Z" fill="currentColor"/></svg>
+            </div>
+        </div>
+    `;
+    
+    apps.forEach(app => {
+        // 如果该应用还没被注入过状态栏，则注入在最前面
+        if (!app.querySelector('.cp-unified-status-bar')) {
+            app.insertAdjacentHTML('afterbegin', statusBarHTML);
+        }
+    });
+}
+
+// 时间同步引擎（包括桌面和所有刚才被注入状态栏的子应用）
+function updateAllCpTimes() {
     const now = new Date();
     const h = now.getHours().toString().padStart(2, '0');
     const m = now.getMinutes().toString().padStart(2, '0');
-    el.textContent = h + ':' + m;
+    const timeStr = h + ':' + m;
+    
+    // 更新桌面时间
+    const elDesktop = document.getElementById('cp-live-time');
+    if (elDesktop) elDesktop.textContent = timeStr;
+    
+    // 更新所有子应用时间
+    const injectedTimes = document.querySelectorAll('.cp-live-time-sync');
+    injectedTimes.forEach(el => el.textContent = timeStr);
 }
-updateCpTime();
-setInterval(updateCpTime, 1000);
+
+// 执行初始化
+injectUnifiedStatusBar();
+updateAllCpTimes();
+setInterval(updateAllCpTimes, 1000);
+
 </script>
 </body>
 </html>
