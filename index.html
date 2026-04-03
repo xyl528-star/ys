@@ -1414,7 +1414,7 @@
         
         .cp-app-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px 12px; }
         .cp-app-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .cp-app-icon { width: 56px; height: 56px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background-size: cover; background-position: center; cursor: pointer; border: 0.5px solid rgba(0,0,0,0.05);}
+        .cp-app-icon { width: 56px; height: 56px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); background-size: cover; background-position: center; cursor: pointer; border: 0.5px solid rgba(0,0,0,0.05); position: relative; z-index: 10;}
         .cp-app-item span { font-size: 11px; color: #333; font-weight: 500; cursor: pointer; }
         
         .cp-square-widget { aspect-ratio: 1; border-radius: 20px; position: relative; }
@@ -1429,7 +1429,7 @@
 .cp-hash-icon::after { display: none; }
         .cp-status-text { font-size: 10px; font-weight: 700; color: #555; font-family: Georgia, "Times New Roman", Times, serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
         
-        .cp-dock { position: absolute; bottom: calc(20px + var(--safe-bottom)); left: 20px; right: 20px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 35px; padding: 12px 15px; display: flex; justify-content: space-around; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4);}
+        .cp-dock { position: absolute; bottom: calc(20px + var(--safe-bottom)); left: 20px; right: 20px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 35px; padding: 12px 15px; display: flex; justify-content: space-around; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4); z-index: 5;}
         .cp-dock .cp-app-icon { width: 54px; height: 54px; box-shadow: none; border-radius: 13px; }
 
 .cp-home-indicator {
@@ -2296,6 +2296,154 @@
 .cp-browser-home-header {
     padding-top: calc(env(safe-area-inset-top) + 38px) !important;
 }
+    
+/* ==============================================
+   [查阅手机 - 淘宝 APP] 极简美学版专属样式
+============================================== */
+.cp-tb-container {
+    background: #f4f5f8; position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+    color: #333;
+}
+.cp-tb-container.visible { display: flex; }
+
+.cp-tb-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 0% 0%, rgba(255, 113, 50, 0.08), transparent 40%),  
+                radial-gradient(circle at 100% 0%, rgba(132, 56, 255, 0.06), transparent 40%), #fafbfc;
+    z-index: 0; pointer-events: none;
+}
+
+.cp-tb-view {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; z-index: 1;
+}
+
+/* 顶部导航 */
+.cp-tb-header {
+    background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: calc(env(safe-area-inset-top) + 32px) 20px 14px !important;
+    font-size: 17px; font-weight: 600; color: #1a1a1a; flex-shrink: 0;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02); z-index: 100;
+}
+.cp-tb-header-icons { display: flex; gap: 18px; align-items: center; }
+.cp-tb-header-icons svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; cursor: pointer; }
+
+/* 5大金刚分类位 */
+.cp-tb-dashboard {
+    margin: 15px 20px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px; padding: 20px 15px; box-shadow: 0 6px 16px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,1);
+    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+}
+.cp-tb-icon-item { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; cursor: pointer; flex: 1; transition: 0.2s;}
+.cp-tb-icon-item.active { transform: scale(1.1); }
+.cp-tb-icon-item.active span { color: #ff5000; font-weight: 700; }
+.cp-tb-icon-item.active svg { stroke: #ff5000; }
+.cp-tb-icon-item svg { width: 26px; height: 26px; color: #555; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.cp-tb-icon-item span { font-size: 11px; color: #666; font-weight: 500;}
+.cp-tb-badge {
+    position: absolute; top: -6px; right: 5%; background: linear-gradient(135deg, #ff7a00, #ff5000);
+    color: #fff; font-size: 10px; font-weight: bold; height: 16px; min-width: 16px; padding: 0 4px;
+    display: flex; align-items: center; justify-content: center; border-radius: 20px; border: 1.5px solid #fff; box-shadow: 0 2px 4px rgba(255,80,0,0.3);
+}
+
+/* 订单列表区 */
+.cp-tb-orders-scroll { flex: 1; overflow-y: auto; padding: 0 20px 100px; display: flex; flex-direction: column; gap: 15px; }
+.cp-tb-orders-scroll::-webkit-scrollbar { display: none; }
+.cp-tb-order-card {
+    background: rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04); border: 1px solid #fff; backdrop-filter: blur(10px);
+}
+.cp-tb-shop-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f2f2f2; padding-bottom: 10px;}
+.cp-tb-shop-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; color:#2c2c2c;}
+.cp-tb-status-txt { font-size: 13px; font-weight: 600; }
+.cp-tb-is-red { color: #ff5000; } .cp-tb-is-gray { color: #888; }
+
+.cp-tb-item-info { display: flex; gap: 14px; align-items: flex-start; }
+.cp-tb-img-box { width: 80px; height: 80px; border-radius: 14px; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.02); background: #f7f7f7; }
+.cp-tb-img-box img { width: 100%; height: 100%; object-fit: cover; }
+.cp-tb-detail-box { flex: 1; min-width: 0;}
+.cp-tb-item-row1 { display: flex; justify-content: space-between; align-items: flex-start; gap:10px; margin-bottom: 4px; }
+.cp-tb-item-name { font-size: 14px; font-weight: 500; line-height: 1.4; color: #222; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cp-tb-item-price { font-size: 15px; font-weight: 600; text-align: right;}
+.cp-tb-item-row2 { display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-top: 4px; }
+.cp-tb-item-spec { background: #f4f5f8; padding: 3px 8px; border-radius: 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;}
+
+.cp-tb-btm-action { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;}
+.cp-tb-o-btn { padding: 6px 16px; border-radius: 18px; font-size: 13px; font-weight: 500; background: #fff; cursor: pointer; }
+.cp-tb-btn-normal { border: 1px solid #d4d4d4; color: #333; }
+.cp-tb-btn-focus { border: 1px solid #ff5000; color: #ff5000; background: rgba(255, 80, 0, 0.05);}
+.cp-tb-btn-deep  { background: #ff5000; color:#fff; border: 1px solid #ff5000;}
+
+/* 底部导航栏 */
+.cp-tb-bottom-nav {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(25px) saturate(150%); -webkit-backdrop-filter: blur(25px);
+    border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; 
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 12px)); z-index: 100;
+}
+.cp-tb-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #8f8f8f; cursor:pointer;}
+.cp-tb-nav-item.active { color: #ff5000; }
+.cp-tb-nav-item svg { width: 24px; height: 24px; fill: currentColor; }
+.cp-tb-nav-item span { font-size: 10px; font-weight: 500;}
+
+/* ==============================================
+   [查阅手机 - 设置 APP] 极简原生版专属样式
+============================================== */
+.cp-set-container {
+    background-color: #f2f2f7; position: fixed; inset: 0; z-index: 2500;
+    display: none; flex-direction: column; overflow-x: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    color: #000;
+}
+.cp-set-container.visible { display: flex; }
+
+.cp-set-view { width: 100%; max-width: 414px; min-height: 100vh; margin: 0 auto; position: relative; padding-bottom: 50px; overflow-y: auto;}
+.cp-set-view::-webkit-scrollbar { display: none; }
+
+.cp-set-header {
+    padding: calc(env(safe-area-inset-top) + 20px) 20px 10px; position: sticky; top: 0; z-index: 10;
+    background: linear-gradient(180deg, rgba(242,242,247,0.98) 70%, rgba(242,242,247,0));
+    display: flex; align-items: center; gap: 10px;
+}
+.cp-set-large-title { font-size: 34px; font-weight: 700; letter-spacing: 0.3px;}
+
+.cp-set-search-bar { margin: 5px 16px 20px; height: 36px; background-color: #e3e3e8; border-radius: 10px; display: flex; align-items: center; padding: 0 10px; color: #8e8e93; font-size: 17px; }
+.cp-set-search-bar svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; margin-right: 6px;}
+
+.cp-set-group { background-color: #ffffff; border-radius: 12px; margin: 0 16px 22px; overflow: hidden; }
+.cp-set-group-title { font-size: 13px; color: #8e8e93; margin: 0 16px 6px 32px; text-transform: uppercase;}
+
+.cp-set-cell { display: flex; align-items: center; padding-left: 16px; min-height: 44px; background: #fff; position: relative; cursor: pointer; transition: background 0.15s; }
+.cp-set-cell:active { background-color: #e5e5ea; }
+
+.cp-set-cell-avatar { height: 80px; }
+.cp-set-avatar-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-right: 15px;}
+.cp-set-profile-txt { display: flex; flex-direction: column; justify-content: center;}
+.cp-set-p-name { font-size: 20px; font-weight: 400; color: #000; margin-bottom: 3px; }
+.cp-set-p-sub { font-size: 13px; color: #3c3c43; font-weight: 400;}
+
+.cp-set-icon-box { width: 28px; height: 28px; border-radius: 6px; display: flex; justify-content: center; align-items: center; margin-right: 14px; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.cp-set-icon-box svg { width: 18px; height: 18px; fill: #fff; }
+
+.cp-set-bg-orange { background: #ff9500; } .cp-set-bg-blue { background: #007aff; }
+.cp-set-bg-green { background: #34c759; } .cp-set-bg-red { background: #ff3b30; }
+.cp-set-bg-gray { background: #8e8e93; } .cp-set-bg-purple { background: #5856d6; }
+
+.cp-set-cell-content { flex: 1; height: 100%; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 12px 0; border-bottom: 0.5px solid #c6c6c8; min-height:44px; box-sizing: border-box;}
+.cp-set-cell:last-child .cp-set-cell-content { border-bottom: none; }
+
+.cp-set-cell-title { font-size: 16px; color: #000; font-weight: 400;}
+.cp-set-cell-value { font-size: 16px; color: #8e8e93; }
+.cp-set-chevron { margin-left: 6px; color: #c4c4c6;}
+.cp-set-chevron svg { width: 8px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;}
+
+.cp-set-ios-switch { width: 51px; height: 31px; background: #e9e9eb; border-radius: 17px; position: relative; transition: 0.3s; box-shadow: inset 0 0 2px rgba(0,0,0,0.05); }
+.cp-set-ios-switch.on { background: #34c759; }
+.cp-set-ios-switch .knob { width: 27px; height: 27px; background: #fff; border-radius: 50%; box-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.06); position: absolute; top: 2px; left: 2px; transition: 0.3s; }
+.cp-set-ios-switch.on .knob { transform: translateX(20px); }
     </style>
     <!-- 引入 Buttplug 底层蓝牙驱动库 (预留) -->
     <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
@@ -2757,6 +2905,8 @@
     <!-- 查阅 AI 手机：目标对象的桌面系统 (极限吸顶 + 锁定App版) -->
     <!-- ============================================== -->
     <div id="page-char-phone-desktop" class="page-layer">
+    <!-- 👇 新增这一行：桌面专属壁纸层 👇 -->
+    <div id="cp-desktop-wallpaper" style="position:absolute; inset:0; z-index:-1; background-size:cover; background-position:center;"></div>
         
         <!-- 状态栏：贴紧屏幕最顶端，没有时间 -->
         <div class="cp-top-bar">
@@ -2802,7 +2952,7 @@
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-notes" onclick="openCpNotes()"></div><span id="cp-text-app-1" onclick="editCharPhoneText('cp-text-app-1', '输入App名称', event)">备忘录</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-music" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-2" onclick="editCharPhoneText('cp-text-app-2', '输入App名称', event)">音乐</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-mail" onclick="openCpMail()"></div><span id="cp-text-app-3" onclick="editCharPhoneText('cp-text-app-3', '输入App名称', event)">邮件</span></div>
-                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-taobao" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-4" onclick="editCharPhoneText('cp-text-app-4', '输入App名称', event)">淘宝</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-taobao" onclick="openCpTaobao()"></div><span id="cp-text-app-4" onclick="editCharPhoneText('cp-text-app-4', '输入App名称', event)">淘宝</span></div>
                 </div>
             </div>
 
@@ -2811,7 +2961,7 @@
                 <div class="cp-section-col cp-app-grid">
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-weather" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-5" onclick="editCharPhoneText('cp-text-app-5', '输入App名称', event)">天气</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-clock" onclick="openCpClock()"></div><span id="cp-text-app-6" onclick="editCharPhoneText('cp-text-app-6', '输入App名称', event)">时钟</span></div>
-                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-settings" onclick="alert('即将开发：进入该APP界面')"></div><span id="cp-text-app-7" onclick="editCharPhoneText('cp-text-app-7', '输入App名称', event)">设置</span></div>
+                    <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-settings" onclick="openCpSettings()"></div><span id="cp-text-app-7" onclick="editCharPhoneText('cp-text-app-7', '输入App名称', event)">设置</span></div>
                     <div class="cp-app-item"><div class="cp-app-icon" id="cp-icon-wechat" onclick="openCpWechat()"></div><span id="cp-text-app-8" onclick="editCharPhoneText('cp-text-app-8', '输入App名称', event)">微信</span></div>
                 </div>
                 <div class="cp-section-col">
@@ -2836,7 +2986,7 @@
             <div class="cp-app-icon" id="cp-icon-camera" onclick="openCpPhotos()"></div>
         </div>
         <div class="cp-home-indicator" onclick="closePage('page-char-phone-desktop')" style="cursor:pointer;"></div>
-        </div>
+       
     </div>
     
 <!-- ============================================== -->
@@ -3320,6 +3470,151 @@
         <div class="cp-home-indicator" onclick="closePage('page-cp-clock')" style="cursor:pointer; z-index: 9999; background: rgba(255,255,255,0.5);"></div>
     </div>
 </div>
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：系统设置 APP -->
+<!-- ============================================== -->
+<div id="page-cp-settings" class="page-layer cp-set-container">
+    <div class="cp-set-view">
+        <div class="cp-set-header">
+            <svg viewBox="0 0 24 24" style="stroke:#007aff; width:28px;height:28px;cursor:pointer; margin-left:-8px;" onclick="closePage('page-cp-settings')"><path d="m15 18-6-6 6-6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <h1 class="cp-set-large-title">设置</h1>
+        </div>
+
+        <div class="cp-set-search-bar">
+            <svg viewBox="0 0 24 24"><path d="m21 21-4.3-4.3"/><circle cx="11" cy="11" r="8"/></svg> 搜索
+        </div>
+
+        <!-- Apple ID 用户名片组 (动态注入 Ta 的信息) -->
+        <div class="cp-set-group">
+            <div class="cp-set-cell cp-set-cell-avatar">
+                <img src="" id="cp-set-avatar" class="cp-set-avatar-img" alt="头像">
+                <div class="cp-set-cell-content" style="border:none; padding-right:15px">
+                    <div class="cp-set-profile-txt">
+                        <div class="cp-set-p-name" id="cp-set-name">Name</div>
+                        <div class="cp-set-p-sub">Apple ID、iCloud、媒体与购买项目</div>
+                    </div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 网络与连接 -->
+        <div class="cp-set-group">
+            <div class="cp-set-cell" style="cursor: default;">
+                <div class="cp-set-icon-box cp-set-bg-orange"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">飞行模式</div>
+                    <div><div class="cp-set-ios-switch"><div class="knob"></div></div></div>
+                </div>
+            </div>
+            <div class="cp-set-cell">
+                <div class="cp-set-icon-box cp-set-bg-blue"><svg viewBox="0 0 24 24"><path d="M12 21c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4.6-5.6c2.5-2.5 6.7-2.5 9.2 0l1.4-1.4c-3.3-3.3-8.6-3.3-11.9 0l1.3 1.4zm-4.3-4.3c4.9-4.9 12.8-4.9 17.7 0l1.4-1.4c-5.7-5.7-14.8-5.7-20.5 0l1.4 1.4zm-4.2-4.3c7.2-7.2 18.9-7.2 26.2 0l1.4-1.4C18.1-1.3 5.9-1.3-2 6.4l1.1 1.4z" transform="scale(0.65) translate(6,6)"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">无线局域网</div>
+                    <div style="display:flex; align-items:center;"><div class="cp-set-cell-value" style="margin-right:2px">CMCC-Private</div><div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div></div>
+                </div>
+            </div>
+            <div class="cp-set-cell">
+                <div class="cp-set-icon-box cp-set-bg-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M6 7l12 10-6 6V1l6 6-12 10" transform="scale(0.8) translate(3,3)"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">蓝牙</div>
+                    <div style="display:flex; align-items:center;"><div class="cp-set-cell-value">开</div><div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div></div>
+                </div>
+            </div>
+        </div> 
+
+        <!-- 基础功能 -->
+        <div class="cp-set-group">
+            <div class="cp-set-cell">
+                <div class="cp-set-icon-box cp-set-bg-red"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" transform="scale(0.8) translate(3,3)"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">通知</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+            <div class="cp-set-cell">
+                <div class="cp-set-icon-box cp-set-bg-purple"><svg viewBox="0 0 24 24"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4z"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">屏幕使用时间</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+            <div class="cp-set-cell">
+                <div class="cp-set-icon-box cp-set-bg-gray"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.73 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">通用</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+            <div class="cp-set-cell">
+                <div class="cp-set-icon-box" style="background:#007bff;"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" transform="scale(0.8) translate(3,3)"/></svg></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">隐私与安全性</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 👇 核心注入：专属的外观设置与主题管理 👇 -->
+        <div class="cp-set-group-title">查阅系统控制</div>
+        <div class="cp-set-group">
+            <div class="cp-set-cell" onclick="changeCpWallpaper()">
+                <div class="cp-set-icon-box bg-purple"><i class="ri-image-edit-fill" style="font-size:18px;"></i></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">桌面壁纸</div>
+                    <div style="display:flex; align-items:center;">
+                        <div class="cp-set-cell-value">更换</div>
+                        <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                    </div>
+                </div>
+            </div>
+            <div class="cp-set-cell" onclick="saveCpThemePreset()">
+                <div class="cp-set-icon-box bg-green"><i class="ri-save-3-line" style="font-size:18px;"></i></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">保存为本地预设</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+            <div class="cp-set-cell" onclick="loadCpThemeModal()">
+                <div class="cp-set-icon-box bg-orange"><i class="ri-list-check-2" style="font-size:18px;"></i></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">加载/管理本地预设</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+            <div class="cp-set-cell" onclick="exportCpTheme()">
+                <div class="cp-set-icon-box bg-gray"><i class="ri-share-forward-box-line" style="font-size:18px;"></i></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title">导出桌面数据包</div>
+                    <div class="cp-set-chevron"><svg viewBox="0 0 9 14"><path d="M1 1l6 6-6 6"/></svg></div>
+                </div>
+            </div>
+            <div class="cp-set-cell" onclick="document.getElementById('cp-theme-import-file').click()">
+                <div class="cp-set-icon-box bg-blue"><i class="ri-download-cloud-2-line" style="font-size:18px;"></i></div>
+                <div class="cp-set-cell-content">
+                    <div class="cp-set-cell-title" style="color:#007aff;">导入桌面数据包</div>
+                </div>
+                <input type="file" id="cp-theme-import-file" hidden accept=".json" onchange="importCpTheme(this)">
+            </div>
+        </div>
+
+        <div style="height: 60px;"></div>
+    </div>
+</div>
+
+<!-- 查阅手机专用的内部小弹窗：加载本地预设 -->
+<div id="modal-cp-preset-list" class="modal-mask" style="z-index: 9999;">
+    <div class="modal-box">
+        <h3 style="margin: 0 0 15px 0;">桌面预设管理</h3>
+        <select id="cp-preset-select" class="ipt-std"></select>
+        <div style="display:flex; gap:10px; margin-top: 15px;">
+            <button class="btn-std btn-sec" style="flex:1;" onclick="document.getElementById('modal-cp-preset-list').classList.remove('show')">取消</button>
+            <button class="btn-std" style="background:#ff3b30; flex:1;" onclick="deleteCpThemePreset()">删除</button>
+            <button class="btn-std" style="flex:1;" onclick="loadCpThemePreset()">加载</button>
+        </div>
+    </div>
+</div>
 <!-- ============================================== -->
 <!-- 查阅 AI 手机：浏览器 (Safari) 纯净排版修复版 -->
 <!-- ============================================== -->
@@ -3352,8 +3647,7 @@
 
     <!-- 视图2：沉浸式文章阅读页 -->
     <div id="cp-browser-article-view" class="cp-browser-view">
-        <!-- 网址栏 -->
-        <!-- 网址栏 (支持点击跳转真实网页) -->
+        
         <!-- 网址栏 (恢复极简高定排版，去掉了丑陋的底色和图标，保留隐藏跳转) -->
         <div class="top-search-bar" id="cp-browser-top-header">
             <div class="url-display" onclick="jumpToRealWeb()" style="cursor: pointer;" title="点击尝试跳转真实网页">
@@ -3499,6 +3793,65 @@
     </div>
 </div>
 
+
+<!-- ============================================== -->
+<!-- 查阅 AI 手机：淘宝 APP -->
+<!-- ============================================== -->
+<div id="page-cp-taobao" class="page-layer cp-tb-container">
+    <div class="cp-tb-bg"></div>
+    <div class="cp-tb-view">
+        <!-- 顶部导航 -->
+        <header class="cp-tb-header">
+            <svg viewBox="0 0 24 24" style="stroke:#000; width:24px;height:24px;cursor:pointer;" onclick="closePage('page-cp-taobao')"><path d="m15 18-6-6 6-6"/></svg>
+            <div style="transform: translateX(10px);">TA的订单历史</div>
+            <div class="cp-tb-header-icons">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <!-- 这里的三个点，绑定了 AI 刷新生成功能 -->
+                <svg viewBox="0 0 24 24" onclick="generateCpTaobaoOrders()"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+            </div>
+        </header>
+
+        <!-- 5大金刚分类位 -->
+        <div class="cp-tb-dashboard">
+            <div class="cp-tb-icon-item active" onclick="switchCpTbTab('all')">
+                <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+                <span>全部</span>
+            </div>
+            <div class="cp-tb-icon-item" onclick="switchCpTbTab('unpaid')">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><path d="M3 10h18"/><path d="M7 15h2"/></svg>
+                <span>待付款</span><div class="cp-tb-badge" id="tb-badge-unpaid" style="display:none;">0</div>
+            </div>
+            <div class="cp-tb-icon-item" onclick="switchCpTbTab('unshipped')">
+                <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2" ry="2"/><path d="M7 8V6a2 2 0 114 0v2"/><path d="M17 8V6a2 2 0 10-4 0v2"/></svg>
+                <span>待发货</span><div class="cp-tb-badge" id="tb-badge-unshipped" style="display:none;">0</div>
+            </div>
+            <div class="cp-tb-icon-item" onclick="switchCpTbTab('unreceived')">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16M2 13h20"/></svg>
+                <span>待收货</span><div class="cp-tb-badge" id="tb-badge-unreceived" style="display:none;">0</div>
+            </div>
+            <div class="cp-tb-icon-item" onclick="switchCpTbTab('unreviewed')">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                <span>待评价</span><div class="cp-tb-badge" id="tb-badge-unreviewed" style="display:none;">0</div>
+            </div>
+        </div>
+
+        <!-- 订单列表滚动区 -->
+        <div class="cp-tb-orders-scroll" id="cp-tb-order-container">
+            <!-- 动态注入订单 -->
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="cp-tb-bottom-nav">
+            <div class="cp-tb-nav-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>首页推荐</span></div>
+            <div class="cp-tb-nav-item"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>微聚消息</span></div>
+            <div class="cp-tb-nav-item"><svg viewBox="0 0 24 24"><path d="M2 3h4l2 14h12l2-14H6"/></svg><span>购物车</span></div>
+            <div class="cp-tb-nav-item active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的全部</span></div>
+        </div>
+        
+        <!-- 退出 APP 的小白条 -->
+        <div class="cp-home-indicator" onclick="closePage('page-cp-taobao')" style="cursor:pointer; z-index: 9999; background: rgba(0,0,0,0.2);"></div>
+    </div>
+</div>
     <!-- 弹窗 1：创建好友 (Create Character) -->
     <div id="modal-ins-char" class="ins-sheet-mask">
         <div class="ins-sheet-body">
@@ -9372,6 +9725,10 @@ window.openCharPhoneDesktop = (contactId) => {
         }
     });
 
+    // 4. 加载专属壁纸
+    const wpEl = document.getElementById('cp-desktop-wallpaper');
+    if (wpEl) wpEl.style.backgroundImage = desktopData.wallpaper ? `url('${getRealImgSrc(desktopData.wallpaper)}')` : 'none';
+
     openPage('page-char-phone-desktop');
 };
 
@@ -10931,7 +11288,410 @@ window.generateSingleBrowserPage = async (targetTitle) => {
     }
 };
 
+// ==========================================
+// [查阅手机 - 淘宝 APP] 核心交互与 AI 订单生成逻辑
+// ==========================================
+let currentCpTbTab = 'all';
 
+window.openCpTaobao = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) { alert("请先选择监视的对象"); return; }
+    
+    // 初始化数据
+    if (!contact.taobaoOrders || contact.taobaoOrders.length === 0) {
+        contact.taobaoOrders = [
+            {
+                id: "tb_1", shop: "小熊创意礼品精选", status: "待收货", type: "unreceived", stateStyle: "cp-tb-is-red",
+                title: "送男/女友创意解压小玩具，可爱毛绒抱枕", spec: "奶白色 默认尺寸", price: "¥88.00", count: 1,
+                btnL: "查看物流", btnR: "确认收货", btnRMode: "cp-tb-btn-deep"
+            }
+        ];
+    }
+    
+    switchCpTbTab('all');
+    openPage('page-cp-taobao');
+};
+
+// 切换标签页 (待付款、待发货等)
+window.switchCpTbTab = (tabName) => {
+    currentCpTbTab = tabName;
+    
+    // 切换UI高亮
+    const icons = document.querySelectorAll('.cp-tb-icon-item');
+    icons.forEach(el => el.classList.remove('active'));
+    
+    const indexMap = { 'all':0, 'unpaid':1, 'unshipped':2, 'unreceived':3, 'unreviewed':4 };
+    if(indexMap[tabName] !== undefined) {
+        icons[indexMap[tabName]].classList.add('active');
+    }
+
+    renderCpTaobaoOrders();
+};
+
+// 渲染订单列表
+window.renderCpTaobaoOrders = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    const container = document.getElementById('cp-tb-order-container');
+    container.innerHTML = '';
+    
+    const orders = contact.taobaoOrders || [];
+    
+    // 统计角标数量
+    const counts = { unpaid: 0, unshipped: 0, unreceived: 0, unreviewed: 0 };
+    orders.forEach(o => {
+        if (counts[o.type] !== undefined) counts[o.type]++;
+    });
+
+    ['unpaid', 'unshipped', 'unreceived', 'unreviewed'].forEach(t => {
+        const badge = document.getElementById(`tb-badge-${t}`);
+        if(counts[t] > 0) { badge.style.display = 'flex'; badge.innerText = counts[t]; }
+        else { badge.style.display = 'none'; }
+    });
+
+    // 过滤展示
+    let filtered = orders;
+    if (currentCpTbTab !== 'all') {
+        filtered = orders.filter(o => o.type === currentCpTbTab);
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 60px 0; color:#aaa;">空空如也，还没有相关订单哦</div>';
+        return;
+    }
+
+    // 占位图片：按你要求统一使用这张
+    const PLACEHOLDER_IMG = "https://i.postimg.cc/FFDnkbPb/IMG-20260403-222355.jpg";
+
+    filtered.forEach(o => {
+        const btnLHtml = o.btnL ? `<button class="cp-tb-o-btn cp-tb-btn-normal">${o.btnL}</button>` : '';
+        const btnRHtml = o.btnR ? `<button class="cp-tb-o-btn ${o.btnRMode || 'cp-tb-btn-focus'}">${o.btnR}</button>` : '';
+
+        container.innerHTML += `
+            <div class="cp-tb-order-card">
+                <div class="cp-tb-shop-head">
+                    <span class="cp-tb-shop-title">
+                        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:#555;stroke-width:2;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> 
+                        ${o.shop} <span style="color:#bbb;font-weight:400;margin-left:2px">></span>
+                    </span>
+                    <span class="cp-tb-status-txt ${o.stateStyle}">${o.status}</span>
+                </div>
+                <div class="cp-tb-item-info">
+                    <div class="cp-tb-img-box"><img src="${PLACEHOLDER_IMG}" alt="img"></div>
+                    <div class="cp-tb-detail-box">
+                        <div class="cp-tb-item-row1">
+                            <div class="cp-tb-item-name">${o.title}</div>
+                            <div class="cp-tb-item-price">${o.price}</div>
+                        </div>
+                        <div class="cp-tb-item-row2">
+                            <span class="cp-tb-item-spec">${o.spec}</span>
+                            <span style="padding-top:4px">x${o.count}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cp-tb-btm-action">
+                    ${btnLHtml}
+                    ${btnRHtml}
+                </div>
+            </div>
+        `;
+    });
+};
+
+// 召唤 AI 根据聊天记录生成专属网购清单
+window.generateCpTaobaoOrders = async () => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { alert("请先去 API 页面配置服务器地址和 Key！"); return; }
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    // 视觉反馈：让右上角的三个点动起来
+    const dotsBtn = document.querySelector('.cp-tb-header-icons svg:last-child');
+    const oldHtml = dotsBtn.innerHTML;
+    dotsBtn.innerHTML = '<circle cx="12" cy="12" r="8" stroke="#111" stroke-width="2" stroke-dasharray="15 10" fill="none"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></circle>';
+    dotsBtn.style.pointerEvents = 'none';
+
+    let myName = appData.customTexts['display-name'] || "User";
+    let myPersona = "";
+    if(contact.userMaskId && appData.userMasks) {
+        const mask = appData.userMasks.find(m => m.id === contact.userMaskId);
+        if(mask) { myName = mask.name; myPersona = mask.prompt; }
+    }
+
+    const historyMsgs = appData.chatData.messages.filter(m => m.chatId === contact.id).slice(-30);
+    let historyText = historyMsgs.map(m => `${m.sender === 'me' ? myName : contact.name}: ${m.content}`).join('\n');
+
+    const prompt = `你正在扮演“${contact.name}”（人设：${contact.prompt}）。
+正在偷看你手机的人是“${myName}”（人设：${myPersona || '普通网友'}）。
+
+你的任务：根据你和${myName}最近的聊天记录，以及你的个人喜好，为你手机里的【淘宝 APP】伪造 5 到 7 个电商购物订单！
+聊天记录参考：\n${historyText || '暂无聊天记录'}
+
+【生成要求】：
+1. 订单类型必须多样：比如偷偷给${myName}买的惊喜礼物、为了赴约买的衣服/化妆品/避孕套、生活日用品、或者是奇奇怪怪的个人爱好物品。
+2. 状态(type) 必须从以下分配：
+   - "unpaid": 待付款（加入购物车但没给钱）
+   - "unshipped": 待发货（刚买完）
+   - "unreceived": 待收货（正在路上）
+   - "unreviewed": 待评价（已经收到了）
+   - "done": 交易成功（历史购买）
+3. 文本字眼要求：
+   - "status": 根据 type 设置，例如 "买家已付款"、"派送中 🚚"、"交易成功"。
+   - "stateStyle": 进行中的(如派送中/待付款)用 "cp-tb-is-red"，结束的用 "cp-tb-is-gray"。
+   - "btnL", "btnR": 左右按钮文字。比如 "查看物流", "催促发货", "确认收货", "追加评价"。
+   - "btnRMode": 重点按钮用 "cp-tb-btn-deep"（橙底白字），次要用 "cp-tb-btn-focus"（淡橙色）。
+
+严格输出纯 JSON 数组：[
+  {
+    "id": "随机字符串", "shop": "店铺名", "status": "商家已发货", "type": "unreceived", "stateStyle": "cp-tb-is-red",
+    "title": "某某商品名称，越真实越好", "spec": "颜色尺码规格", "price": "¥99.00", "count": 1,
+    "btnL": "查看物流", "btnR": "确认收货", "btnRMode": "cp-tb-btn-deep"
+  }
+]`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: prompt}], temperature: 0.85 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let orders = JSON.parse(rawText);
+        
+        contact.taobaoOrders = orders;
+        await saveData();
+        renderCpTaobaoOrders();
+        showToast(`已刷新淘宝订单记录`);
+
+    } catch (e) {
+        alert("订单刷新失败:\n" + e.message);
+    } finally {
+        dotsBtn.innerHTML = oldHtml;
+        dotsBtn.style.pointerEvents = 'auto';
+    }
+};
+
+// ==========================================
+// [查阅手机 - 系统设置 APP] 壁纸与主题系统引擎
+// ==========================================
+
+// 1. 初始化设置界面
+window.openCpSettings = () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) { alert("请先选择监视的对象"); return; }
+    
+    // 绑定真实的头像和名字
+    document.getElementById('cp-set-name').innerText = contact.name;
+    document.getElementById('cp-set-avatar').src = getRealImgSrc(contact.avatar);
+
+    openPage('page-cp-settings');
+};
+
+// 2. 召唤通用图片上传框并绑定标识
+window.changeCpWallpaper = () => {
+    // 特殊标识：cpbg|联系人ID
+    currentUploadId = `cpbg|${currentPhoneContactId}`;
+    document.getElementById('url-core').value = '';
+    document.getElementById('modal-upload').classList.add('show');
+};
+
+// 3. 拦截图片的纯净逻辑补充 (请确保它与之前的 cpi| 逻辑在同一个 handleImage 里和谐共处，或者直接使用这段补充)
+// 如果你懂怎么整合，可以直接放到原本的 handleImage 里，如果不懂，直接运行这行黑科技代码进行猴子补丁(Monkey Patch)：
+const oldCpHandleImage = window.handleImage;
+window.handleImage = async (src) => {
+    if (currentUploadId && currentUploadId.startsWith('cpbg|')) {
+        const contactId = currentUploadId.split('|')[1];
+        const contact = appData.chatData.contacts.find(c => c.id === contactId);
+        
+        if (contact) {
+            const imageKey = `cp_wp_${Date.now()}`; 
+            try { await idbHelper.saveImage(imageKey, src); } catch(e){}
+            appData.images[imageKey] = src;
+
+            if (!contact.desktopData) contact.desktopData = { images: {}, texts: {} };
+            contact.desktopData.wallpaper = imageKey; // 存入壁纸
+            
+            await saveData();
+
+            // 实时生效
+            const wpEl = document.getElementById('cp-desktop-wallpaper');
+            if (wpEl) wpEl.style.backgroundImage = `url('${src}')`;
+            
+            document.getElementById('modal-upload').classList.remove('show');
+            currentUploadId = null; 
+            showToast('壁纸已更换');
+        }
+        return;
+    }
+    if (oldCpHandleImage) oldCpHandleImage(src);
+};
+
+// ==================
+// 主题预设：保存/加载/删除 (仅限本地)
+// ==================
+window.saveCpThemePreset = async () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact || !contact.desktopData) return;
+
+    const name = prompt("请输入此桌面风格的名称：");
+    if (!name || !name.trim()) return;
+
+    if (!appData.charPhoneThemes) appData.charPhoneThemes = {};
+    
+    // 拷贝一份当前的数据
+    const presetData = JSON.parse(JSON.stringify(contact.desktopData));
+    presetData.imagePayloads = {}; // 用来装图片本体
+
+    // 提取关联的 Base64 图片，防止换手机或者清除缓存后图裂了
+    if (presetData.wallpaper && appData.images[presetData.wallpaper]) {
+        presetData.imagePayloads[presetData.wallpaper] = appData.images[presetData.wallpaper];
+    }
+    for (let key in presetData.images) {
+        let imgId = presetData.images[key];
+        if (appData.images[imgId]) presetData.imagePayloads[imgId] = appData.images[imgId];
+    }
+
+    appData.charPhoneThemes[name.trim()] = presetData;
+    await saveData();
+    showToast('预设已保存');
+};
+
+window.loadCpThemeModal = () => {
+    const sel = document.getElementById('cp-preset-select');
+    sel.innerHTML = '<option value="">-- 选择桌面预设 --</option>';
+    if (appData.charPhoneThemes) {
+        Object.keys(appData.charPhoneThemes).forEach(name => sel.add(new Option(name, name)));
+    }
+    document.getElementById('modal-cp-preset-list').classList.add('show');
+};
+
+window.loadCpThemePreset = async () => {
+    const sel = document.getElementById('cp-preset-select');
+    const name = sel.value;
+    if (!name || !appData.charPhoneThemes[name]) { alert("请选择预设！"); return; }
+    
+    if (confirm(`确定要加载预设 "${name}" 吗？当前桌面的照片和文字将被替换。`)) {
+        const preset = appData.charPhoneThemes[name];
+        await applyCpThemeData(preset);
+        document.getElementById('modal-cp-preset-list').classList.remove('show');
+        showToast('预设已加载');
+    }
+};
+
+window.deleteCpThemePreset = async () => {
+    const sel = document.getElementById('cp-preset-select');
+    const name = sel.value;
+    if (!name || !appData.charPhoneThemes[name]) return;
+    
+    if (confirm(`确定删除预设 "${name}"？`)) {
+        delete appData.charPhoneThemes[name];
+        await saveData();
+        loadCpThemeModal(); // 刷新下拉框
+        showToast('预设已删除');
+    }
+};
+
+// ==================
+// 主题数据包：导出/导入 JSON (分享给别人)
+// ==================
+window.exportCpTheme = async () => {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact || !contact.desktopData) { alert("当前没有任何桌面数据！"); return; }
+
+    const btn = document.querySelector('.cp-set-icon-box.bg-gray').parentNode;
+    btn.style.opacity = '0.5';
+
+    try {
+        const themeData = JSON.parse(JSON.stringify(contact.desktopData));
+        themeData.isCharPhoneTheme = true; // 防护验证
+        themeData.imagePayloads = {};
+
+        // 打包图片实体数据
+        if (themeData.wallpaper && appData.images[themeData.wallpaper]) {
+            themeData.imagePayloads[themeData.wallpaper] = appData.images[themeData.wallpaper];
+        }
+        for (let key in themeData.images) {
+            let imgId = themeData.images[key];
+            if (appData.images[imgId]) themeData.imagePayloads[imgId] = appData.images[imgId];
+        }
+
+        const dataStr = JSON.stringify(themeData);
+        const blob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `CharPhone_Theme_${contact.name}_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        alert("导出失败: " + e.message);
+    } finally {
+        btn.style.opacity = '1';
+    }
+};
+
+window.importCpTheme = async (input) => {
+    const file = input.files[0];
+    if(!file) return;
+
+    if(!confirm("确定要导入该桌面数据包吗？\n当前角色的手机桌面（照片/文字/壁纸）将被覆盖。")) {
+        input.value = ''; return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const imported = JSON.parse(e.target.result);
+
+            if(!imported.isCharPhoneTheme) {
+                alert("错误：这不是一个有效的 Char Phone 桌面数据包！");
+                input.value = ''; return;
+            }
+
+            await applyCpThemeData(imported);
+            alert("桌面数据包导入成功！请重新打开桌面查看。");
+            closePage('page-cp-settings');
+
+        } catch(err) {
+            alert("导入失败: 文件解析错误");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+};
+
+// 核心执行：应用主题数据到当前联系人
+async function applyCpThemeData(themeData) {
+    const contact = appData.chatData.contacts.find(c => c.id === currentPhoneContactId);
+    if (!contact) return;
+
+    // 1. 恢复图片到 IndexedDB
+    if(!idbHelper.db) await idbHelper.init();
+    const tx = idbHelper.db.transaction('images', 'readwrite');
+    const store = tx.objectStore('images');
+
+    if (themeData.imagePayloads) {
+        for (let imgId in themeData.imagePayloads) {
+            let base64 = themeData.imagePayloads[imgId];
+            store.put(base64, imgId);
+            appData.images[imgId] = base64;
+        }
+    }
+    await new Promise(resolve => tx.oncomplete = resolve);
+
+    // 2. 覆盖数据
+    delete themeData.isCharPhoneTheme;
+    delete themeData.imagePayloads;
+    contact.desktopData = themeData;
+
+    await saveData();
+    
+    // 3. 立即刷新桌面渲染
+    openCharPhoneDesktop(contact.id);
+}
 // ==========================================
 // [查阅手机 - 相册 APP] 核心交互与 AI 生成逻辑
 // ==========================================
