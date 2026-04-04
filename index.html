@@ -186,7 +186,7 @@
         .ios-bubble-wrapper {
             align-self: flex-start;
             background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: 12px 20px; 
             border-radius: 24px; border-bottom-left-radius: 6px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
@@ -231,7 +231,7 @@
         .capsule-section { padding: 0 24px; margin-bottom: 10px; flex-shrink: 0; }
         .capsule {
             height: 54px; border-radius: 27px;
-            background: rgba(255,255,255,0.7); backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);
             display: flex; align-items: center; padding: 0 8px 0 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
             border: 1px solid rgba(255,255,255,0.3);
@@ -277,7 +277,7 @@
         }
         .app-item {
             width: 62px; height: 62px; border-radius: 18px; margin: 0 auto;
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: center;
             position: relative; cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
@@ -299,7 +299,7 @@
             bottom: calc(110px + var(--safe-bottom)); 
             left: 50%; transform: translateX(-50%);
             width: 80px; height: 28px;
-            background: rgba(255,255,255,0.25); backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.25); backdrop-filter: blur(10px);
             border-radius: 14px; 
             border: 1px solid rgba(255,255,255,0.15);
             display: flex; align-items: center; justify-content: center; gap: 5px;
@@ -321,7 +321,7 @@
             width: 52px; height: 52px; 
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; border-radius: 16px; position: relative;
-            background: rgba(255,255,255,0.3); backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1);
             overflow: hidden;
         }
@@ -343,7 +343,7 @@
         }
         
         .nav-header {
-            height: 50px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
+            height: 50px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: center;
             border-bottom: 1px solid rgba(0,0,0,0.05); flex-shrink: 0; 
             font-weight: 600; font-size: 16px; color: #000;
@@ -400,7 +400,7 @@
             display: flex; flex-direction: column; gap: 15px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative;
             text-align: center;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(10px);
         }
         .modal-box h3 { margin-bottom: 5px; font-weight: 600; }
         .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
@@ -443,7 +443,7 @@
         /* 底部 TabBar */
         .ins-tab-bar {
             position: absolute; bottom: 0; width: 100%; height: calc(56px + var(--safe-bottom));
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transform: translateZ(0);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transform: translateZ(0);
             border-top: 0.5px solid #E5E5EA; display: flex; justify-content: space-around; padding-top: 8px; z-index: 100;
         }
         .ins-tab-item { width: 60px; text-align: center; color: #999; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
@@ -814,6 +814,73 @@
         .chat-picker-stk-box:active { background: #f0f0f0; }
 
 
+/* === 特殊消息样式 (红包、转账、语音、定位、文件等) === */
+.special-msg-wrap { background: transparent !important; padding: 0 !important; box-shadow: none !important; }
+
+.file-card { display: flex; align-items: center; background: #fff; padding: 14px; border-radius: 14px; width: 240px; justify-content: space-between; }
+.file-info { display: flex; flex-direction: column; overflow: hidden; flex: 1; padding-right: 12px;}
+.file-name { font-size: 15px; font-weight: 500; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { font-size: 12px; color: #8E8E93; margin-top: 4px; }
+.file-icon-box { width: 44px; height: 44px; border-radius: 10px; background: #FFF0ED; display: flex; align-items: center; justify-content: center; color: #F35948; font-size: 26px; border: 1px solid #FFEDEA; flex-shrink: 0; }
+
+.voice-bubble { display: flex; align-items: center; gap: 12px; cursor: pointer; min-width: 105px; user-select: none; padding: 13px 18px; border-radius: 16px; }
+.m-me .voice-bubble { background: #8CE161; color: #111; }
+.m-bot .voice-bubble { background: #E4E3DF; color: #111; }
+.voice-duration { font-size: 15px; font-weight: 500; color: inherit; position: relative; font-variant-numeric: tabular-nums; }
+.unread-dot { width: 7px; height: 7px; background-color: #FA5151; border-radius: 50%; position: absolute; top: -2px; right: -12px; box-shadow: 0 0 0 1px #fff; transition: opacity 0.3s, transform 0.3s; }
+.sound-wave { display: flex; align-items: center; gap: 3px; height: 16px;}
+.wave-bar { width: 2.5px; border-radius: 1.5px; background-color: currentColor; opacity: 0.85; transition: height 0.1s;}
+.wave-bar:nth-child(1) { height: 6px; }
+.wave-bar:nth-child(2) { height: 12px; }
+.wave-bar:nth-child(3) { height: 16px; }
+.wave-bar:nth-child(4) { height: 8px; }
+.wave-bar:nth-child(5) { height: 10px; }
+.wave-bar:nth-child(6) { height: 5px; }
+.voice-bubble.playing .wave-bar { animation: playWave 0.5s ease-in-out infinite alternate; }
+.voice-bubble.playing .wave-bar:nth-child(even) { animation-delay: 0.15s; }
+.voice-bubble.playing .wave-bar:nth-child(3n) { animation-delay: 0.3s; }
+@keyframes playWave { 0%  { height: 3px; } 100% { height: 16px;} }
+
+.location-card { padding: 0; border-radius: 12px; overflow: hidden; width: 245px; background: #fff; }
+.loc-map-svg { width: 100%; height: 95px; background: #F1F4F9; display: block; }
+.loc-info { padding: 12px 14px; position: relative;}
+.loc-title { font-size: 15px; font-weight: 500; color: #2A2A2A;}
+.loc-desc { font-size: 12px; color: #8E8E93; margin-top: 3px;}
+.loc-go { position: absolute; right: 14px; top: 18px; width: 30px; height: 30px; background: #E7F0FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #007AFF;}
+
+.pay-card { padding: 0; border-radius: 12px; overflow: hidden; width: 235px; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.pay-card:active { transform: scale(0.97); }
+.pay-card-body { padding: 18px 16px; display: flex; align-items: center; gap: 12px; color: #fff;}
+.pay-card-footer { background: #fff; padding: 7px 16px; font-size: 12px; color: #8E8E93; }
+.transfer-body { background: linear-gradient(135deg, #FFA929 0%, #F57D1D 100%); }
+.redpacket-body { background: linear-gradient(135deg, #F35948 0%, #D43628 100%); }
+.pay-icon { font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+.pay-info-title { font-size: 16px; font-weight: 500; text-shadow: 0 1px 1px rgba(0,0,0,0.05);}
+.pay-info-sub { font-size: 12px; color: rgba(255,255,255,0.9); margin-top:3px;}
+
+.kr-text-group { cursor: pointer; transition: 0.3s; display: flex; flex-direction: column;}
+.translate-btn { font-size: 12px; color: #9A9A9A; display: flex; align-items: center; gap: 4px; margin-top: 6px;}
+.translation-box { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); color: #444; font-size: 15px; animation: translateDrop 0.25s ease-out forwards; }
+@keyframes translateDrop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.ov-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 3000; display: none; opacity: 0; transition: 0.3s; backdrop-filter: blur(2px); }
+.redpacket-dialog { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%) scale(0.9); background: linear-gradient(180deg, #E24838 0%, #D43628 100%); border-radius: 20px; width: 280px; height: 395px; z-index: 3001; display: none; opacity: 0; transition: 0.35s cubic-bezier(0.3, 1, 0.3, 1); flex-direction: column; align-items: center; color: #FCE1B6; text-align: center; overflow: hidden; box-shadow: 0 15px 35px rgba(212,54,40,0.3); transform-origin: center; }
+.rp-avatar { width: 50px; height: 50px; border-radius: 12px; border: 2px solid #edaf81; margin: 30px auto 10px; object-fit: cover;}
+.rp-msg-title { font-size: 20px; font-weight: 500; margin-bottom: 25px; transition: 0.3s; }
+.rp-sealBtn { width: 86px; height: 86px; border-radius: 50%; background: linear-gradient(135deg, #FDE6A4 0%, #E6AE2E 100%); color: #C03E29; font-size: 34px; font-weight: bold; display: flex; align-items: center; justify-content: center; margin: auto; box-shadow: 0 6px 15px rgba(0,0,0,0.15), inset 0 -4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.3s; }
+.rp-sealBtn.open-spin { animation: spinCoin 1s cubic-bezier(0.5, 0.1, 0.3, 1.2) infinite; pointer-events: none;}
+@keyframes spinCoin { 0% { transform: rotateY(0deg) scale(1); } 50% { transform: rotateY(180deg) scale(1.1); } 100% { transform: rotateY(360deg) scale(1); } }
+.rp-amount-panel { margin: auto; display: none; opacity: 0; transform: scale(0.6); transition: opacity 0.4s ease-out, transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); flex-direction: column; align-items: center; gap: 4px; }
+.rp-huge-number { font-size: 42px; font-weight: 700; color: #FCE1B6; text-shadow: 0 4px 10px rgba(0,0,0,0.15); line-height: 1;}
+.rp-number-sub { font-size: 13px; color: rgba(252,225,182,0.85); font-weight: 400; }
+.action-sheet { position: absolute; bottom: -100%; left: 0; width: 100%; background: #F6F6F6; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 3001; transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); padding: 10px 15px 30px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;}
+.sheet-info-area { text-align: center; padding: 20px 0; color: #2a2a2a;}
+.sheet-amount { font-size: 34px; font-weight: 600; margin-top: 5px; color: #FF971D;}
+.sheet-btn { background: #fff; padding: 16px; border-radius: 14px; text-align: center; font-size: 16px; font-weight: 500; cursor: pointer; color: #2a2a2a; border: none; touch-action: manipulation; }
+.sheet-btn:active { background: #eeeeee; }
+.sheet-btn.confirm { color: #007AFF; }
+.sheet-btn.reject { color: #F35948; }
+
 /* === QQ 贴表情特效 === */
 .peeled-sticker {
     position: absolute;
@@ -1056,7 +1123,8 @@
 }
 .mind-front-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .mind-sys-title { font-size: 10px; font-weight: 600; color: #a1abc0; letter-spacing: 2px; text-transform: uppercase; font-family: 'Outfit', sans-serif;}
-.mind-live-dot { width: 8px; height: 8px; background-color: #6de2a1; border-radius: 50%; box-shadow: 0 0 10px rgba(109,226,161,0.8); animation: pulse 1.5s infinite;}
+.mind-live-dot { width: 8px; height: 8px; background-color: #6de2a1; border-radius: 50%; box-shadow: 0 0 10px rgba(109,226,161,0.8); }
+.mind-modal-mask.show .mind-live-dot { animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
 
 .mind-avatar-zone { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
@@ -1076,7 +1144,8 @@
 .mind-value { font-size: 12px; color: #2d3436; font-weight: 500; line-height: 1.3;}
 
 .mind-action-card { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);}
-.mind-flip-arrow { margin-top: auto; text-align: center; color: #dfe6e9; font-size: 10px; letter-spacing: 1px; animation: bounceX 2s infinite; font-family: 'Outfit', sans-serif;}
+.mind-flip-arrow { margin-top: auto; text-align: center; color: #dfe6e9; font-size: 10px; letter-spacing: 1px; font-family: 'Outfit', sans-serif;}
+.mind-modal-mask.show .mind-flip-arrow { animation: bounceX 2s infinite; }
 @keyframes bounceX { 0%,100% {transform: translateY(0);} 50% {transform: translateY(-4px);} }
 
 /* --- 背面：潜意识手札 --- */
@@ -1099,7 +1168,9 @@
 .mind-progress-bar { width: 100%; height: 5px; background:#e0dbd3; border-radius:3px; overflow: hidden;}
 .mind-progress-val { width: 0%; height: 100%; background: #2c3e50; border-radius:3px; transition: width 1s ease-out;}
 .mind-heartbeat-zone { display: flex; align-items: center; justify-content: center; gap: 8px;}
-.mind-big-heart { font-size: 20px; color: #ff5e62; animation: beatFast 0.4s infinite alternate; }
+.mind-big-heart { font-size: 20px; color: #ff5e62; }
+.mind-modal-mask.show .mind-big-heart { animation: beatFast 0.4s infinite alternate; }
+@keyframes beatFast { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
 .mind-memo-text { font-family: 'Outfit'; font-size: 10px; color:#a1a1a1; font-style: italic;}
 
 /* 扫描时的遮罩层 */
@@ -1108,7 +1179,8 @@
     display: flex; flex-direction:column; justify-content: center; align-items: center;
     backdrop-filter: blur(5px); transition: 0.3s;
 }
-.mind-scan-line { width: 80%; height: 2px; background: #007AFF; box-shadow: 0 0 10px #007AFF; animation: scanAnim 1s ease-in-out infinite alternate; margin-top: 20px;}
+.mind-scan-line { width: 80%; height: 2px; background: #007AFF; box-shadow: 0 0 10px #007AFF; margin-top: 20px;}
+.mind-modal-mask.show .mind-scan-line { animation: scanAnim 1s ease-in-out infinite alternate; }
 @keyframes scanAnim { from { transform: translateY(-30px); } to { transform: translateY(30px); } }
 /* ============================================== */
         /* [阅读/CP圈 APP] 专属油墨纸莎草美化 V2.0 */
@@ -1244,7 +1316,7 @@
        /* --- 7. 底部 Dock 导航栏 --- */
         .lib-dock-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; height: calc(56px + var(--safe-bottom));
-            background: var(--lib-bg); opacity: 0.98; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: var(--lib-bg); opacity: 0.98; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border-top: 0.5px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; padding-top: 8px; z-index: 100;
             box-sizing: border-box;
         }
@@ -1394,7 +1466,7 @@
         .cp-desktop-inner { 
             flex: 1; display: flex; flex-direction: column; justify-content: flex-start; 
             gap: 10px; 
-            padding-top:12px;
+            padding-top: calc(env(safe-area-inset-top) + 32px);
             padding-bottom: 110px; overflow-y: auto; 
         }
         
@@ -1429,7 +1501,7 @@
 .cp-hash-icon::after { display: none; }
         .cp-status-text { font-size: 10px; font-weight: 700; color: #555; font-family: Georgia, "Times New Roman", Times, serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
         
-        .cp-dock { position: absolute; bottom: calc(20px + var(--safe-bottom)); left: 20px; right: 20px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 35px; padding: 12px 15px; display: flex; justify-content: space-around; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4); z-index: 5;}
+        .cp-dock { position: absolute; bottom: calc(20px + var(--safe-bottom)); left: 20px; right: 20px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 35px; padding: 12px 15px; display: flex; justify-content: space-around; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4); z-index: 5;}
         .cp-dock .cp-app-icon { width: 54px; height: 54px; box-shadow: none; border-radius: 13px; }
 
 .cp-home-indicator {
@@ -1507,7 +1579,7 @@
 
 .clock-bottom-tabbar {
     background-color: rgba(18, 18, 18, 0.85);
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border-top: 0.5px solid rgba(255,255,255,0.1);
     display: flex; justify-content: space-around;
     padding-top: 6px;
@@ -1595,7 +1667,7 @@
 .mail-bottom-toolbar {
     position: absolute; bottom: 0; left: 0; width: 100%; display: flex; align-items: flex-start; justify-content: center;
     padding: 10px 20px calc(10px + env(safe-area-inset-bottom)); min-height: 44px;
-    background-color: rgba(246, 246, 246, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    background-color: rgba(246, 246, 246, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border-top: 0.5px solid rgba(0,0,0,0.15); z-index: 99;
 }
 .mail-toolbar-text { font-size: 12px; color: #333; margin-top: 5px; }
@@ -1670,7 +1742,7 @@
 .cp-note-item-folder { margin-top: 6px; font-size: 13px; color: #8e8e93; display: flex; align-items: center; gap: 4px; }
 
 /* 底栏 */
-.cp-notes-bottom { background: rgba(249,249,249,0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(0,0,0,0.1); padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.cp-notes-bottom { background: rgba(249,249,249,0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.1); padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .cp-notes-count { font-size: 12px; color: #000; flex: 1; text-align: center; }
 .cp-notes-compose { color: #d4a311; background: none; border: none; cursor: pointer; }
 
@@ -1720,7 +1792,7 @@
 .cp-msg-container.chat-active #cp-msg-chat-view { transform: translateX(0); }
 
 /* --- 列表页 --- */
-.cp-msg-top-nav { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; flex-shrink: 0; }
+.cp-msg-top-nav { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--header-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 100; flex-shrink: 0; }
 .cp-msg-nav-btn { color: var(--ios-blue); font-size: 17px; cursor: pointer; }
 .cp-msg-compose svg { width: 24px; height: 24px; fill: var(--ios-blue); cursor: pointer; }
 
@@ -1744,7 +1816,7 @@
 .cp-msg-preview { font-size: 15px; color: var(--ios-gray); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* --- 聊天详情页 --- */
-.cp-msg-chat-header { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--border-color); z-index: 30; flex-shrink: 0;}
+.cp-msg-chat-header { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px; background: var(--header-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 0.5px solid var(--border-color); z-index: 30; flex-shrink: 0;}
 /* 1. 修复：增大返回按钮的点击热区，让它极其灵敏 */
 .cp-msg-header-left { display: flex; align-items: center; color: var(--ios-blue); font-size: 17px; cursor: pointer; letter-spacing: -0.5px; padding: 10px 15px 10px 0; margin-left: -5px; }
 .cp-msg-header-left svg { width: 22px; height: 22px; fill: var(--ios-blue); margin-right: -4px; }
@@ -1760,7 +1832,7 @@
 /* 4. 修复：底部输入框超长被切断，➕号变成椭圆的问题 */
 .cp-msg-footer { 
     display: flex; align-items: flex-end; padding: 8px 15px calc(10px + env(safe-area-inset-bottom)); 
-    background: var(--header-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+    background: var(--header-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
     border-top: 1px solid var(--border-color); flex-shrink: 0; 
     box-sizing: border-box; width: 100%; /* 强制限制在屏幕宽度内 */
 }
@@ -1898,7 +1970,7 @@
     box-sizing: border-box; /* 核心修复点 */
     display: flex; justify-content: space-between; align-items: center;
     width: 100%; padding: calc(env(safe-area-inset-top) + 10px) 15px 10px 15px;
-    background: var(--p-header-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    background: var(--p-header-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border-bottom: 0.5px solid var(--p-border-line); z-index: 100; flex-shrink: 0;
 }
 .cp-photo-nav-btn { color: var(--p-blue); font-size: 17px; cursor: pointer; display: flex; align-items: center;}
@@ -1941,7 +2013,7 @@
 .cp-photo-meta-exif .model { color: #fff; font-weight:600;}
 
 /* 底部功能栏 (相簿首页 & 大图页通用) */
-.cp-photo-tab-bar { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(249, 249, 249, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 0.5px solid var(--p-border-line); display: flex; justify-content: space-around; padding-top:8px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 100; box-sizing: border-box;}
+.cp-photo-tab-bar { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(249, 249, 249, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 0.5px solid var(--p-border-line); display: flex; justify-content: space-around; padding-top:8px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 100; box-sizing: border-box;}
 .cp-photo-tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--p-text-light-gray); }
 .cp-photo-tab-item svg { width: 26px; height: 26px; fill: currentColor; margin-bottom: 3px;}
 .cp-photo-tab-item span { font-size: 10px; font-weight: 500; }
@@ -2183,7 +2255,7 @@
 
 /* 悬浮底栏 */
 .cp-ph-dock-wrap { position: absolute; bottom: calc(25px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; z-index: 100; }
-.cp-ph-dock { background: rgba(45, 45, 45, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 35px; display: flex; align-items: center; justify-content: space-evenly; padding: 6px; width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.cp-ph-dock { background: rgba(45, 45, 45, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 35px; display: flex; align-items: center; justify-content: space-evenly; padding: 6px; width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .cp-ph-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 46px; border-radius: 16px; color: var(--ph-gray); cursor: pointer; transition: 0.2s; }
 .cp-ph-nav-item i { font-size: 20px; margin-bottom: 2px; }
 .cp-ph-nav-item span { font-size: 10px; font-weight: 500;}
@@ -2227,7 +2299,7 @@
 .cp-browser-history-url { font-family: 'Outfit', sans-serif; font-size: 12px; color: #8E8E93; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
 /* --- 文章页高定样式 --- */
-.top-search-bar { width: 100%; background: var(--tab-bg); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border-bottom: 0.5px solid rgba(60, 60, 67, 0.2); padding: calc(env(safe-area-inset-top) + 10px) 20px 10px; z-index: 100; flex-shrink: 0; transition: transform 0.3s ease; }
+.top-search-bar { width: 100%; background: var(--tab-bg); backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-bottom: 0.5px solid rgba(60, 60, 67, 0.2); padding: calc(env(safe-area-inset-top) + 10px) 20px 10px; z-index: 100; flex-shrink: 0; transition: transform 0.3s ease; }
 .top-search-bar.hidden { transform: translateY(-100%); position: absolute; }
 .url-display { width: 100%; display: flex; justify-content: center; align-items: center; gap: 6px; font-family: 'Outfit', sans-serif; font-size: 14.5px; letter-spacing: 0.3px; color: #111; white-space: nowrap; overflow: hidden; }
 .url-prefix { color: #8E8E93; font-weight: 400; }
@@ -2260,7 +2332,7 @@
 .sub-url { font-size: 11px; color: #8E8E93; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.6; }
 
 /* --- 严防死守的底部操作栏：作为 Flex 容器的底部元素 --- */
-.action-bar-bottom { width: 100%; background: var(--tab-bg); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border-top: 0.5px solid rgba(60, 60, 67, 0.2); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; z-index: 1005; flex-shrink: 0; box-sizing: border-box; }
+.action-bar-bottom { width: 100%; background: var(--tab-bg); backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); border-top: 0.5px solid rgba(60, 60, 67, 0.2); padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; z-index: 1005; flex-shrink: 0; box-sizing: border-box; }
 .ui-action { display: flex; justify-content: center; align-items: center; width: 24%; height: 40px; cursor: pointer; user-select: none; transition: opacity 0.2s; }
 .ui-action:active { opacity: 0.3; }
 .ui-action.off-duty svg { stroke: rgba(142, 142, 147, 0.4); }
@@ -2322,7 +2394,7 @@
 
 /* 顶部导航 */
 .cp-tb-header {
-    background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px);
+    background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px);
     display: flex; justify-content: space-between; align-items: center;
     padding: calc(env(safe-area-inset-top) + 32px) 20px 14px !important;
     font-size: 17px; font-weight: 600; color: #1a1a1a; flex-shrink: 0;
@@ -2333,7 +2405,7 @@
 
 /* 5大金刚分类位 */
 .cp-tb-dashboard {
-    margin: 15px 20px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    margin: 15px 20px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border-radius: 20px; padding: 20px 15px; box-shadow: 0 6px 16px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,1);
     display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
 }
@@ -2380,7 +2452,7 @@
 /* 底部导航栏 */
 .cp-tb-bottom-nav {
     position: absolute; bottom: 0; left: 0; width: 100%;
-    background: rgba(255,255,255,0.85); backdrop-filter: blur(25px) saturate(150%); -webkit-backdrop-filter: blur(25px);
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(10px) saturate(150%); -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; 
     padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 12px)); z-index: 100;
 }
@@ -2907,16 +2979,6 @@
     <div id="page-char-phone-desktop" class="page-layer">
     <!-- 👇 新增这一行：桌面专属壁纸层 👇 -->
     <div id="cp-desktop-wallpaper" style="position:absolute; inset:0; z-index:-1; background-size:cover; background-position:center;"></div>
-        
-        <!-- 状态栏：贴紧屏幕最顶端，没有时间 -->
-        <div class="cp-top-bar">
-            <div id="cp-live-time" style="font-size:13px; font-weight:600; letter-spacing:0.5px; color:#111; min-width:50px;"></div>
-            <div class="cp-status-icons">
-                <svg viewBox="0 0 18 12" width="16" height="10"><path d="M1 9h3v3H1zM6 6h3v6H6zM11 3h3v9h-3zM16 0h2v12h-2z" fill="#111"/></svg>
-                <span style="font-family:-apple-system; font-weight:700; font-size:11px; margin:0 2px;">5G</span>
-                <svg viewBox="0 0 25 12" width="25" height="12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111" stroke-width="1"/><rect x="2" y="2" width="15" height="8" rx="2" fill="#111"/><path d="M23 4h1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1V4Z" fill="#111"/></svg>
-            </div>
-        </div>
 
         <!-- 内部容器：自动向上对齐排布 -->
         <div class="cp-desktop-inner">
@@ -4024,7 +4086,7 @@
             </div>
 
             <form class="dock" onsubmit="event.preventDefault(); sendOnlyUserMsg();">
-                <div class="btn-plus"><i class="ri-add-line"></i></div>
+                <div class="btn-plus" onclick="document.getElementById('chat-plus-panel').style.display = document.getElementById('chat-plus-panel').style.display === 'none' ? 'grid' : 'none';"><i class="ri-add-line"></i></div>
                 
                 <input type="text" class="dock-input" id="inp-txt" placeholder="Signal to AI..." autocomplete="off">
                 
@@ -4037,6 +4099,16 @@
                     <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </div>
             </form>
+            
+            <div class="chat-plus-panel" id="chat-plus-panel" style="display:none; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 15px 20px 30px; background: #F2F2F7; border-top: 1px solid #E5E5EA; width: 100%; box-sizing: border-box; margin-top: 10px;">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#333;"><i class="ri-camera-line"></i></div><span style="font-size:11px; color:#888;">相机</span></div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#333;"><i class="ri-image-line"></i></div><span style="font-size:11px; color:#888;">相册</span></div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#333;"><i class="ri-mic-line"></i></div><span style="font-size:11px; color:#888;">语音</span></div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#F35948;"><i class="ri-red-packet-fill"></i></div><span style="font-size:11px; color:#888;">红包</span></div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#FFA929;"><i class="ri-exchange-cny-fill"></i></div><span style="font-size:11px; color:#888;">转账</span></div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#007AFF;"><i class="ri-map-pin-fill"></i></div><span style="font-size:11px; color:#888;">定位</span></div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#FF9500;"><i class="ri-file-fill"></i></div><span style="font-size:11px; color:#888;">文件</span></div>
+            </div>
         </footer>
     </div>
 
@@ -4108,6 +4180,14 @@
                         <span class="row-sub">让AI感知现实当前的时间与日期</span>
                     </div>
                     <div class="tgl-btn" id="set-time-tgl" onclick="this.classList.toggle('on')"></div>
+                </div>
+                
+                <div class="item-row">
+                    <div>
+                        <span class="row-label"><i class="ri-translate-2" style="margin-right:4px;"></i>Bilingual Translation</span>
+                        <span class="row-sub">双语翻译开关</span>
+                    </div>
+                    <div class="tgl-btn" id="set-translate-tgl" onclick="this.classList.toggle('on')"></div>
                 </div>
                 
 <!-- 动态 HTML 模块 -->
@@ -5347,8 +5427,9 @@ function bindLongPress(element, content, type) {
         const t = document.getElementById('clock-display');
         setInterval(() => {
             const d = new Date();
-            t.innerText = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-        }, 1000);
+            const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            if (t.innerText !== timeStr) t.innerText = timeStr;
+        }, 10000);
     }
 
     window.renderApprList = () => {
@@ -6667,10 +6748,19 @@ function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled
         let quoteHtml = quoteText ? `<div class="msg-quote-block">${quoteText}</div>` : '';
         let textHtml = quoteHtml + pureText.replace(/\n/g, '<br>');
 
+        let isSpecial = pureText.includes('special-msg-wrap');
         let showCore = (pureText.length > 0 || quoteText);
-        let coreStyle = showCore ? '' : 'display: none;'; 
+        let coreStyle = showCore ? (isSpecial ? 'background: transparent; padding: 0; box-shadow: none;' : '') : 'display: none;'; 
         
         let coreBlock = `<div class="msg-core" style="${coreStyle}">${textHtml}</div>`;
+        
+        let translateHtml = '';
+        if (sender === 'bot' && !isSpecial && currentChatContact.autoTranslate) {
+            translateHtml = `<div class="kr-text-group">
+                                <div class="translate-btn" onclick="translateMsg(this, '${id}')"><i class="ri-translate-2"></i> 翻译</div>
+                                <div class="translation-box" id="trans_${id}"></div>
+                             </div>`;
+        }
         
         let stickerBlock = stickerObj ? `<img src="${getRealImgSrc(stickerObj.src)}" style="max-width:100px; border-radius:12px; display:block; margin-top:4px; margin-bottom:2px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : '';
 
@@ -6680,7 +6770,7 @@ function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled
             moduleBlocks += `<div id="${sbId}" class="msg-module-box" style="margin-top:6px;">${htmlContent}</div>`;
         });
 
-        let contentCol = `<div class="msg-col">${coreBlock}${stickerBlock}${moduleBlocks}</div>`;
+        let contentCol = `<div class="msg-col">${coreBlock}${translateHtml}${stickerBlock}${moduleBlocks}</div>`;
 
                 let timeHtml = `<span class="time">${timeStr}</span>`;
         
@@ -6801,6 +6891,9 @@ window.updateWbLabel();
     const timeTgl = document.getElementById('set-time-tgl');
     if(currentChatContact.timeAwareness) timeTgl.classList.add('on'); else timeTgl.classList.remove('on');
 
+    const translateTgl = document.getElementById('set-translate-tgl');
+    if(currentChatContact.autoTranslate) translateTgl.classList.add('on'); else translateTgl.classList.remove('on');
+
     // 👇 这里是刚刚新增的：读取 HTML 动态模块的开关状态 👇
     const htmlTgl = document.getElementById('set-html-tgl');
     if(currentChatContact.htmlModules) htmlTgl.classList.add('on'); else htmlTgl.classList.remove('on');
@@ -6888,6 +6981,7 @@ window.saveChatSettings = async () => {
     const wbBoxes = document.querySelectorAll('#set-worldbook-dropdown input:checked');
 currentChatContact.worldbookCat = Array.from(wbBoxes).map(b => b.value);
     currentChatContact.timeAwareness = document.getElementById('set-time-tgl').classList.contains('on');
+    currentChatContact.autoTranslate = document.getElementById('set-translate-tgl').classList.contains('on');
     
     // 👇 这里是刚刚新增的：保存 HTML 动态模块的开关状态 👇
     currentChatContact.htmlModules = document.getElementById('set-html-tgl').classList.contains('on');
@@ -7536,27 +7630,23 @@ ${availableStickers.join('\n')}
     if(currentChatContact.htmlModules) {
         systemPrompt += `\n\n[动态可视化模块 (HTML)]
 你拥有发送交互式UI卡片的能力！请发挥创意！
-当你觉得适合“发张照片”、“分享链接”、“展示门票”、“发文件”或“玩个小游戏”等时，必须生成一段 HTML/CSS/JS 代码来模拟富媒体消息。
-* 规则1：整个 HTML 代码必须严格包裹在 <sandbox> 和 </sandbox> 标签内。
-* 规则2：适配手机端（最大宽度 280px），使用现代UI设计（圆角、柔和阴影）。
-* 规则3：可以使用 <script> 实现点击效果。
-* 示例场景（分享美食照）：
-  <sandbox>
-  <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:sans-serif;">
-     <img src="https://placehold.co/280x200/ff9999/fff?text=Yummy+Food" style="width:100%; display:block;">
-     <div style="padding:12px;"><b style="color:#333;">看这个！🍰</b><p style="margin:4px 0 0; font-size:12px; color:#666;">刚在新开的咖啡店买的。</p></div>
-  </div>
-  </sandbox>`;
+当你觉得适合“发张照片”、“发语音”、“发红包”、“转账”、“发定位”、“发文件”时，必须生成一段 HTML 代码来模拟富媒体消息。
+* 规则1：整个 HTML 代码必须包含 class="special-msg-wrap"。
+* 规则2：你可以使用以下模板（请替换其中的文字、金额等）：
+  - 照片：<div class="special-msg-wrap"><img src="https://i.postimg.cc/FsvyQp2p/IMG-20260403-233525.jpg" style="max-width:200px; border-radius:12px;"><div style="font-size:12px; color:#888; margin-top:4px;">照片描述</div></div>
+  - 语音：<div class="special-msg-wrap voice-bubble" onclick="playVoiceAndRead(this)"><div class="sound-wave"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div><div class="voice-duration"><span>18"</span><div class="unread-dot"></div></div></div>
+  - 红包：<div class="special-msg-wrap pay-card" onclick="openRedPacketCenter(this, '88.88', 'bot', '祝你天天快乐发财！')"><div class="pay-card-body redpacket-body"><i class="ri-red-packet-fill pay-icon" style="color: #FFDE7A;"></i><div><div class="pay-info-title">祝你天天快乐发财！</div><div class="pay-info-sub packetInlineWord">微信红包 🧧</div></div></div><div class="pay-card-footer packFooterText">微信红包</div></div>
+  - 转账：<div class="special-msg-wrap pay-card" onclick="maybeOpenSheet(this, '500.00', 'bot')"><div class="pay-card-body transfer-body transBodyVisual"><i class="ri-exchange-cny-fill pay-icon transIcon" style="color:#FFF;"></i><div><div class="pay-info-title">￥ 500.00</div><div class="pay-info-sub transSubMsg">转账给你</div></div></div><div class="pay-card-footer">微信转账</div></div>
+  - 定位：<div class="special-msg-wrap location-card"><svg class="loc-map-svg" viewBox="0 0 245 95" xmlns="http://www.w3.org/2000/svg"><path d="M0,45 L245,30 M120,0 L180,95 M20,0 L60,95 M50,70 L245,85" stroke="#FFFFFF" stroke-width="4" fill="none"/><circle cx="125" cy="48" r="18" fill="rgba(0,122,255,0.15)"/><circle cx="125" cy="48" r="6" fill="#007AFF" stroke="#FFF" stroke-width="2"/></svg><div class="loc-info"><div class="loc-title">地点名称</div><div class="loc-desc">距离描述</div><div class="loc-go"><i class="ri-navigation-fill"></i></div></div></div>
+  - 文件：<div class="special-msg-wrap file-card"><div class="file-info"><span class="file-name">文件名.pdf</span><span class="file-size">文件大小</span></div><div class="file-icon-box"><i class="ri-file-pdf-fill"></i></div></div>`;
     }
     
-// ==========================================
+    // ==========================================
     // 5. 记忆与环境注入 (已改为读取多区块)
     // ==========================================
-    if(currentChatContact.timeAwareness) {
-        const now = new Date();
-        const timeStr = now.toLocaleString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
-        systemPrompt += `\n\n[环境与时间]\n当前现实时间是：${timeStr}。请让时间自然地影响你的打招呼方式或话题。`;
-    }
+    const now = new Date();
+    const timeStr = now.toLocaleString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+    systemPrompt += `\n\n[环境与时间]\n当前现实时间是：${timeStr}。请让时间自然地影响你的打招呼方式或话题。`;
 
     if(currentChatContact.worldbookCat && currentChatContact.worldbookCat.length > 0 && appData.world) {
         const lore = appData.world.filter(w => currentChatContact.worldbookCat.includes(w.cat)).map(w => `- ${w.title}: ${w.content}`).join('\n');
@@ -9592,12 +9682,16 @@ ${prefsDesc}
         let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
         let articles = JSON.parse(rawText);
         articles.forEach((a, i) => { 
-            if(!a.id) a.id = 'art_' + Date.now() + '_' + i;
+            a.id = 'art_' + Date.now() + '_' + Math.floor(Math.random()*10000) + '_' + i;
             a.author = getAuthorForArticle(a.title); // 初始化随机作者
             a.chapters =[{ title: "第一章：楔子", content: a.content }];
         });
         
         cat.articles = articles;
+        
+        // 修复：刷新时不要默认点赞收藏
+        // 确保新生成的文章不会自动出现在 likes 列表中
+        
         await saveData(); 
         renderDynamicArticles();
     } catch (e) {
@@ -9807,11 +9901,12 @@ function updateCpClockLive() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
     const m = String(now.getMinutes()).padStart(2, '0');
-    el.textContent = `${h}:${m}`;
+    const timeStr = `${h}:${m}`;
+    if (el.textContent !== timeStr) el.textContent = timeStr;
 }
 
 // 挂载定时器，每分钟自动跳动
-setInterval(updateCpClockLive, 1000 * 60);
+setInterval(updateCpClockLive, 10000);
 
 // ==========================================
 // [查阅手机 - 邮件 APP] 核心逻辑 & AI 生成
@@ -11925,8 +12020,8 @@ window.generateCpPhotos = async () => {
 // 🎯 全网终极解决方案：统一给所有 Char Phone APP 注入标准、不遮挡的悬浮状态栏
 // =========================================================================
 function injectUnifiedStatusBar() {
-    // 找到除了桌面以外的所有查阅手机的子应用
-    const apps = document.querySelectorAll('.cp-mail-container, .cp-notes-container, .cp-msg-container, .cp-ph-container, .cp-wx-container, .cp-clock-container, .cp-browser-container, .cp-photo-container');
+    // 找到所有查阅手机的子应用及桌面
+    const apps = document.querySelectorAll('.cp-mail-container, .cp-notes-container, .cp-msg-container, .cp-ph-container, .cp-wx-container, .cp-clock-container, .cp-browser-container, .cp-photo-container, .cp-tb-container, .cp-set-container, #page-char-phone-desktop');
     
     const statusBarHTML = `
         <div class="cp-unified-status-bar">
@@ -11948,25 +12043,56 @@ function injectUnifiedStatusBar() {
 }
 
 // 时间同步引擎（包括桌面和所有刚才被注入状态栏的子应用）
+let cachedTimeElements = null;
 function updateAllCpTimes() {
     const now = new Date();
     const h = now.getHours().toString().padStart(2, '0');
     const m = now.getMinutes().toString().padStart(2, '0');
     const timeStr = h + ':' + m;
     
-    // 更新桌面时间
-    const elDesktop = document.getElementById('cp-live-time');
-    if (elDesktop) elDesktop.textContent = timeStr;
-    
-    // 更新所有子应用时间
-    const injectedTimes = document.querySelectorAll('.cp-live-time-sync');
-    injectedTimes.forEach(el => el.textContent = timeStr);
+    if (!cachedTimeElements) {
+        cachedTimeElements = document.querySelectorAll('.cp-live-time-sync');
+    }
+    cachedTimeElements.forEach(el => {
+        if (el.textContent !== timeStr) el.textContent = timeStr;
+    });
 }
 
 // 执行初始化
 injectUnifiedStatusBar();
 updateAllCpTimes();
-setInterval(updateAllCpTimes, 1000);
+setInterval(updateAllCpTimes, 10000);
+
+window.translateMsg = async (btn, msgId) => {
+    const transBox = document.getElementById('trans_' + msgId);
+    if (transBox.style.display === 'block') {
+        transBox.style.display = 'none';
+        return;
+    }
+    
+    const msg = appData.chatData.messages.find(m => m.id === msgId);
+    if (!msg) return;
+    
+    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i> 翻译中...';
+    
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[{role:"system", content: "Translate the following text to simplified Chinese. Only output the translation, nothing else."}, {role:"user", content: msg.content.replace(/<[^>]+>/g, '')}], temperature: 0.3 })
+        });
+        const data = await res.json();
+        if(data.error) throw new Error(data.error.message);
+        
+        transBox.innerText = data.choices[0].message.content.trim();
+        transBox.style.display = 'block';
+    } catch (e) {
+        alert("翻译失败: " + e.message);
+    } finally {
+        btn.innerHTML = '<i class="ri-translate-2"></i> 翻译';
+    }
+};
 
 </script>
 </body>
