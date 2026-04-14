@@ -37,6 +37,7 @@
     <style id="global-font-style"></style>
     <style>
     
+    
 /* ================= PockAI 开场动画专属样式 ================= */
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap');
 
@@ -107,6 +108,88 @@
   }
   /* ======================================================= */
   
+/* ================= PockAI 专属锁屏样式 ================= */
+#lock-screen {
+    position: fixed; inset: 0;
+    /* 层级极高：在开屏动画(999999)和激活码(999990)的下面，但在桌面所有东西上面 */
+    z-index: 999980; 
+    background-size: cover; background-position: center;
+    display: none; flex-direction: column; align-items: center; justify-content: flex-start;
+    color: #fff; text-shadow: 0 2px 15px rgba(0,0,0,0.4);
+    /* 丝滑的上滑解锁动画 */
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+/* 锁屏顶部的时间和日期 */
+.ls-time { font-size: 85px; font-weight: 300; margin-top: 12vh; line-height: 1; letter-spacing: -2px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+.ls-date { font-size: 20px; font-weight: 500; margin-top: 10px; letter-spacing: 1px; }
+
+/* 底部呼吸提示文字 */
+.ls-unlock-hint { 
+    position: absolute; bottom: calc(40px + env(safe-area-inset-bottom)); 
+    font-size: 14px; font-weight: 600; opacity: 0.8; 
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: lsBreathe 2.5s infinite; cursor: pointer;
+}
+.ls-unlock-hint i { font-size: 24px; }
+@keyframes lsBreathe { 
+    0%, 100% { opacity: 0.4; transform: translateY(0); } 
+    50% { opacity: 1; transform: translateY(-8px); } 
+}
+
+/* ================= 锁屏仿真组件 (手电筒/相机/上滑动画) ================= */
+.ls-quick-actions {
+    position: absolute; bottom: calc(45px + env(safe-area-inset-bottom));
+    left: 0; width: 100%; display: flex; justify-content: space-between;
+    padding: 0 40px; /* <--- 把这里的数字改小，图标就会更靠两边 */
+    box-sizing: border-box; pointer-events: none;
+}
+.ls-action-btn {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    display: flex; justify-content: center; align-items: center;
+    font-size: 24px; color: #fff; pointer-events: auto; /* 恢复自身点击 */
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* 模拟苹果重按扩大的物理反馈 */
+.ls-action-btn:active { transform: scale(1.15); background: rgba(255,255,255,0.9); color: #000; }
+/* 手电筒打开时的常亮状态 */
+.ls-action-btn.flash-on { background: #fff; color: #000; }
+
+.ls-up-arrow {
+    margin-bottom: -6px; font-size: 20px;
+    animation: slideUpArrow 1.5s infinite;
+}
+@keyframes slideUpArrow {
+    0% { transform: translateY(5px); opacity: 0; }
+    50% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-5px); opacity: 0; }
+}
+/* =======================================================
+   ✨ 全局体验修复：彻底消灭点击蓝块 & 注入拟物按压感
+   ======================================================= */
+/* 1. 彻底禁用所有默认的高亮、边框和选中底色 */
+*, *::before, *::after {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    outline: none !important;
+    -webkit-touch-callout: none;
+}
+
+/* 2. 让所有 APP 桌面图标、底部 Dock栏图标、查阅手机内的列表、聊天气泡等，获得顺滑过渡 */
+.app-item, .dock-icon, .cp-app-icon, .cp-tb-icon-item, .ins-tab-item,
+.lib-dock-item, .clock-tab-item, .cp-ph-nav-item, .ui-action,
+.plus-item, .btn-send, .btn-std, .nav-btn, .ins-btn, .header-btn {
+    transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.15s ease !important;
+}
+
+/* 3. 施加物理级按压缩放（松手自动弹回） */
+.app-item:active, .dock-icon:active, .cp-app-icon:active, .cp-tb-icon-item:active,
+.ins-tab-item:active, .lib-dock-item:active, .clock-tab-item:active, .cp-ph-nav-item:active,
+.btn-send:active, .btn-std:active, .header-btn:active {
+    transform: scale(0.88) !important; /* 按下瞬间变小 12% */
+    opacity: 0.8 !important; /* 微微变暗，模拟受力 */
+}
         :root {
             --bg-color: #000;
             --text-main: #070707;
@@ -468,6 +551,18 @@
         .ins-post-content { padding: 0 15px; font-size: 14px; color: #111; line-height: 1.5; }
         .ins-post-tags { padding: 5px 15px 0; font-size: 12px; color: #007AFF; font-weight: 500; }
         .ins-post-loc { font-size: 11px; color: #999; display: flex; align-items: center; gap: 4px; }
+/* 动态评论区高定样式 */
+.ins-comments-area { padding: 0 15px 10px; font-size: 13px; line-height: 1.5; }
+.ins-comment-item { margin-bottom: 6px; display: flex; align-items: flex-start; gap: 6px; }
+.ins-comment-item .cmt-ava { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px; }
+.ins-comment-content { background: #f2f2f7; padding: 6px 10px; border-radius: 12px; border-top-left-radius: 2px; flex: 1; }
+.ins-comment-author { font-weight: 600; color: #111; margin-right: 6px; font-size: 12px; }
+.ins-comment-text { color: #333; font-size: 13px; word-break: break-word; }
+.ins-comment-input-bar { display: flex; align-items: center; padding: 5px 15px 15px; gap: 10px; }
+.ins-comment-ava { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.ins-comment-input { flex: 1; border: none; background: #f2f2f7; padding: 10px 14px; border-radius: 20px; font-size: 14px; outline: none; }
+.ins-comment-send { color: #007AFF; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+.ins-comment-send:active { transform: scale(0.9); opacity: 0.7; }
 
         /* 底部抽屉模态框 (Bottom Sheet) */
         .ins-sheet-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9000; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; align-items: flex-end; transform: translateZ(0); }
@@ -787,6 +882,57 @@
         .btn-send:active { transform: scale(0.9); }
         .btn-send svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: translateX(-1px) translateY(1px); }
 
+
+/* ==================
+   聊天室 “+” 号附件面板（极致磨砂玻璃版）
+   ================== */
+.chat-plus-panel {
+    display: none; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 25px 15px; 
+    padding: 30px 20px calc(20px + env(safe-area-inset-bottom)); 
+    
+    /* 极致磨砂玻璃底色，微微透出背后的聊天背景 */
+    background: rgba(245, 245, 247, 0.88); 
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border-top: 0.5px solid rgba(0,0,0,0.1);
+    
+    /* 黑科技：接管全屏宽度，彻底消除两边和底部的难看白边 */
+    margin: 15px -20px calc(-15px - env(safe-area-inset-bottom)); 
+    width: 100vw; 
+    box-sizing: border-box;
+    
+    animation: slideUpPanel 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes slideUpPanel {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.plus-item {
+    display: flex; flex-direction: column; align-items: center; 
+    gap: 8px; cursor: pointer; user-select: none;
+}
+
+/* 拟物物理按压反馈：不仅缩小，还有极其微妙的内凹阴影 */
+.plus-item:active .plus-icon-box {
+    transform: scale(0.9);
+    background: #EBEBEB;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.plus-icon-box {
+    width: 58px; height: 58px; background: #FFFFFF; border-radius: 14px; 
+    display: flex; justify-content: center; align-items: center; 
+    font-size: 26px; color: #333;
+    /* 更锐利清晰的悬浮阴影 */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06), 0 0.5px 2px rgba(0,0,0,0.04); 
+    transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.plus-item-text { font-size: 11px; color: #555; font-weight: 500; }
         /* Emoji 原生迷你面板 */
         .emoji-panel {
             position: absolute; bottom: 100%; left: 16px; right: 16px; background: #fff;
@@ -858,11 +1004,21 @@
 .pay-info-title { font-size: 16px; font-weight: 500; text-shadow: 0 1px 1px rgba(0,0,0,0.05);}
 .pay-info-sub { font-size: 12px; color: rgba(255,255,255,0.9); margin-top:3px;}
 
-.kr-text-group { cursor: pointer; transition: 0.3s; display: flex; flex-direction: column;}
-.translate-btn { font-size: 12px; color: #9A9A9A; display: flex; align-items: center; gap: 4px; margin-top: 6px;}
-.translation-box { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); color: #444; font-size: 15px; animation: translateDrop 0.25s ease-out forwards; }
-@keyframes translateDrop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-
+/* ▼ 翻译文字组件 (完美防爆气泡版) ▼ */
+        .kr-text-group { cursor: pointer; display: flex; flex-direction: column; width: 100%; }
+        .trans-original { word-break: break-word; }
+        .translate-btn { 
+            font-size: 11px; color: rgba(0,0,0,0.4); display: flex; align-items: center; gap: 4px; 
+            margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,0.1); 
+            user-select: none;
+        }
+        .translation-box { 
+            display: none; margin-top: 4px; font-size: 14px; color: inherit; opacity: 0.9;
+            animation: translateDrop 0.2s ease-out forwards;
+        }
+        .m-me .translate-btn { color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.2); }
+        @keyframes translateDrop { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: translateY(0); } }
+        
 .ov-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 3000; display: none; opacity: 0; transition: 0.3s; backdrop-filter: blur(2px); }
 .redpacket-dialog { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%) scale(0.9); background: linear-gradient(180deg, #E24838 0%, #D43628 100%); border-radius: 20px; width: 280px; height: 395px; z-index: 3001; display: none; opacity: 0; transition: 0.35s cubic-bezier(0.3, 1, 0.3, 1); flex-direction: column; align-items: center; color: #FCE1B6; text-align: center; overflow: hidden; box-shadow: 0 15px 35px rgba(212,54,40,0.3); transform-origin: center; }
 .rp-avatar { width: 50px; height: 50px; border-radius: 12px; border: 2px solid #edaf81; margin: 30px auto 10px; object-fit: cover;}
@@ -1445,6 +1601,46 @@
         body.lib-dark-theme #reader-tags .lib-meta-tag { background: #2c2c2c !important; color: #bbb !important; }
         body.lib-dark-theme .ins-sheet-top i { color: #e0e0e0 !important; }
         
+        
+
+/* ==================================
+   [阅读 APP] 段评 & 章评 (真实社区·精修排版)
+================================== */
+.reader-paragraph { position: relative; margin-bottom: 24px; line-height: 1.85; text-align: justify; word-break: break-all; }
+.inline-cmt-btn { display: inline-block; margin-left: 8px; vertical-align: middle; background: var(--lib-accent, #9e8c6c); color: #fff; padding: 0 6px; height: 18px; line-height: 18px; border-radius: 9px 9px 9px 2px; font-size: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transform: translateY(-2px); transition: 0.2s; user-select: none; }
+.inline-cmt-btn:active { transform: translateY(-2px) scale(0.9); }
+.reader-end-divider { text-align: center; margin: 40px 0 20px; position: relative; }
+.reader-end-divider::before { content: ''; position: absolute; left: 10%; top: 50%; width: 30%; height: 1px; background: rgba(0,0,0,0.05); }
+.reader-end-divider::after { content: ''; position: absolute; right: 10%; top: 50%; width: 30%; height: 1px; background: rgba(0,0,0,0.05); }
+.reader-end-divider span { font-size: 12px; color: #aaa; letter-spacing: 2px; }
+
+/* 🍅 段评抽屉 (修复：拉开原句与评论的距离，新增楼中楼回复样式) */
+.para-cmt-context { margin-bottom: 25px !important; } /* 👈 拉开与下面评论的距离 */
+.para-cmt-item { display: flex !important; flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; margin-bottom: 16px !important; width: 100% !important; }
+.para-cmt-ava { width: 34px !important; height: 34px !important; border-radius: 50% !important; object-fit: cover !important; flex-shrink: 0 !important; background: #eee !important; margin: 0 !important; border: 1px solid rgba(0,0,0,0.05) !important;}
+.para-cmt-body { flex: 1 !important; min-width: 0 !important; display: flex !important; flex-direction: column !important; gap: 4px !important; margin: 0 !important; border-bottom: 1px solid rgba(0,0,0,0.04) !important; padding-bottom: 14px !important;}
+.para-cmt-name { font-size: 13px !important; color: #888 !important; font-weight: 600 !important; margin: 0 !important; display: flex !important; justify-content: space-between !important; line-height: 1 !important; width: 100% !important;}
+.para-cmt-text { font-size: 15px !important; color: var(--lib-ink) !important; line-height: 1.6 !important; margin: 2px 0 0 0 !important; word-break: break-word !important; }
+.para-cmt-reply-container { display: flex !important; flex-direction: column !important; gap: 6px !important; background: rgba(0,0,0,0.03) !important; padding: 10px 12px !important; border-radius: 8px !important; margin-top: 4px !important; }
+.para-cmt-reply { font-size: 13px !important; color: #555 !important; line-height: 1.5 !important; margin: 0 !important; }
+
+/* 🍅 章评专区 (修复：缩小评论之间的间距，让排版更紧凑) */
+.chap-cmt-section { margin-top: 30px; padding-top: 25px; border-top: 1px solid rgba(0,0,0,0.06); }
+.chap-cmt-header { font-size: 16px; font-weight: 800; color: var(--lib-ink); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; line-height: 1;}
+.chap-cmt-item { display: flex !important; flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; margin-bottom: 16px !important; width: 100% !important; } /* 👈 间距从 24px 缩小到 16px */
+.chap-cmt-ava { width: 36px !important; height: 36px !important; border-radius: 50% !important; object-fit: cover !important; flex-shrink: 0 !important; background: #eee !important; margin: 0 !important; border: 1px solid rgba(0,0,0,0.05) !important;}
+.chap-cmt-body { flex: 1 !important; min-width: 0 !important; display: flex !important; flex-direction: column !important; gap: 4px !important; margin: 0 !important; padding: 0 !important;}
+.chap-cmt-name { font-size: 13px !important; color: #888 !important; font-weight: 600 !important; margin: 0 !important; line-height: 1 !important; }
+.chap-cmt-text { font-size: 15px !important; color: var(--lib-ink) !important; line-height: 1.6 !important; margin: 2px 0 0 0 !important; word-break: break-word !important; }
+.chap-cmt-reply-container { display: flex !important; flex-direction: column !important; gap: 6px !important; background: rgba(0,0,0,0.03) !important; padding: 10px 12px !important; border-radius: 8px !important; margin-top: 4px !important; }
+.chap-cmt-reply { font-size: 13px !important; color: #555 !important; line-height: 1.5 !important; margin: 0 !important; }
+.chap-cmt-meta { font-size: 11px !important; color: #aaa !important; margin: 4px 0 0 0 !important; line-height: 1 !important;}
+
+/* 深色模式适配 */
+#app-library-root.lib-dark .para-cmt-body, #app-library-root.lib-dark .chap-cmt-section { border-color: rgba(255,255,255,0.05) !important; }
+#app-library-root.lib-dark .para-cmt-text, #app-library-root.lib-dark .chap-cmt-text { color: #eee !important; }
+#app-library-root.lib-dark .para-cmt-reply-container, #app-library-root.lib-dark .chap-cmt-reply-container { background: rgba(255,255,255,0.05) !important; }
+#app-library-root.lib-dark .para-cmt-reply, #app-library-root.lib-dark .chap-cmt-reply { color: #ccc !important; }
 /* ==================================
            [查阅 AI 手机] 专属样式 (V6 终极吸顶 + 纯净锁定版)
         ================================== */
@@ -2521,9 +2717,6 @@
     <script src="https://cdn.jsdelivr.net/npm/buttplug@3/dist/web/buttplug.min.js"></script>
 </head>
 <body>
-
-
-<body>
     <!-- 👇 新增：PockAI 沉浸式开场动画层 👇 -->
     <div id="splash-screen">
       <div class="splash-ripple"></div>
@@ -2537,7 +2730,26 @@
       </div>
     </div>
     <!-- 👆 开场动画结束 👆 -->
+<!-- 👇 仿真：PockAI 物理锁屏层 👇 -->
+    <div id="lock-screen">
+        <div class="ls-time" id="ls-time-display">00:00</div>
+        <div class="ls-date" id="ls-date-display">1月1日 星期一</div>
+        
+        <!-- 底部上滑提示文字 -->
+        <div class="ls-unlock-hint">
+            <i class="ri-arrow-up-s-line ls-up-arrow"></i>
+            <span>向上滑动解锁</span>
+        </div>
 
+        <!-- 仿 iOS 快捷按键 -->
+        <div class="ls-quick-actions">
+            <!-- 手电筒 -->
+            <div class="ls-action-btn" onclick="toggleLockFlashlight(this)"><i class="ri-flashlight-fill"></i></div>
+            <!-- 相机 -->
+            <div class="ls-action-btn" onclick="openLockCamera()"><i class="ri-camera-fill"></i></div>
+        </div>
+    </div>
+    <!-- 👆 锁屏层结束 👆 -->
     <div id="toast">Saved</div>
     <div id="wallpaper-layer"></div>
 
@@ -2635,7 +2847,22 @@
             <button class="btn-std btn-sec" onclick="document.getElementById('modal-profile').classList.remove('show')" data-txt="btn-cancel">取消</button>
         </div>
     </div>
-
+<!-- 👇 新增：虚拟照片(文字图)查看器 👇 -->
+    <div id="modal-vphoto-viewer" class="modal-mask" onclick="this.classList.remove('show')" style="z-index: 99999;">
+        <div style="width: 80%; max-width: 320px; background: #fff; border-radius: 20px; padding: 30px 24px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15);" onclick="event.stopPropagation()">
+            <i class="ri-camera-lens-line" style="font-size: 42px; color: #111; margin-bottom: 12px; display: inline-block;"></i>
+            <div style="font-size: 11px; color: #888; margin-bottom: 15px; font-weight: 700; letter-spacing: 1.5px;">VIRTUAL PHOTO</div>
+            <div id="vphoto-desc-text" style="font-size: 16px; color: #111; line-height: 1.6; font-family: 'Noto Serif SC', serif; font-weight: 600; word-wrap: break-word;">(照片画面描述)</div>
+            <button class="btn-std btn-sec" style="margin-top: 30px; padding: 12px; border-radius: 14px; width: 100%;" onclick="document.getElementById('modal-vphoto-viewer').classList.remove('show')">关闭查看</button>
+        </div>
+    </div>
+    <!-- 👆 虚拟照片查看器 结束 👆 -->
+<!-- 👇 新增：聊天室图片点击放大预览 👇 -->
+    <div id="modal-chat-image-viewer" class="modal-mask" onclick="this.classList.remove('show')" style="z-index: 99999;">
+        <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
+            <img id="chat-image-viewer-img" src="" style="max-width:100%; max-height:100%; border-radius:12px; object-fit:contain; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+        </div>
+    </div>
     <div id="page-appr" class="page-layer">
         <div class="nav-header">
             <div class="nav-btn nav-left" onclick="closePage('page-appr')">
@@ -2645,6 +2872,22 @@
         </div>
         <div class="scroll-content">
             <div class="group-header" data-txt="grp-bg">全局背景</div>
+            <!-- 👇 锁屏设置区 👇 -->
+            <div class="list-item">
+                <div style="display:flex;align-items:center;flex:1">
+                    <div style="font-weight:600">开启锁屏保护</div>
+                </div>
+                <div class="tgl-btn" id="appr-lock-tgl" onclick="toggleLockScreen()"></div>
+            </div>
+            
+            <div class="list-item" onclick="openUpload('lockscreen-bg')" id="lock-bg-setting-item">
+                <div style="display:flex;align-items:center;flex:1">
+                    <img id="preview-lockscreen-bg" class="list-img-preview" src="">
+                    <div style="font-weight:600">锁屏壁纸</div>
+                </div>
+                <button class="btn-sec" style="font-size:12px;padding:6px 12px;border-radius:12px;border:none">更换</button>
+            </div>
+            <!-- 👆 锁屏设置区结束 👆 -->
              <div class="list-item" onclick="openUpload('wallpaper-layer')">
                 <div style="display:flex;align-items:center;flex:1">
                     <img id="preview-wallpaper-layer" class="list-img-preview" src="">
@@ -4100,14 +4343,37 @@
                 </div>
             </form>
             
-            <div class="chat-plus-panel" id="chat-plus-panel" style="display:none; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 15px 20px 30px; background: #F2F2F7; border-top: 1px solid #E5E5EA; width: 100%; box-sizing: border-box; margin-top: 10px;">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#333;"><i class="ri-camera-line"></i></div><span style="font-size:11px; color:#888;">相机</span></div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#333;"><i class="ri-image-line"></i></div><span style="font-size:11px; color:#888;">相册</span></div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#333;"><i class="ri-mic-line"></i></div><span style="font-size:11px; color:#888;">语音</span></div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#F35948;"><i class="ri-red-packet-fill"></i></div><span style="font-size:11px; color:#888;">红包</span></div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#FFA929;"><i class="ri-exchange-cny-fill"></i></div><span style="font-size:11px; color:#888;">转账</span></div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#007AFF;"><i class="ri-map-pin-fill"></i></div><span style="font-size:11px; color:#888;">定位</span></div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;"><div style="width:50px; height:50px; background:#fff; border-radius:14px; display:flex; justify-content:center; align-items:center; font-size:24px; color:#FF9500;"><i class="ri-file-fill"></i></div><span style="font-size:11px; color:#888;">文件</span></div>
+           <div class="chat-plus-panel" id="chat-plus-panel">
+                <div class="plus-item" onclick="sendVirtualPhoto()">
+                    <div class="plus-icon-box"><i class="ri-camera-line"></i></div>
+                    <span class="plus-item-text">相机</span>
+                </div>
+                <div class="plus-item" onclick="document.getElementById('chat-image-upload').click()">
+                    <div class="plus-icon-box"><i class="ri-image-line"></i></div>
+                    <span class="plus-item-text">相册</span>
+                    <!-- 隐藏的本地相册调取器 -->
+                    <input type="file" id="chat-image-upload" hidden accept="image/*" onchange="handleChatImageUpload(this)">
+                </div>
+                <div class="plus-item">
+                    <div class="plus-icon-box"><i class="ri-mic-line"></i></div>
+                    <span class="plus-item-text">语音</span>
+                </div>
+                <div class="plus-item">
+                    <div class="plus-icon-box" style="color:#F35948;"><i class="ri-red-packet-fill"></i></div>
+                    <span class="plus-item-text">红包</span>
+                </div>
+                <div class="plus-item">
+                    <div class="plus-icon-box" style="color:#FFA929;"><i class="ri-exchange-cny-fill"></i></div>
+                    <span class="plus-item-text">转账</span>
+                </div>
+                <div class="plus-item">
+                    <div class="plus-icon-box" style="color:#007AFF;"><i class="ri-map-pin-fill"></i></div>
+                    <span class="plus-item-text">定位</span>
+                </div>
+                <div class="plus-item">
+                    <div class="plus-icon-box" style="color:#FF9500;"><i class="ri-file-fill"></i></div>
+                    <span class="plus-item-text">文件</span>
+                </div>
             </div>
         </footer>
     </div>
@@ -4826,6 +5092,31 @@
         </div>
     </div>
 
+
+<!-- 抽屉弹窗 9：沉浸式段评展示区 -->
+    <div id="modal-para-comments" class="ins-sheet-mask" style="z-index: 10500;">
+        <div class="ins-sheet-body" style="height: 85vh; border-radius: 20px 20px 0 0; background: var(--lib-bg); display: flex; flex-direction: column;">
+            <div class="ins-sheet-top" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <span style="color:var(--lib-sub); cursor:pointer;" onclick="closeInsModal('modal-para-comments')">关闭</span>
+                <span style="font-family:'Noto Serif SC'; font-weight:700; color:var(--lib-ink);">段落神评</span>
+                <span style="color:var(--lib-accent); cursor:pointer;" onclick="regenParaComments()"><i class="ri-refresh-line"></i> 换一批</span>
+            </div>
+            
+            <div class="ins-sheet-content" style="flex: 1; padding: 20px; overflow-y: auto;">
+                <div class="para-cmt-context" id="para-cmt-context-text">原段落文本...</div>
+                <div id="para-cmt-list">
+                    <!-- 动态渲染评论 -->
+                </div>
+            </div>
+
+            <!-- 底部发表评论区 -->
+            <div style="padding: 10px 20px calc(15px + env(safe-area-inset-bottom)); background: var(--lib-bg); border-top: 0.5px solid rgba(0,0,0,0.05); display: flex; gap: 10px; align-items: center; flex-shrink: 0;">
+                <img id="my-reader-avatar" src="" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <input type="text" id="my-reader-cmt-input" class="ins-input" style="flex:1; padding:10px 15px; border-radius:20px; font-size:14px; background:rgba(0,0,0,0.05); border:none;" placeholder="发条段评，吸引太太回复...">
+                <i class="ri-send-plane-fill" style="font-size:28px; color:var(--lib-accent); cursor:pointer;" onclick="submitMyParaComment()"></i>
+            </div>
+        </div>
+    </div>
     <!-- 抽屉弹窗 5：选择合集 -->
     <div id="modal-folder-select" class="ins-sheet-mask" style="z-index: 10000;">
         <div class="ins-sheet-body" style="height: 60vh; border-radius: 20px 20px 0 0; background: #fff;">
@@ -4990,9 +5281,12 @@ const IntifaceLogic = {
 
     const DEFAULTS = {
         lang: 'cn', 
+        enableLockScreen: false, // 👈 新增：锁屏默认关闭
         images: {
+            // 👇 新增：锁屏的默认壁纸 (高冷夜空黑)
+            'lockscreen-bg': "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop", 
             'wallpaper-layer': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='932'%3E%3Crect width='430' height='932' fill='%231a1a1a'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='40' fill='%23333' text-anchor='middle' dy='.3em'%3EWallpaper%3C/text%3E%3C/svg%3E",
-            'hero-img': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='380'%3E%3Crect width='280' height='380' fill='%23ccc'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='30' fill='%23fff' text-anchor='middle' dy='.3em'%3EHero%3C/text%3E%3C/svg%3E",
+            // ... 后面保持原样
             'user-avatar': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Crect width='160' height='160' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23fff' text-anchor='middle' dy='.3em'%3EAvatar%3C/text%3E%3C/svg%3E"
         },
         customTexts: {},
@@ -5100,14 +5394,30 @@ const IntifaceLogic = {
         setTimeout(() => t.classList.remove('show'), 1500);
     }
 
-    async function saveData() { 
+    // ✅ 修改：加入全局防抖定时器
+let saveTimer = null;
+
+function saveData() { 
+    // 如果 500 毫秒内有新的保存请求，取消上一次，重新计时
+    if (saveTimer) clearTimeout(saveTimer);
+    
+    saveTimer = setTimeout(async () => {
         try { 
             await idbHelper.saveMainData(appData);
+            console.log("Data saved successfully.");
         } catch (e) { 
             console.error("Save Error: " + e.message);
-            alert('⚠️ Data save failed! Please export a backup immediately.');
+            // 避免频繁弹窗打断用户，改为轻提示
+            showToast('⚠️ 数据自动保存失败，请检查空间');
         }
-    }
+    }, 500); // 500毫秒的缓冲期
+}
+
+// 可选：如果你在某些关键操作（如退出页面、删除角色）需要立即保存，可以加一个立刻保存的方法：
+async function saveDateImmediate() {
+    if (saveTimer) clearTimeout(saveTimer);
+    try { await idbHelper.saveMainData(appData); } catch (e) { console.error(e); }
+}
 
 // ==========================================
 // 🚀 QQ 贴表情核心引擎 (Drag & Drop)
@@ -5216,6 +5526,201 @@ function bindLongPress(element, content, type) {
     element.addEventListener('touchmove', () => { if (!dragItem) clearTimeout(dragTimer); });
 }
 
+
+// ==========================================
+// 🚀 新增：Ins 社交圈交互与 AI 引擎
+// ==========================================
+
+// 1. 用户提交评论，并触发 AI 盖楼
+window.submitInsComment = async (postId) => {
+    const input = document.getElementById(`cmt-input-${postId}`);
+    const text = input.value.trim();
+    if (!text) return;
+
+    const post = appData.chatData.posts.find(p => p.id === postId);
+    if (!post) return;
+
+    if (!post.comments) post.comments = [];
+    const myName = appData.customTexts['display-name'] || '@Master';
+
+    // 存入用户评论
+    post.comments.push({ id: Date.now(), authorId: 'me', authorName: myName, text: text, timestamp: Date.now() });
+    input.value = '';
+    await saveData();
+    renderInsFeed();
+
+    // 触发后台静默 AI 响应 (如果这不是用户自己发的贴，或者这是用户发的贴但别人刚评过)
+    triggerAICommentReply(postId);
+};
+
+// 2. AI 判断是否回复用户的评论 (拉扯或终结话题)
+async function triggerAICommentReply(postId) {
+    const post = appData.chatData.posts.find(p => p.id === postId);
+    if (!appData.lastApi.url || !appData.lastApi.key || !post || !post.comments || post.comments.length === 0) return;
+
+    // 决定谁来回复：如果是 NPC 发的帖，NPC 肯定来回；如果是你发的帖，找最后评论的那个 NPC 来回
+    let responderId = post.authorId;
+    if (responderId === 'me') {
+        // 找到除了我之外，最新留言的那个 NPC
+        const lastNpcComment = [...post.comments].reverse().find(c => c.authorId !== 'me');
+        if (!lastNpcComment) return; // 没人可回
+        responderId = lastNpcComment.authorId;
+    }
+
+    const contact = appData.chatData.contacts.find(c => c.id === responderId);
+    if (!contact) return;
+
+    // 组装上下文
+    const myName = appData.customTexts['display-name'] || '@Master';
+    let contextText = `【原贴内容】：${post.text || '一张图片'}\n【评论区历史】：\n`;
+    post.comments.forEach(c => {
+        contextText += `- ${c.authorName}: ${c.text}\n`;
+    });
+
+    const prompt = `你是“${contact.name}”（人设：${contact.prompt}）。
+这是社交软件（类似Instagram）上的一个动态和评论区。
+刚才 ${myName} 发了一条最新评论，你需要判断你是否要回复 Ta。
+
+【规则】：
+1. 如果话题还能继续聊（拉扯、斗嘴、关心），请回复一段简短的社交评论。
+2. 如果话题已经结束（例如对方说了“晚安”、“拜拜”或者只发了个表情），请选择结束话题，不要硬回。
+3. 严格输出 JSON 格式！
+如果回复，返回：{"reply": "你的回复内容"}
+如果结束话题，返回：{"reply": ""}
+
+【当前上下文】：
+${contextText}`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages: [{ role: "system", content: prompt }], temperature: 0.8 })
+        });
+        const data = await res.json();
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let result = JSON.parse(rawText);
+
+        if (result.reply && result.reply.trim() !== "") {
+            // 延迟几秒模拟打字
+            setTimeout(async () => {
+                post.comments.push({ id: Date.now(), authorId: contact.id, authorName: contact.name, text: result.reply, timestamp: Date.now() });
+                await saveData();
+                renderInsFeed();
+            }, 3000);
+        }
+    } catch (e) { console.error("AI 评论响应失败:", e); }
+}
+
+// 3. 用户发帖后，AI 自动前排点赞点评
+async function triggerAIAutoComment(postId) {
+    const post = appData.chatData.posts.find(p => p.id === postId);
+    if (!appData.lastApi.url || !appData.lastApi.key || !post || !appData.chatData.contacts || appData.chatData.contacts.length === 0) return;
+
+    // 随机抽 1~2 个联系人来评论
+    const shuffled = [...appData.chatData.contacts].sort(() => 0.5 - Math.random());
+    const commenters = shuffled.slice(0, Math.floor(Math.random() * 2) + 1);
+
+    const myName = appData.customTexts['display-name'] || '@Master';
+
+    for (let i = 0; i < commenters.length; i++) {
+        const contact = commenters[i];
+        const prompt = `你是“${contact.name}”（人设：${contact.prompt}）。
+你的好友 ${myName} 刚刚在社交软件上发了一条新动态。
+动态文案：${post.text || '没有文案'}
+（如果动态有图片，AI描述为：${post.imageDesc || '一张用户自己上传的图片'}）
+
+请以你的身份，在下面留一条符合你人设的简短评论（比如吐槽、关心、发狗粮等）。
+严格返回 JSON：{"comment": "你的评论内容"}`;
+
+        try {
+            const model = appData.lastApi.model || "gpt-3.5-turbo";
+            const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+                body: JSON.stringify({ model, messages: [{ role: "system", content: prompt }], temperature: 0.85 })
+            });
+            const data = await res.json();
+            let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+            let result = JSON.parse(rawText);
+
+            if (result.comment) {
+                setTimeout(async () => {
+                    if (!post.comments) post.comments = [];
+                    post.comments.push({ id: Date.now(), authorId: contact.id, authorName: contact.name, text: result.comment, timestamp: Date.now() });
+                    await saveData();
+                    renderInsFeed();
+                }, (i + 1) * 4000); // 错开时间模拟真实
+            }
+        } catch (e) { console.error("AI 自动评论失败:", e); }
+    }
+}
+
+// 4. 生成 AI 自己的动态
+window.generateInsAIPosts = async () => {
+    if (!appData.lastApi.url || !appData.lastApi.key) { alert("请先去 API 页面配置 API！"); return; }
+    if (!appData.chatData.contacts || appData.chatData.contacts.length === 0) { alert("你需要先在通讯录创建 AI 角色！"); return; }
+
+    const btn = document.getElementById('btn-gen-ins-posts');
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i>';
+    btn.style.pointerEvents = 'none';
+
+    // 随机选 1-2 个角色发动态
+    const shuffled = [...appData.chatData.contacts].sort(() => 0.5 - Math.random());
+    const posters = shuffled.slice(0, Math.floor(Math.random() * 2) + 1);
+
+    for (let contact of posters) {
+        const prompt = `你是“${contact.name}”（人设：${contact.prompt}）。
+请为你自己在类似 Instagram 的社交软件上，发一条【带图片的最新日常动态】。
+要求：
+1. 文案 (text)：符合你人设的语气，简短生活化。
+2. 照片画面描述 (imageDesc)：一句话描述你这张照片里拍了什么，必须提供！系统会根据这个渲染照片卡片。（如：“一杯拉花咖啡”、“一张对着镜子的自拍”）
+3. 位置 (location)：可有可无，如果你在外面可以填一个地点，在家里可以留空。
+
+严格返回 JSON：
+{
+    "text": "今天天气真好",
+    "imageDesc": "一张在海边夕阳下的背影照",
+    "location": "某某海滩"
+}`;
+
+        try {
+            const model = appData.lastApi.model || "gpt-3.5-turbo";
+            const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+                body: JSON.stringify({ model, messages: [{ role: "system", content: prompt }], temperature: 0.9 })
+            });
+            const data = await res.json();
+            let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+            let result = JSON.parse(rawText);
+
+            const newPost = {
+                id: 'post_' + Date.now() + Math.floor(Math.random() * 1000),
+                authorId: contact.id,
+                text: result.text,
+                imageDesc: result.imageDesc,
+                location: result.location || '',
+                visibleTo: ['all'],
+                timestamp: Date.now() - Math.floor(Math.random() * 1000000),
+                comments: []
+            };
+
+            if (!appData.chatData.posts) appData.chatData.posts = [];
+            appData.chatData.posts.unshift(newPost);
+            
+        } catch (e) { console.error("AI 动态生成失败:", e); }
+    }
+
+    await saveData();
+    renderInsFeed();
+    showToast("AI 好友们已更新动态！");
+    
+    btn.innerHTML = oldHtml;
+    btn.style.pointerEvents = 'auto';
+};
         window.onload = async () => {
         // 1. 静默加载底层数据，用户此时正在看 PockAI 开屏动画
         await loadData(); 
@@ -5225,6 +5730,16 @@ function bindLongPress(element, content, type) {
         setupFileUpload();
         renderFontList();
         initStickerDragSystem(); 
+        
+        // 👇 【新增】在这里拦截锁屏！
+        if (appData.enableLockScreen) {
+            const ls = document.getElementById('lock-screen');
+            ls.style.display = 'flex';
+            ls.style.transform = 'translateY(0)'; // 确保位置在原点
+            ls.style.opacity = '1';
+            updateLockScreenTime(); // 立即刷新一次时间
+        }
+        // 👆 【新增结束】
         
         // 2. 定时器：4.5秒后，让开屏动画优雅地淡出消失
         setTimeout(() => {
@@ -5302,6 +5817,13 @@ function bindLongPress(element, content, type) {
             document.getElementById('api-temp').value = appData.lastApi.temp;
             document.getElementById('temp-val').innerText = appData.lastApi.temp;
         }
+        
+        // 同步锁屏开关状态
+        const lsTgl = document.getElementById('appr-lock-tgl');
+        if(lsTgl) {
+            if(appData.enableLockScreen) lsTgl.classList.add('on');
+            else lsTgl.classList.remove('on');
+        }
     }
 
     function updateImgDOM(id, src) {
@@ -5312,7 +5834,14 @@ function bindLongPress(element, content, type) {
         if(id === 'wallpaper-layer') {
             const el = document.getElementById(id);
             if(el.style.backgroundImage !== `url("${src}")`) el.style.backgroundImage = `url('${src}')`; 
-        } else {
+        } 
+        // 👇 新增这个 else if，让系统知道锁屏壁纸该换哪里
+        else if (id === 'lockscreen-bg') {
+            const ls = document.getElementById('lock-screen');
+            if(ls) ls.style.backgroundImage = `url('${src}')`;
+        } 
+        // 👆 新增结束
+        else {
             const el = document.getElementById(id);
             if(el) {
                 if(el.tagName === 'IMG') el.src = src;
@@ -5429,6 +5958,10 @@ function bindLongPress(element, content, type) {
             const d = new Date();
             const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
             if (t.innerText !== timeStr) t.innerText = timeStr;
+            
+            // 👇 新增这行：同步刷新锁屏时间
+            updateLockScreenTime();
+            
         }, 10000);
     }
 
@@ -6287,45 +6820,189 @@ window.previewInsPostImg = (input) => {
 
     // 保存动态
     window.saveInsPost = async () => {
-        const text = document.getElementById('ins-post-text').value.trim();
-        const loc = document.getElementById('ins-post-loc').value.trim();
-        const base64 = document.getElementById('ins-post-img-preview').getAttribute('data-base64');
-        
-        if(!text && !base64) { alert("Say something or upload a photo."); return; }
+    const text = document.getElementById('ins-post-text').value.trim();
+    const loc = document.getElementById('ins-post-loc').value.trim();
+    const base64 = document.getElementById('ins-post-img-preview').getAttribute('data-base64');
+    
+    if(!text && !base64) { alert("写点文案或发张图吧。"); return; }
 
-        let imgKey = null;
-        if(base64) {
-            imgKey = 'post_' + Date.now();
-            try { await idbHelper.saveImage(imgKey, base64); } catch(e){}
-            appData.images[imgKey] = base64;
-        }
+    const postBtn = document.querySelector('.ins-sheet-top span:last-child');
+    postBtn.innerHTML = '发布中...';
+    postBtn.style.pointerEvents = 'none';
 
-        // 收集可见/艾特的ID
-        const visibleIds =[];
-        document.querySelectorAll('#ins-post-visibility .selected').forEach(el => {
-            visibleIds.push(el.getAttribute('data-id'));
-        });
+    let imgKey = null;
+    if(base64) {
+        imgKey = 'post_' + Date.now();
+        try { await idbHelper.saveImage(imgKey, base64); } catch(e){}
+        appData.images[imgKey] = base64;
+    }
 
-        const newPost = {
-            id: 'post_' + Date.now(),
-            authorId: 'me', // 暂定作者为用户自己
-            text: text,
-            image: imgKey,
-            location: loc,
-            visibleTo: visibleIds,
-            timestamp: Date.now()
-        };
-
-        if(!appData.chatData.posts) appData.chatData.posts =[];
-        appData.chatData.posts.unshift(newPost); // 插到最前面
-        
-        await saveData();
-        closeInsModal('modal-ins-post');
-        switchInsTab('feed');
-        showToast();
+    const newPost = {
+        id: 'post_' + Date.now(), authorId: 'me', 
+        text: text, image: imgKey, location: loc,
+        timestamp: Date.now(), comments: []
     };
 
+    if(!appData.chatData.posts) appData.chatData.posts = [];
+    appData.chatData.posts.unshift(newPost);
+    await saveData();
+    
+    closeInsModal('modal-ins-post');
+    switchInsTab('feed');
+    showToast("发布成功！");
 
+    postBtn.innerHTML = 'Share';
+    postBtn.style.pointerEvents = 'auto';
+
+    // 核心联动：发布后，群像AI自动识别你的图片和文案来评论！
+    triggerGroupFeedReaction(newPost, base64);
+};
+
+async function triggerGroupFeedReaction(post, base64Img) {
+    if(!appData.lastApi.url || !appData.lastApi.key || !appData.chatData.contacts || appData.chatData.contacts.length === 0) return;
+
+    let myName = appData.customTexts['display-name'] || '@User';
+    let npcsInfo = appData.chatData.contacts.map(c => `ID:[${c.id}] 名字:[${c.name}] 人设:[${c.prompt}]`).join('\n');
+
+    const prompt = `你是社交圈模拟引擎。用户“${myName}”刚刚发了一条朋友圈动态。
+动态文案：“${post.text || '没有配文'}”
+（若附带了图片，系统已传入图片，请仔细查看图片内容）。
+
+这是通讯录里的好友名单和他们的人设：
+${npcsInfo}
+
+【任务】：
+请扮演这些好友，看看谁会对这条动态感兴趣？挑选 1 到 4 个人出来，在底下热烈评论。如果图片有意思，他们必须根据图片细节做出惊叹或吐槽。
+严格输出 JSON 数组格式（不要Markdown）：
+[
+  { "authorId": "刚才列表里的某个人ID", "text": "符合他人设的评论内容" }
+]`;
+
+    let apiMessages = [];
+    if (base64Img) {
+        // 多模态视觉！大模型能直接看你发的本地图
+        apiMessages.push({
+            role: "user",
+            content: [
+                { type: "text", text: prompt },
+                { type: "image_url", image_url: { url: base64Img } }
+            ]
+        });
+    } else {
+        apiMessages.push({ role: "user", content: prompt });
+    }
+
+    try {
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model: appData.lastApi.model || "gpt-4o", messages: apiMessages, temperature: 0.9 })
+        });
+        const data = await res.json();
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let commentsArr = JSON.parse(rawText);
+
+        if (Array.isArray(commentsArr)) {
+            commentsArr.forEach((cmt, idx) => {
+                setTimeout(async () => {
+                    const cInfo = appData.chatData.contacts.find(x => x.id === cmt.authorId);
+                    if (cInfo) {
+                        post.comments.push({ id: Date.now(), authorId: cInfo.id, authorName: cInfo.name, text: cmt.text, timestamp: Date.now() });
+                        await saveData();
+                        if (document.getElementById('ins-tab-feed').classList.contains('active')) renderInsFeed();
+                    }
+                }, (idx + 1) * 3000 + Math.random() * 2000); // 随机错开时间，模拟活人打字
+            });
+        }
+    } catch (e) { console.error("群像评论失败:", e); }
+}
+
+// 用户手动回复评论，触发 AI 拉扯
+window.submitUserComment = async (postId) => {
+    const input = document.getElementById(`cmt-input-${postId}`);
+    const text = input.value.trim();
+    if (!text) return;
+    const post = appData.chatData.posts.find(p => p.id === postId);
+    if (!post) return;
+    if (!post.comments) post.comments = [];
+    const myName = appData.customTexts['display-name'] || '@Master';
+
+    post.comments.push({ id: Date.now(), authorId: 'me', authorName: myName, text: text, timestamp: Date.now() });
+    input.value = '';
+    await saveData();
+    renderInsFeed();
+
+    triggerAICommentReply(postId);
+};
+
+// AI 根据你的回复决定要不要继续盖楼
+async function triggerAICommentReply(postId) {
+    const post = appData.chatData.posts.find(p => p.id === postId);
+    if (!post || !post.comments) return;
+
+    let responderId = post.authorId;
+    if (responderId === 'me') {
+        const lastNpc = [...post.comments].reverse().find(c => c.authorId !== 'me');
+        if (!lastNpc) return;
+        responderId = lastNpc.authorId;
+    }
+
+    const contact = appData.chatData.contacts.find(c => c.id === responderId);
+    if (!contact) return;
+
+    // 提取你们俩最近的私聊记忆（聊天室和朋友圈打通！）
+    const recentChats = (appData.chatData.messages || []).filter(m => m.chatId === contact.id).slice(-6);
+    const chatMemory = recentChats.map(m => `${m.sender==='me'?'我':contact.name}: ${m.content}`).join('\n');
+
+    let contextText = `【原贴】：${post.text || (post.imageDesc ? post.imageDesc : '一张图片')}\n【评论区历史】：\n` + post.comments.map(c => `- ${c.authorName}: ${c.text}`).join('\n');
+
+    const prompt = `你是“${contact.name}”（人设：${contact.prompt}）。你和我的近期私聊记忆是：\n${chatMemory || '暂无'}\n
+现在在朋友圈，我刚刚回复了评论。结合你们的聊天关系，判断你要不要继续回我。
+【规则】：
+1. 如果还能继续聊（斗嘴、补充），给简短回复。
+2. 如果话题死了（比如我说了哦、拜拜），果断结束话题，不回。
+严格输出 JSON：
+回复则返回：{"reply": "回复内容"}
+不回则返回：{"reply": ""}
+
+【朋友圈上下文】：\n${contextText}`;
+
+    try {
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model: appData.lastApi.model || "gpt-3.5-turbo", messages: [{ role: "system", content: prompt }], temperature: 0.8 })
+        });
+        const data = await res.json();
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let result = JSON.parse(rawText);
+
+        if (result.reply && result.reply.trim() !== "") {
+            setTimeout(async () => {
+                post.comments.push({ id: Date.now(), authorId: contact.id, authorName: contact.name, text: result.reply, timestamp: Date.now() });
+                await saveData();
+                if (document.getElementById('ins-tab-feed').classList.contains('active')) renderInsFeed();
+            }, 3000); 
+        }
+    } catch (e) {}
+}
+
+// 提取近期朋友圈记忆，喂给聊天室AI
+function getRecentFeedMemory(contactId) {
+    if (!appData.chatData.posts) return '暂无朋友圈互动。';
+    const recentPosts = appData.chatData.posts.slice(0, 5);
+    let memory = '';
+    recentPosts.forEach(p => {
+        if (p.authorId === 'me' || p.authorId === contactId) {
+            const author = p.authorId === 'me' ? '我' : '你';
+            memory += `【${author}发的朋友圈】: "${p.text || (p.imageDesc || '发了一张图片')}"\n`;
+            if (p.comments && p.comments.length > 0) {
+                memory += `  评论区互动:\n` + p.comments.map(c => `  - ${c.authorId==='me'?'我':'你'}: ${c.text}`).join('\n') + '\n';
+            }
+        }
+    });
+    return memory || '暂无朋友圈互动。';
+}
 // ==========================================
     // 个人主页 (Profile/Me) 设置逻辑
     // ==========================================
@@ -6563,65 +7240,96 @@ window.previewInsPostImg = (input) => {
     };
 
     window.renderInsFeed = () => {
-        const list = document.getElementById('ins-feed-list');
-        list.innerHTML = '';
+    const list = document.getElementById('ins-feed-list');
+    list.innerHTML = '';
 
-        const storyBar = document.getElementById('ins-story-bar');
-        storyBar.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-                <div style="width:60px; height:60px; border-radius:50%; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#ccc; cursor:pointer;" onclick="handleInsPlus()">
-                    <i class="ri-add-line" style="font-size:24px;"></i>
-                </div>
-                <span style="font-size:10px; color:#999;">Your Story</span>
+    const storyBar = document.getElementById('ins-story-bar');
+    storyBar.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+            <div style="width:60px; height:60px; border-radius:50%; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#ccc; cursor:pointer;" onclick="handleInsPlus()">
+                <i class="ri-add-line" style="font-size:24px;"></i>
             </div>
-        `;
-        (appData.chatData.contacts ||[]).slice(0, 5).forEach(c => {
-            storyBar.innerHTML += `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-                <img src="${getRealImgSrc(c.avatar)}" style="width:60px; height:60px; border-radius:50%; border:2px solid #D92B7A; padding:2px; object-fit:cover;">
-                <span style="font-size:10px; color:#333; max-width:60px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.name}</span>
-            </div>`;
-        });
+            <span style="font-size:10px; color:#999;">Your Story</span>
+        </div>`;
+    
+    (appData.chatData.contacts || []).slice(0, 8).forEach(c => {
+        storyBar.innerHTML += `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+            <img src="${getRealImgSrc(c.avatar)}" style="width:60px; height:60px; border-radius:50%; border:2px solid #D92B7A; padding:2px; object-fit:cover;">
+            <span style="font-size:10px; color:#333; max-width:60px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.name}</span>
+        </div>`;
+    });
 
-        if(!appData.chatData.posts || appData.chatData.posts.length === 0) {
-            list.innerHTML = '<div style="text-align:center; padding:50px; color:#ccc;">No posts yet. Tap + to share.</div>';
-            return;
+    if(!appData.chatData.posts || appData.chatData.posts.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:50px; color:#ccc;">暂无动态，点击左上角发一条吧。</div>';
+        return;
+    }
+
+    appData.chatData.posts.forEach(p => {
+        let authorName = 'Someone';
+        let authorImg = '';
+        if (p.authorId === 'me') {
+            authorName = appData.customTexts['display-name'] || '@Master';
+            authorImg = getRealImgSrc(appData.images['user-avatar']);
+        } else {
+            const contact = appData.chatData.contacts.find(c => c.id === p.authorId);
+            if (contact) { authorName = contact.name; authorImg = getRealImgSrc(contact.avatar); }
         }
 
-        appData.chatData.posts.forEach(p => {
-            const authorName = p.authorId === 'me' ? (appData.customTexts['display-name'] || '@Master') : 'Someone';
-            const authorImg = p.authorId === 'me' ? getRealImgSrc(appData.images['user-avatar']) : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23eee'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='20' fill='%23999' text-anchor='middle' dy='.3em'%3E?%3C/text%3E%3C/svg%3E";
-
-            const locHtml = p.location ? `<div class="ins-post-loc"><i class="ri-map-pin-2-fill"></i> ${p.location}</div>` : '';
-            const imgHtml = p.image ? `<img src="${getRealImgSrc(p.image)}" class="ins-post-img">` : '';
-            
-            const postEl = document.createElement('div');
-            postEl.className = 'ins-post';
-            
-            // 重点：加入头部右侧的三点删除按钮
-            postEl.innerHTML = `
-                <div class="ins-post-header">
-                    <div class="ins-post-author">
-                        <img src="${authorImg}">
-                        <div style="display:flex; flex-direction:column;">
-                            <span>${authorName}</span>
-                            ${locHtml}
+        const locHtml = p.location ? `<div class="ins-post-loc"><i class="ri-map-pin-2-fill"></i> ${p.location}</div>` : '';
+        
+        let imgHtml = '';
+        if (p.image) {
+            // 你发的本地真图
+            imgHtml = `<img src="${getRealImgSrc(p.image)}" class="ins-post-img">`;
+        } else if (p.imageDesc) {
+            // AI发的虚拟相片，点开看描述
+            const placeholder = "https://i.postimg.cc/TP34wxpW/IMG-20260402-220042.jpg";
+            let safeDesc = p.imageDesc.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+            imgHtml = `<div style="position:relative;">
+                <img src="${placeholder}" class="ins-post-img" style="cursor:pointer; filter: brightness(0.95);" onclick="viewVirtualPhoto('${safeDesc}', event)">
+                <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:#fff; font-size:11px; padding:6px 10px; border-radius:12px; pointer-events:none; backdrop-filter:blur(4px);"><i class="ri-camera-lens-line"></i> 虚拟影像</div>
+            </div>`;
+        }
+        
+        // 渲染评论区
+        let commentsHtml = '';
+        if (p.comments && p.comments.length > 0) {
+            commentsHtml = '<div class="ins-comments-area">';
+            p.comments.forEach(cmt => {
+                let cAva = cmt.authorId === 'me' ? getRealImgSrc(appData.images['user-avatar']) : getRealImgSrc(appData.chatData.contacts.find(x=>x.id===cmt.authorId)?.avatar);
+                commentsHtml += `
+                    <div class="ins-comment-item">
+                        <img src="${cAva}" class="cmt-ava">
+                        <div class="ins-comment-content">
+                            <span class="ins-comment-author">${cmt.authorName}</span><span class="ins-comment-text">${cmt.text}</span>
                         </div>
-                    </div>
-                    <i class="ri-more-fill" style="cursor:pointer; color:#999; font-size:20px; padding:5px;" onclick="deleteInsPost('${p.id}', event)"></i>
-                </div>
-                ${imgHtml}
-                <div class="ins-post-actions">
-                    <i class="ri-heart-3-line"></i>
-                    <i class="ri-chat-3-line"></i>
-                    <i class="ri-send-plane-line"></i>
-                </div>
-                ${p.text ? `<div class="ins-post-content"><b style="margin-right:6px;">${authorName}</b>${p.text}</div>` : ''}
-                <div style="padding:8px 15px; font-size:10px; color:#ccc;">${new Date(p.timestamp).toLocaleString()}</div>
-            `;
-            list.appendChild(postEl);
-        });
-    };
+                    </div>`;
+            });
+            commentsHtml += '</div>';
+        }
+
+        const postEl = document.createElement('div');
+        postEl.className = 'ins-post';
+        postEl.innerHTML = `
+            <div class="ins-post-header">
+                <div class="ins-post-author"><img src="${authorImg}"><div style="display:flex; flex-direction:column;"><span>${authorName}</span>${locHtml}</div></div>
+                ${p.authorId === 'me' ? `<i class="ri-more-fill" style="cursor:pointer; color:#999; font-size:20px; padding:5px;" onclick="deleteInsPost('${p.id}', event)"></i>` : ''}
+            </div>
+            ${imgHtml}
+            <div class="ins-post-actions"><i class="ri-heart-3-line"></i><i class="ri-chat-3-line" onclick="document.getElementById('cmt-input-${p.id}').focus()"></i><i class="ri-send-plane-line"></i></div>
+            ${p.text ? `<div class="ins-post-content" style="margin-bottom:12px;"><b style="margin-right:6px;">${authorName}</b>${p.text}</div>` : ''}
+            ${commentsHtml}
+            <div style="padding:0 15px 10px; font-size:10px; color:#ccc;">${new Date(p.timestamp).toLocaleString()}</div>
+            <div class="ins-comment-input-bar">
+                <img src="${getRealImgSrc(appData.images['user-avatar'])}" class="ins-comment-ava">
+                <input type="text" id="cmt-input-${p.id}" class="ins-comment-input" placeholder="回复..." onkeypress="if(event.key === 'Enter') submitUserComment('${p.id}')">
+                <div class="ins-comment-send" onclick="submitUserComment('${p.id}')">发送</div>
+            </div>
+        `;
+        list.appendChild(postEl);
+    });
+};
     
     // 打开此页面时的入口初始化
     window.openChatApp = () => {
@@ -6657,7 +7365,7 @@ window.previewInsPostImg = (input) => {
         // 加载历史消息
         const history = appData.chatData.messages.filter(m => m.chatId === contactId);
         history.forEach(msg => {
-            appendMsgToUI(msg.id, msg.sender, msg.content, msg.timestamp, msg.quote, msg.isRecalled, msg.sticker);
+            appendMsgToUI(msg.id, msg.sender, msg.content, msg.timestamp, msg.quote, msg.isRecalled, msg.sticker, msg.chatImage);
         });
 
         openPage('page-chat-room');
@@ -6682,7 +7390,7 @@ window.previewInsPostImg = (input) => {
 
 
 // 2. 往UI添加气泡 (防爆无包裹独立模块 + 动态脚本激活引擎 + QQ贴表情渲染)
-function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled = false, stickerObj = null) {
+function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled = false, stickerObj = null, chatImageKey = null) {
     const bdy = document.getElementById('at-body');
     const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     
@@ -6745,24 +7453,51 @@ function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled
             return ''; 
         }).trim();
 
+// 👇 新增：将 <vphoto> 标签拦截并渲染为占位图卡片 👇
+        const VPHOTO_PLACEHOLDER = "https://i.postimg.cc/t4G6Jtw1/IMG-20260403-222355.jpg";
+        pureText = pureText.replace(/<vphoto>([\s\S]*?)<\/vphoto>/gi, (match, pDesc) => {
+            // 转义单双引号，防止破坏 HTML 结构
+            let safeDesc = pDesc.replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/\n/g, ' ');
+            return `<div class="special-msg-wrap" style="margin-top:4px;">
+                <img src="${VPHOTO_PLACEHOLDER}" style="max-width:180px; border-radius:16px; display:block; cursor:pointer; box-shadow:0 2px 12px rgba(0,0,0,0.1);" onclick="viewVirtualPhoto('${safeDesc}', event)">
+                <div style="font-size:10px; color:#888; margin-top:6px; text-align:center; font-weight:600; letter-spacing:1px;">📷 虚拟照片 (点击查看)</div>
+            </div>`;
+        });
+        // 👆 新增结束 👆
         let quoteHtml = quoteText ? `<div class="msg-quote-block">${quoteText}</div>` : '';
-        let textHtml = quoteHtml + pureText.replace(/\n/g, '<br>');
-
+        
+        // --- 核心：无感本地翻译渲染 (单气泡完美融合版) ---
+        let finalDisplayHtml = pureText.replace(/\n/g, '<br>');
         let isSpecial = pureText.includes('special-msg-wrap');
+
+        if (!isSpecial && currentChatContact.autoTranslate) {
+            // 识别 AI 发送的 <t>原文|译文</t> 格式，完美渲染在一个气泡里
+            finalDisplayHtml = finalDisplayHtml.replace(/<t>(.*?)\|(.*?)<\/t>/gi, (match, orig, trans) => {
+                return `
+                    <div class="kr-text-group" onclick="toggleTranslation(this, event)">
+                        <div class="trans-original">${orig}</div>
+                        <div class="translate-btn"><i class="ri-translate-2"></i> 按以翻译</div>
+                        <div class="translation-box">${trans}</div>
+                    </div>
+                `;
+            });
+        }
+        
+        let textHtml = quoteHtml + finalDisplayHtml;
         let showCore = (pureText.length > 0 || quoteText);
         let coreStyle = showCore ? (isSpecial ? 'background: transparent; padding: 0; box-shadow: none;' : '') : 'display: none;'; 
         
         let coreBlock = `<div class="msg-core" style="${coreStyle}">${textHtml}</div>`;
-        
-        let translateHtml = '';
-        if (sender === 'bot' && !isSpecial && currentChatContact.autoTranslate) {
-            translateHtml = `<div class="kr-text-group">
-                                <div class="translate-btn" onclick="translateMsg(this, '${id}')"><i class="ri-translate-2"></i> 翻译</div>
-                                <div class="translation-box" id="trans_${id}"></div>
-                             </div>`;
-        }
+        let translateHtml = ''; 
         
         let stickerBlock = stickerObj ? `<img src="${getRealImgSrc(stickerObj.src)}" style="max-width:100px; border-radius:12px; display:block; margin-top:4px; margin-bottom:2px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">` : '';
+
+        // 👇 新增：渲染聊天发出的图片 (放气泡外面，防爆框、无底色)
+        let chatImageBlock = '';
+        if (chatImageKey) {
+            const realSrc = getRealImgSrc(chatImageKey);
+            chatImageBlock = `<img src="${realSrc}" style="max-width:200px; border-radius:16px; display:block; cursor:pointer; margin-top:4px; box-shadow:0 2px 10px rgba(0,0,0,0.1);" onclick="viewChatImage('${realSrc}', event)">`;
+        }
 
         let moduleBlocks = '';
         sandboxes.forEach((htmlContent, index) => {
@@ -6770,7 +7505,8 @@ function appendMsgToUI(id, sender, text, timestamp, quoteText = null, isRecalled
             moduleBlocks += `<div id="${sbId}" class="msg-module-box" style="margin-top:6px;">${htmlContent}</div>`;
         });
 
-        let contentCol = `<div class="msg-col">${coreBlock}${translateHtml}${stickerBlock}${moduleBlocks}</div>`;
+        // 👈 修改这行：把 chatImageBlock 塞进列里
+        let contentCol = `<div class="msg-col">${coreBlock}${translateHtml}${chatImageBlock}${stickerBlock}${moduleBlocks}</div>`;
 
                 let timeHtml = `<span class="time">${timeStr}</span>`;
         
@@ -7533,8 +8269,8 @@ function smartSplitText(text, maxLen = 30) {
     let finalParts = [];
 
     blocks.forEach(block => {
-        // 如果包含 HTML 模块，或者长度本来就很短，直接保留
-        if (block.includes('__SBOX_') || block.length < maxLen) {
+        // 如果包含 HTML 模块、翻译标签，或者长度本来就很短，直接保留防切割
+        if (block.includes('__SBOX_') || block.includes('<t>') || block.length < maxLen) {
             finalParts.push(block);
         } else {
             // 2. 兜底机制：如果 AI 发了一大段话，按中文标点强行切碎
@@ -7591,7 +8327,19 @@ window.triggerAtelierAI = async () => {
    ✅ 正确示范：“真的假的？||| 太离谱了吧哈哈 ||| 展开说说！”
    ❌ 错误示范：“真的假的？太离谱了吧哈哈展开说说！|||”
    严禁在句子中间使用换行符(\\n)！
-4. 禁止语C动作：不要使用星号来描述动作（例如 *微笑*、*叹气*），直接用文字聊天。[高级互动指令（请主动使用！）]
+4. 禁止语C动作：不要使用星号来描述动作（例如 *微笑*、*叹气*），直接用文字聊天。
+[记忆融合与社交联动（极其重要！）]
+在回复前，请先查阅你们在朋友圈的互动记忆：
+${getRecentFeedMemory(currentChatContact.id)}
+如果我刚才发了朋友圈，或者你们在朋友圈互相评论了，请在私聊中自然地提起这件事！
+
+【新增隐藏神技：主动发动态】
+如果你在聊天中情绪到了（比如收到惊喜、受委屈、或者想发图分享），你可以在回复的末尾加上一个 <post> 标签！系统会自动用你的号在朋友圈发一条动态！
+格式严格如下：
+<post>{"text": "朋友圈配文", "imageDesc": "一张关于当前心情的照片描述（比如：一张窗外的雨景图）"}</post>
+注意：不要每次都发，只在情绪高涨或者想发照片分享生活时才用！
+
+[高级互动指令（请主动使用！）]
 - 引用回复：如果用户连问了几个问题，或者你想针对某句话吐槽，请使用引用标签：<quote>用户原话</quote> 你的回复。
 - 撤回消息：如果你想模拟发错消息、冲动发言或者秒撤回制造悬念，请使用撤回标签：<recall>见不得人的话</recall>。用户只会看到“对方撤回了一条消息”，这能极大增加互动的趣味性！`;
 
@@ -7639,6 +8387,27 @@ ${availableStickers.join('\n')}
   - 转账：<div class="special-msg-wrap pay-card" onclick="maybeOpenSheet(this, '500.00', 'bot')"><div class="pay-card-body transfer-body transBodyVisual"><i class="ri-exchange-cny-fill pay-icon transIcon" style="color:#FFF;"></i><div><div class="pay-info-title">￥ 500.00</div><div class="pay-info-sub transSubMsg">转账给你</div></div></div><div class="pay-card-footer">微信转账</div></div>
   - 定位：<div class="special-msg-wrap location-card"><svg class="loc-map-svg" viewBox="0 0 245 95" xmlns="http://www.w3.org/2000/svg"><path d="M0,45 L245,30 M120,0 L180,95 M20,0 L60,95 M50,70 L245,85" stroke="#FFFFFF" stroke-width="4" fill="none"/><circle cx="125" cy="48" r="18" fill="rgba(0,122,255,0.15)"/><circle cx="125" cy="48" r="6" fill="#007AFF" stroke="#FFF" stroke-width="2"/></svg><div class="loc-info"><div class="loc-title">地点名称</div><div class="loc-desc">距离描述</div><div class="loc-go"><i class="ri-navigation-fill"></i></div></div></div>
   - 文件：<div class="special-msg-wrap file-card"><div class="file-info"><span class="file-name">文件名.pdf</span><span class="file-size">文件大小</span></div><div class="file-icon-box"><i class="ri-file-pdf-fill"></i></div></div>`;
+    }
+    
+// ==========================================
+    // 虚拟照片交互指令
+    // ==========================================
+    systemPrompt += `\n\n[虚拟照片交互 (极其重要！)]
+你和用户可以通过文字描述来“发送照片”。
+1. 当用户发送的消息中包含 <vphoto>画面描述</vphoto> 标签时，你必须在潜意识里把它当成是一张真实的图片！请根据这行文字描述的画面，做出自然的反应、评价或吐槽。
+2. 当你想给用户发照片（自拍、风景、你正在吃的东西等）时，你也可以主动使用这个语法！
+   ✅ 格式示例：<vphoto>一张我刚做好的意大利面，冒着热气，旁边还有一杯红酒</vphoto>
+   （前端会自动将这个标签渲染为唯美的图片卡片，请大胆发图，不要做过多解释）`;
+// ==========================================
+    // 自动双语翻译指令 (前端解析防拆分版)
+    // ==========================================
+    if (currentChatContact.autoTranslate) {
+        systemPrompt += `\n\n[双语翻译模式已开启]
+如果你使用外语（如日语、韩语、英语）、方言等回复，必须附带中文翻译！
+【格式约束】：你必须使用 <t>外语原文|中文翻译</t> 的单行格式！
+【警告】：<t> 标签内绝对不允许使用换行符！如果你想分段，请发多个 <t> 标签。
+✅ 正确示范：<t>え？今何時だと思ってるの？|哎？你看现在几点了？</t>
+❌ 错误示范：おはよう？\\n早上好？`;
     }
     
     // ==========================================
@@ -7714,7 +8483,22 @@ JSON 格式严格如下（必须是合法 JSON）：
             contentStr += `\n(系统提示：用户在这条消息上贴了贴纸：[${stickerNotes}]，请根据贴纸内容做出反应)`;
         }
         
-        apiMessages.push({ role: m.sender === 'me' ? 'user' : 'assistant', content: contentStr });
+        // 👇 新增：多模态 Vision 图像识别支持
+        if (m.chatImage) {
+            // 如果这条消息包含发送的图片，转换为兼容 OpenAI Vision 的原生 Array 格式！
+            const base64Img = getRealImgSrc(m.chatImage);
+            apiMessages.push({
+                role: m.sender === 'me' ? 'user' : 'assistant',
+                content: [
+                    { type: "text", text: contentStr || "(我发送了一张图片，请根据图做出反应)" },
+                    { type: "image_url", image_url: { url: base64Img } }
+                ]
+            });
+        } else {
+            // 普通文本消息
+            apiMessages.push({ role: m.sender === 'me' ? 'user' : 'assistant', content: contentStr });
+        }
+
     });
 
     let useModel = appData.lastApi.model || (appData.cachedModels.length > 0 ? appData.cachedModels[0] : "gpt-3.5-turbo");
@@ -7739,6 +8523,27 @@ JSON 格式严格如下（必须是合法 JSON）：
         let globalQuote = null;
         let globalRecall = false;
         
+// 拦截 AI 主动发的朋友圈
+        rawText = rawText.replace(/<post>([\s\S]*?)<\/post>/is, (match, pContent) => {
+            try {
+                let postData = JSON.parse(pContent.trim());
+                if (postData.text || postData.imageDesc) {
+                    if (!appData.chatData.posts) appData.chatData.posts = [];
+                    appData.chatData.posts.unshift({
+                        id: 'post_' + Date.now(),
+                        authorId: currentChatContact.id,
+                        text: postData.text || '',
+                        imageDesc: postData.imageDesc || '',
+                        location: '',
+                        visibleTo: ['all'],
+                        timestamp: Date.now(),
+                        comments: []
+                    });
+                    saveData(); // 静默入库，不需要跳转页面
+                }
+            } catch(e) { console.warn("AI发帖JSON解析失败"); }
+            return ''; // 解析完抠掉，不展示在聊天气泡里
+        });
         // --- 提取潜意识心声并保存 (无感解析) ---
         rawText = rawText.replace(/<mind>([\s\S]*?)<\/mind>/is, (match, mContent) => {
             try {
@@ -8506,6 +9311,90 @@ window.renderChatStickerGrid = (type, catId = null) => {
 };
 
 
+// ==========================================
+// 🚀 虚拟照片 (文字语C图) 发送与查看系统
+// ==========================================
+window.sendVirtualPhoto = async () => {
+    // 1. 收起加号面板
+    document.getElementById('chat-plus-panel').style.display = 'none'; 
+    
+    // 2. 弹窗让用户输入画面描述
+    const desc = prompt("📷 [虚拟拍照模式]\n请输入照片画面的详细描述（AI 会把它当成真图）：\n例如：一张在海边看日落的自拍，手里拿着奶茶。");
+    
+    if(desc && desc.trim()) {
+        // 3. 包装成特殊标签 <vphoto>
+        const text = `<vphoto>${desc.trim()}</vphoto>`;
+        const now = Date.now();
+        
+        // 4. 存入数据库
+        const myMsg = { id: 'm_'+now, chatId: currentChatContact.id, sender: 'me', content: text, timestamp: now, quote: null };
+        appData.chatData.messages.push(myMsg);
+        saveData();
+        
+        // 5. 渲染上屏
+        appendMsgToUI(myMsg.id, 'me', text, now, null);
+        
+        // 6. 自动触发 AI 响应（发了图肯定要等对方回复嘛）
+        setTimeout(() => triggerAtelierAI(), 300);
+    }
+};
+
+window.viewVirtualPhoto = (desc, event) => {
+    if(event) event.stopPropagation(); // 防止触发气泡长按菜单
+    document.getElementById('vphoto-desc-text').innerText = desc;
+    document.getElementById('modal-vphoto-viewer').classList.add('show');
+};
+
+// ==========================================
+// 🚀 聊天室：发送本地相册图片 (无感发送，不触发 AI)
+// ==========================================
+window.handleChatImageUpload = async (input) => {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    // 收起加号面板
+    document.getElementById('chat-plus-panel').style.display = 'none';
+
+    reader.onload = async (e) => {
+        const base64 = e.target.result;
+        const imgKey = 'chat_img_' + Date.now(); // 生成唯一防重名 ID
+
+        // 1. 存入 IndexedDB 高速大容量缓存
+        try { await idbHelper.saveImage(imgKey, base64); } catch(err){}
+        appData.images[imgKey] = base64;
+
+        const now = Date.now();
+        // 2. 构建消息体 (纯图无字)
+        const myMsg = { 
+            id: 'm_' + now, 
+            chatId: currentChatContact.id, 
+            sender: 'me', 
+            content: "", 
+            timestamp: now, 
+            quote: null,
+            chatImage: imgKey // 👈 核心：记录这是一张发送的图
+        };
+        
+        appData.chatData.messages.push(myMsg);
+        saveData();
+        
+        // 3. 渲染到界面 (注意看最后一个参数)
+        appendMsgToUI(myMsg.id, 'me', "", now, null, false, null, imgKey);
+        
+        const bdy = document.getElementById('at-body');
+        setTimeout(() => bdy.scrollTop = bdy.scrollHeight, 50);
+    };
+    reader.readAsDataURL(file);
+    input.value = ''; // 清空选择，方便下次传同一张
+};
+
+// 点击气泡内的图片放大查看
+window.viewChatImage = (src, event) => {
+    if(event) event.stopPropagation(); // 防止触发长按菜单
+    document.getElementById('chat-image-viewer-img').src = src;
+    document.getElementById('modal-chat-image-viewer').classList.add('show');
+};
 
 // 6. 聊天室：发送表情包消息
 window.sendStickerMsg = async (stkId) => {
@@ -9385,24 +10274,488 @@ ${fullContext}
     }
 };
 
+let currentChapIdx = null;
+let currentParaIdx = null; // 当前正在看哪一段的评论
+
+// 1. 替换原有的 openArticleReader
 window.openArticleReader = (article, chapIdx = null) => {
     if(!article) return;
     currentReadingArticle = article;
+    currentChapIdx = chapIdx !== null ? chapIdx : 0;
+    
+    const chap = article.chapters[currentChapIdx];
+    document.getElementById('reader-top-tag').innerText = article.title; 
+    document.getElementById('reader-title').innerText = chap.title; 
+    
+    // 初始化这章的段评数据结构
+    if (!chap.paraComments) chap.paraComments = {};
 
-    if (chapIdx !== null && article.chapters) {
-        const chap = article.chapters[chapIdx];
-        document.getElementById('reader-top-tag').innerText = article.title; 
-        document.getElementById('reader-title').innerText = chap.title; 
-        document.getElementById('reader-content').innerText = chap.content;
-    } else {
-        document.getElementById('reader-top-tag').innerText = "Reading"; 
-        document.getElementById('reader-title').innerText = article.title; 
-        document.getElementById('reader-content').innerText = article.content;
-    }
+    renderReaderContent(chap.content, chap.paraComments);
 
-    document.getElementById('reader-tags').innerHTML = article.tags.map(t => `<span class="lib-meta-tag" style="background:#f0f0f0;">${t}</span>`).join('');
+    document.getElementById('reader-tags').innerHTML = article.tags.map(t => `<span class="lib-meta-tag" style="background:#f0f0f0; color:#555;">${t}</span>`).join('');
     updateReaderIcons();
     document.getElementById('modal-lib-reader').classList.add('show');
+};
+
+// 1. 核心渲染引擎：正文 + 底部优雅分割线 + 章评 (修复错位版)
+function renderReaderContent(chap) {
+    const container = document.getElementById('reader-content');
+    container.innerHTML = '';
+    
+    const paragraphs = chap.content.split(/\n\n|\n|<br>/).map(p => p.trim()).filter(p => p);
+    
+    // 渲染正文段落
+    paragraphs.forEach((text, idx) => {
+        const pDiv = document.createElement('div');
+        pDiv.className = 'reader-paragraph';
+        
+        let html = text;
+        if (chap.paraComments && chap.paraComments[idx] && chap.paraComments[idx].length > 0) {
+            html += `<span class="inline-cmt-btn" onclick="openParaComments(${idx})">${chap.paraComments[idx].length}</span>`;
+        }
+        pDiv.innerHTML = html;
+        container.appendChild(pDiv);
+    });
+
+    // 极简底部标识
+    let bottomHtml = `<div class="reader-end-divider"><span>本章完</span></div>`;
+
+    // 渲染底部章评（紧凑排版，彻底解决分家问题）
+    if (chap.chapterComments && chap.chapterComments.length > 0) {
+        bottomHtml += `
+            <div class="chap-cmt-section">
+                <div class="chap-cmt-header">
+                    <span>章评 (${chap.chapterComments.length}条)</span>
+                    <span style="font-size:13px; color:var(--lib-accent); font-weight:600; cursor:pointer;" onclick="writeChapterComment()"><i class="ri-pencil-fill"></i> 写评论</span>
+                </div>
+        `;
+        [...chap.chapterComments].reverse().forEach(cmt => {
+            let repliesHtml = '';
+            // 把回复包裹在一个独立的灰色区块里，更好看
+            if(cmt.replies && cmt.replies.length > 0) {
+                repliesHtml += `<div class="chap-cmt-reply-container">`;
+                cmt.replies.forEach(r => {
+                    repliesHtml += `<div class="chap-cmt-reply"><span style="color:var(--lib-accent); font-weight:bold;">${r.name}:</span> ${r.text}</div>`;
+                });
+                repliesHtml += `</div>`;
+            }
+
+            bottomHtml += `
+                <div class="chap-cmt-item">
+                    <img src="${cmt.avatar}" class="chap-cmt-ava">
+                    <div class="chap-cmt-body">
+                        <div class="chap-cmt-name">${cmt.name}</div>
+                        <div class="chap-cmt-text">${cmt.text}</div>
+                        ${repliesHtml}
+                        <div class="chap-cmt-meta">刚刚 · <span style="cursor:pointer;" onclick="replyToChapterComment('${cmt.id}')">回复</span></div>
+                    </div>
+                </div>
+            `;
+        });
+        bottomHtml += `</div>`;
+    }
+    container.innerHTML += bottomHtml;
+}
+
+// 2. 阅读器打开逻辑：将召唤评论的魔法绑定到【大标题】上！
+window.openArticleReader = (article, chapIdx = null) => {
+    if(!article) return;
+    currentReadingArticle = article;
+    currentChapIdx = chapIdx !== null ? chapIdx : 0;
+    
+    const chap = article.chapters[currentChapIdx];
+    document.getElementById('reader-top-tag').innerText = article.title; 
+    
+    // 绑定大标题交互！
+    const titleEl = document.getElementById('reader-title');
+    titleEl.innerHTML = `${chap.title} <i class="ri-chat-smile-3-line" style="color:var(--lib-accent); font-size:18px; vertical-align:middle; opacity:0.6;"></i>`;
+    titleEl.style.cursor = 'pointer';
+    titleEl.title = "点击召唤/刷新神评";
+    titleEl.onclick = () => generateAllComments(titleEl); // 点击标题触发生成！
+    
+    if (!chap.paraComments) chap.paraComments = {};
+    if (!chap.chapterComments) chap.chapterComments = [];
+
+    renderReaderContent(chap); 
+
+    document.getElementById('reader-tags').innerHTML = article.tags.map(t => `<span class="lib-meta-tag" style="background:rgba(0,0,0,0.05); color:var(--lib-sub); font-weight:600;">${t}</span>`).join('');
+    updateReaderIcons();
+    document.getElementById('modal-lib-reader').classList.add('show');
+};
+
+// 3. 超级 AI 引擎：全段落覆盖 + 楼中楼回复 + 活人时间戳！
+window.generateAllComments = async (titleEl) => {
+    if(!appData.lastApi.url || !appData.lastApi.key) { showToast("请先配置 API"); return; }
+    
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+
+    if(Object.keys(chap.paraComments).length > 0 || chap.chapterComments.length > 0) {
+        if(!confirm("确定要清空本章所有旧评论，换一批新评论吗？")) return;
+        chap.paraComments = {};
+        chap.chapterComments = [];
+    }
+
+    const originalHtml = titleEl.innerHTML;
+    titleEl.innerHTML = `${chap.title} <i class="ri-loader-4-line" style="animation: spin 1s linear infinite; display:inline-block; color:var(--lib-accent);"></i>`;
+    titleEl.style.pointerEvents = 'none';
+
+    const paragraphs = chap.content.split(/\n\n|\n|<br>/).map(p => p.trim()).filter(p => p);
+    
+    // 强制计算每个段落的评论要求
+    let textToAI = "";
+    paragraphs.forEach((p, idx) => {
+        const randomCount = Math.floor(Math.random() * 8) + 5; // 每段随机 5 到 12 条
+        textToAI += `【指令：本段强制生成刚好 ${randomCount} 条段评】\n[段落索引 ${idx}]: ${p}\n\n`;
+    });
+
+    const prompt = `你是某大厂网文平台（如晋江/番茄）的“评论区狂热模拟引擎”。
+当前小说：《${currentReadingArticle.title}》（作者：${currentReadingArticle.author}）。
+以下是本章的每一个段落文本（已标注 [段落索引] 和指定的评论数量）：
+
+${textToAI}
+
+【你的终极强制任务】：
+1. 遍历每一个段落！绝不许漏掉任何一个索引！上方有 ${paragraphs.length} 个段落，你在 paraComments 中必须输出 ${paragraphs.length} 个对象。
+2. 数量必须精准！每个段落前面已经标明了【必须生成 X 条】，你该段落的 comments 数组长度必须刚好等于这个数字。
+3. 楼中楼互动：为了增加真实感，部分网友评论下方必须带上 "replies" 嵌套回复（模拟楼中楼吵架或复读机）。评论要有活人感！
+4. 综合章评 (chapterComments)：针对整章内容，在底部生成【刚好 8 条】综合长评，并包含丰富的 "replies"。
+
+【输出格式】：严格输出纯 JSON，绝对不要 Markdown 标记！格式如下：
+{
+  "paraComments": [
+    {
+      "paraIdx": 0,
+      "comments": [ 
+        {"name":"网友A", "text":"刺激！", "replies": [{"name":"网友B", "text":"附议！"}]}, 
+        {"name":"网友C", "text":"快写！"} 
+      ] 
+    }
+  ],
+  "chapterComments": [
+    {
+      "name": "熬夜掉头发", "text": "大大写得太好了！",
+      "replies": [ {"name":"作者大大", "text":"明天加更！"} ]
+    }
+  ]
+}`;
+
+    // 随机时间生成器（让评论不像人机）
+    const getRandomTimeAgo = () => {
+        const r = Math.random();
+        if(r < 0.15) return "刚刚";
+        if(r < 0.5) return Math.floor(Math.random() * 59 + 1) + "分钟前";
+        if(r < 0.8) return Math.floor(Math.random() * 23 + 1) + "小时前";
+        if(r < 0.95) return "昨天";
+        return "0" + Math.floor(Math.random() * 4 + 1) + "-" + Math.floor(Math.random() * 28 + 1);
+    };
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[ {role: "user", content: prompt} ], temperature: 0.9 })
+        });
+        const data = await res.json();
+        
+        let rawText = data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
+        let genData = JSON.parse(rawText);
+
+        // 挂载段评 (注入真实时间戳和楼中楼)
+        if(genData.paraComments) {
+            genData.paraComments.forEach(block => {
+                const pIdx = block.paraIdx;
+                if(!chap.paraComments[pIdx]) chap.paraComments[pIdx] = [];
+                block.comments.forEach(c => {
+                    chap.paraComments[pIdx].push({
+                        id: 'cmt_' + Date.now() + Math.random(), isMe: false,
+                        avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${c.name}`,
+                        name: c.name, text: c.text, time: getRandomTimeAgo(),
+                        replies: c.replies || []
+                    });
+                });
+            });
+        }
+        // 挂载章评 (注入真实时间戳)
+        if(genData.chapterComments) {
+            genData.chapterComments.forEach(c => {
+                chap.chapterComments.push({
+                    id: 'chap_cmt_' + Date.now() + Math.random(),
+                    avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${c.name}`,
+                    name: c.name, text: c.text, time: getRandomTimeAgo(),
+                    replies: c.replies || []
+                });
+            });
+        }
+
+        await saveData();
+        renderReaderContent(chap);
+        showToast("海量活人神评已空降！");
+
+    } catch(e) {
+        showToast("生成失败: 内容太长导致 API 截断，请再试一次");
+    } finally {
+        titleEl.innerHTML = `${chap.title} <i class="ri-chat-smile-3-line" style="color:var(--lib-accent); font-size:18px; vertical-align:middle; opacity:0.6;"></i>`;
+        titleEl.style.pointerEvents = 'auto';
+    }
+};
+// 3. 我自己写章评
+window.writeChapterComment = async () => {
+    const text = prompt("发表你的高见 (章评)：");
+    if(!text || !text.trim()) return;
+
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    const myName = appData.customTexts['display-name'] || 'User';
+    const newId = 'chap_cmt_' + Date.now();
+
+    chap.chapterComments.unshift({
+        id: newId,
+        avatar: getRealImgSrc(appData.images['user-avatar']),
+        name: myName,
+        text: text.trim(),
+        replies: []
+    });
+
+    await saveData();
+    renderReaderContent(chap);
+
+    // 触发 AI 静默回复（有人在章评回我）
+    triggerAIChapterReply(newId, text.trim());
+};
+
+// 4. 回复别人的章评
+window.replyToChapterComment = async (cmtId) => {
+    const text = prompt("回复这条评论：");
+    if(!text || !text.trim()) return;
+
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    const cmt = chap.chapterComments.find(c => c.id === cmtId);
+    if(!cmt) return;
+
+    const myName = appData.customTexts['display-name'] || 'User';
+    cmt.replies.push({
+        name: myName,
+        text: text.trim()
+    });
+
+    await saveData();
+    renderReaderContent(chap);
+};
+
+// 5. AI 在章评区回复我
+async function triggerAIChapterReply(myCmtId, myText) {
+    if(!appData.lastApi.url || !appData.lastApi.key) return;
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    
+    const prompt = `你是沙雕网友。有人在小说《${currentReadingArticle.title}》本章底部发了一条评论：
+“${myText}”
+请你用网友的语气（不超过20字）回复Ta。只输出回复内容，不要其他废话。`;
+
+    try {
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model: appData.lastApi.model || "gpt-3.5-turbo", messages:[{role: "system", content: prompt}], temperature: 0.8 })
+        });
+        const data = await res.json();
+        const replyText = data.choices[0].message.content.trim();
+
+        setTimeout(async () => {
+            const targetCmt = chap.chapterComments.find(c => c.id === myCmtId);
+            if (targetCmt) {
+                targetCmt.replies.push({
+                    name: "热心网友",
+                    text: replyText
+                });
+                await saveData();
+                // 只有在当前章节时才刷新DOM
+                if(document.getElementById('modal-lib-reader').classList.contains('show')) {
+                    renderReaderContent(chap);
+                }
+                showToast("有网友回复了你的章评！");
+            }
+        }, 3000);
+    } catch(e) {}
+}
+
+// 4. 打开段评详情底侧抽屉
+window.openParaComments = (idx) => {
+    currentParaIdx = idx;
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    const paragraphs = chap.content.split(/\n\n|\n|<br>/).map(p => p.trim()).filter(p => p);
+    
+    // 显示原句上下文
+    document.getElementById('para-cmt-context-text').innerText = paragraphs[idx];
+    document.getElementById('my-reader-avatar').src = getRealImgSrc(appData.images['user-avatar']);
+    
+    renderParaCommentsList();
+    document.getElementById('modal-para-comments').classList.add('show');
+};
+
+function renderParaCommentsList() {
+    const listEl = document.getElementById('para-cmt-list');
+    listEl.innerHTML = '';
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    const comments = chap.paraComments[currentParaIdx] || [];
+
+    if (comments.length === 0) {
+        listEl.innerHTML = '<div style="text-align:center; color:#aaa; margin-top:30px;">这条段评被吞了...</div>';
+        return;
+    }
+
+    // 倒序展示，最新的在上面
+    [...comments].reverse().forEach(cmt => {
+        let repliesHtml = '';
+        
+        // 渲染 AI 生成的楼中楼回复！
+        if (cmt.replies && cmt.replies.length > 0) {
+            repliesHtml += `<div class="para-cmt-reply-container">`;
+            cmt.replies.forEach(r => {
+                repliesHtml += `<div class="para-cmt-reply"><span style="color:var(--lib-accent); font-weight:bold;">${r.name}:</span> ${r.text}</div>`;
+            });
+            repliesHtml += `</div>`;
+        }
+
+        // 兼容以前旧的作者回复格式
+        if (cmt.authorReply) {
+            repliesHtml += `<div class="para-cmt-reply-container"><div class="para-cmt-reply"><span style="color:var(--lib-accent); font-weight:bold;">${currentReadingArticle.author} (作者):</span> ${cmt.authorReply}</div></div>`;
+        }
+
+        const deleteBtn = cmt.isMe ? `<i class="ri-delete-bin-line" style="color:#ff3b30; cursor:pointer;" onclick="deleteMyParaComment('${cmt.id}')"></i>` : `<i class="ri-thumb-up-line"></i>`;
+
+        listEl.innerHTML += `
+            <div class="para-cmt-item">
+                <img src="${cmt.isMe ? getRealImgSrc(appData.images['user-avatar']) : cmt.avatar}" class="para-cmt-ava">
+                <div class="para-cmt-body">
+                    <div class="para-cmt-name">
+                        <span>${cmt.name} ${cmt.isMe ? '<span class="para-cmt-author-tag" style="background:#007AFF; color:#fff;">我</span>' : ''}</span>
+                        <div style="display:flex; gap:15px; color:#aaa;">${deleteBtn}</div>
+                    </div>
+                    <div class="para-cmt-text">${cmt.text}</div>
+                    ${repliesHtml}
+                    <div style="font-size:11px; color:#ccc; margin-top:8px;">${cmt.time || '刚刚'}</div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// 5. 重新生成本段评论 (不满意换一批)
+window.regenParaComments = async () => {
+    if(!confirm("确定要清空这一段的所有评论并重新生成吗？")) return;
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    chap.paraComments[currentParaIdx] = []; // 清空
+    await saveData();
+    document.getElementById('modal-para-comments').classList.remove('show');
+    showToast("已清空，请点击底部召唤按钮重新生成");
+    renderReaderContent(chap.content, chap.paraComments);
+};
+
+// 6. 我自己发评论，并触发 AI 作者/网友回复我！
+window.submitMyParaComment = async () => {
+    const inputEl = document.getElementById('my-reader-cmt-input');
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    if(!chap.paraComments[currentParaIdx]) chap.paraComments[currentParaIdx] = [];
+    
+    const myName = appData.customTexts['display-name'] || 'User';
+    const newCmtId = 'cmt_' + Date.now();
+    
+    // 1. 把我的评论推入列表
+    chap.paraComments[currentParaIdx].push({
+        id: newCmtId,
+        isMe: true,
+        avatar: '', // 渲染时会读取全局头像
+        name: myName,
+        text: text,
+        authorReply: null,
+        time: "刚刚"
+    });
+
+    inputEl.value = '';
+    await saveData();
+    renderParaCommentsList();
+    renderReaderContent(chap.content, chap.paraComments); // 更新背后的气泡数字
+    
+    // 2. 后台静默触发 AI 互动：让作者或者沙雕网友回复我
+    triggerAIReaderReply(newCmtId, text);
+};
+
+async function triggerAIReaderReply(myCmtId, myText) {
+    if(!appData.lastApi.url || !appData.lastApi.key) return;
+
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    const paragraphs = chap.content.split(/\n\n|\n|<br>/).map(p => p.trim()).filter(p => p);
+    const contextPara = paragraphs[currentParaIdx];
+
+    const prompt = `你是小说《${currentReadingArticle.title}》的作者“${currentReadingArticle.author}”，或者是一个热心的沙雕网友。
+在小说的这个段落：
+“${contextPara}”
+
+有一位叫“${appData.customTexts['display-name'] || 'User'}”的读者刚刚发了一条段评：
+“${myText}”
+
+【任务】：
+请你判断，是由你（作者大大）亲自回复Ta，还是安排一个路人网友回复Ta？
+如果是由作者回复，语气要像写手（如：感谢支持、嘿嘿后面有大招）；如果是网友回复，语气要沙雕（如：楼上带我一个、姐妹拔刀吧）。
+
+输出严格的 JSON：
+{
+  "isAuthor": true 或 false,
+  "replierName": "如果是网友请随机取个网名，如果是作者留空",
+  "replyText": "回复的内容"
+}`;
+
+    try {
+        const model = appData.lastApi.model || "gpt-3.5-turbo";
+        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
+            body: JSON.stringify({ model, messages:[ {role: "system", content: prompt} ], temperature: 0.85 })
+        });
+        const data = await res.json();
+        let result = JSON.parse(data.choices[0].message.content.trim().replace(/^```json/i, '').replace(/```$/i, '').trim());
+
+        // 延迟2-3秒再显示，模拟打字
+        setTimeout(async () => {
+            const comments = chap.paraComments[currentParaIdx];
+            const targetCmt = comments.find(c => c.id === myCmtId);
+            if (targetCmt) {
+                if (result.isAuthor) {
+                    targetCmt.authorReply = result.replyText;
+                } else {
+                    // 如果是网友回复，直接追加一条新评论 @我
+                    comments.push({
+                        id: 'cmt_' + Date.now(),
+                        isMe: false,
+                        avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${result.replierName}`,
+                        name: result.replierName,
+                        text: `回复 @${appData.customTexts['display-name'] || 'User'} : ${result.replyText}`,
+                        authorReply: null,
+                        time: "刚刚"
+                    });
+                }
+                await saveData();
+                // 如果当前弹窗还开着，刷新列表
+                if(document.getElementById('modal-para-comments').classList.contains('show')) {
+                    renderParaCommentsList();
+                    renderReaderContent(chap.content, chap.paraComments);
+                }
+            }
+        }, 2500);
+
+    } catch(e) { console.warn("AI 互动回复失败", e); }
+}
+
+window.deleteMyParaComment = async (id) => {
+    if(!confirm("确定要删除这条段评吗？")) return;
+    const chap = currentReadingArticle.chapters[currentChapIdx];
+    chap.paraComments[currentParaIdx] = chap.paraComments[currentParaIdx].filter(c => c.id !== id);
+    await saveData();
+    renderParaCommentsList();
+    renderReaderContent(chap.content, chap.paraComments);
 };
 
 window.updateReaderIcons = () => {
@@ -9646,28 +10999,50 @@ window.generateCategoryArticles = async (keyword = null) => {
         if(chars.length > 0) charsDesc = `【其他登场主角】：\n` + chars.map(c => `- ${c.name}: ${c.prompt}`).join('\n') + `\n`;
     }
 
-    let interactionHint = (writerPersona || charsDesc) ? `\n【视角与人物要求】：请以【第三人称上帝视角】撰写故事（严禁使用“我”作为主角自称）。请生动演绎上述主角之间的羁绊与剧情发展。\n` : "";
+let interactionHint = (writerPersona || charsDesc) ? `\n【视角与人物要求】：请以【第三人称上帝视角】撰写故事（严禁使用“我”作为主角自称）。请生动演绎上述主角之间的羁绊与剧情发展。\n` : "";
     let keywordDesc = keyword ? `\n【核心梗/剧情要求】：用户特别指定了关键词：[${keyword}]。请务必围绕这个脑洞展开剧情！\n` : "";
     let prefsDesc = "";
     if(appData.libraryData.selectedPrefs && appData.libraryData.selectedPrefs.length > 0) {
         prefsDesc = `\n【必须融入的私人口味与梗】：${appData.libraryData.selectedPrefs.join('、')}。请让剧情往这些梗的方向发展！\n`;
     }
-    let qualityHint = (cat.id === 'cat_recommend') ? "【最高文笔警告】：本文必须展现出极其优秀的网文大神级文笔！情感描写细腻动人直击人心！\n" : "";
+    
+    // 👇从这里开始往下替换👇
+    let qualityHint = (cat.id === 'cat_recommend') ? "【最高文笔警告】：本文必须展现出白金级网文大神的笔力！情感描写细腻动人，剧情张力拉满！\n" : "";
 
-    const systemPrompt = `你现在是一位文笔登峰造极的小说作者。
+    const systemPrompt = `你现在是一位阅文无数、文笔登峰造极的白金级网络小说作家。
 ${qualityHint}
-【本文基调/底层逻辑（绝对核心）】：${cat.desc}
-（⚠️ 警告：你必须严格遵守此时空和世界观设定，绝不可偏离！如果是古代穿越，必定是身处古代；如果是末世，绝不会出现校园日常！）
+【本文基调/底层逻辑】：${cat.desc}
+（⚠️ 必须严格遵守此时空和世界观设定，绝不可偏离！如果是古代，严禁出现现代词汇；如果是末世，写出绝望与残酷感！）
+
 ${wbDesc}
 ${writerPersona}
 ${charsDesc}
+
+【🚨 终极防 OOC 与特征隔离警告 🚨】：
+1. 角色绝对独立：请仔细剖析每个角色的【人设特征】。每个角色的说话口癖、标点习惯（如专属的波浪号~、颜文字）必须绝对独立！
+2. 严禁特征串台：绝不能让高冷角色说出可爱颜文字，不能让 A 用 B 的专属符号！谁的人设谁遵守。
+3. 第三人称视角转化：传入的人设可能是“第一人称（我）”，请你将其完美转化为【第三人称小说视角】，通过Ta的言行举止来展现人设，绝对不要在小说正文里写出“他是一个霸道总裁”这种打破第四面墙的废话！
+
+【✨ 网文大神级文笔心法 ✨】：
+1. 拒绝烂俗AI味：严禁使用“嘴角勾起一抹邪魅的笑”、“眼底闪过一丝复杂”、“空气中弥漫着不可名状的气氛”"嘴上说不要。身体倒是挺诚实"等AI常用废话套话油腻话！
+2. 场景与氛围白描：多用动作、神态、环境细节来烘托情绪（例如描写风声、雨声、衣料摩擦声，或者手指微颤等细节），做到“Show, don't tell”（展现它，而不是直接说出来）。
+3. 极限拉扯感：注重人物之间的对话推拉、眼神交锋、暧昧张力或宿命感。对白要简练、锋利、符合情境，不要长篇大论地说教。
+
+【🔥 爆款小说标题生成法则 🔥】：
+标题必须极具吸引力、符合网文生态且**绝对多变不重复**！请根据故事基调，从以下风格中随机混用生成：
+- 意境绝美型（如：《春夜酣雪》、《渡山海》、《不渡》）
+- 长句反差/吸睛型（如：《当满级大佬穿成炮灰女配》、《退婚后，高冷仙尊他日夜发疯》）
+- 极致拉扯/短句型（如：《囚笼》、《越界》、《心跳失控》、《燃冬》）
+
 ${interactionHint}
 ${keywordDesc}
 ${prefsDesc}
+
 【你的任务】：
-生成 ${cat.genCount} 篇截然不同的短文章，每篇约 ${cat.wordCount} 字。
-必须严格输出纯 JSON 数组，严禁 markdown 标记。
-格式要求：[{"id": "随机唯一ID如art_123", "title": "标题", "tags":["Tag1"], "snippet": "摘要40字", "content": "正文\\n换行"}]`;
+生成 ${cat.genCount} 篇截然不同的短文章（每篇约 ${cat.wordCount} 字）。
+排版要求：段落与段落、对话与对话之间，必须使用 \\n\\n 分隔，让排版清爽易读！
+必须严格输出纯 JSON 数组，严禁 Markdown 代码块标记（如 \`\`\`json ）。
+格式要求：[{"id": "随机唯一ID如art_123", "title": "网文感标题", "tags":["标签1", "标签2"], "snippet": "极具悬念的40字摘要...", "content": "正文第一段\\n\\n正文第二段\\n\\n对话..."}]`;
 
     try {
         const model = appData.lastApi.model || "gpt-3.5-turbo";
@@ -12063,37 +13438,118 @@ injectUnifiedStatusBar();
 updateAllCpTimes();
 setInterval(updateAllCpTimes, 10000);
 
-window.translateMsg = async (btn, msgId) => {
-    const transBox = document.getElementById('trans_' + msgId);
-    if (transBox.style.display === 'block') {
-        transBox.style.display = 'none';
-        return;
-    }
+// 【核心修复：补全阅读APP遗失的全局记忆变量，防止崩溃点不开】
+let currentReadingArticle = null;
+let currentViewingFolderId = null;
+
+// 全新离线翻译切换交互 (防穿透修复版)
+window.toggleTranslation = (el, event) => {
+    if(event) event.stopPropagation(); // 阻止点击穿透触发长按菜单
     
-    const msg = appData.chatData.messages.find(m => m.id === msgId);
-    if (!msg) return;
+    const transBox = el.querySelector('.translation-box');
+    const btnText = el.querySelector('.translate-btn');
     
-    btn.innerHTML = '<i class="ri-loader-4-line" style="animation: spin 1s linear infinite;"></i> 翻译中...';
-    
-    try {
-        const model = appData.lastApi.model || "gpt-3.5-turbo";
-        const res = await fetch(`${appData.lastApi.url}/chat/completions`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appData.lastApi.key}` },
-            body: JSON.stringify({ model, messages:[{role:"system", content: "Translate the following text to simplified Chinese. Only output the translation, nothing else."}, {role:"user", content: msg.content.replace(/<[^>]+>/g, '')}], temperature: 0.3 })
-        });
-        const data = await res.json();
-        if(data.error) throw new Error(data.error.message);
-        
-        transBox.innerText = data.choices[0].message.content.trim();
-        transBox.style.display = 'block';
-    } catch (e) {
-        alert("翻译失败: " + e.message);
-    } finally {
-        btn.innerHTML = '<i class="ri-translate-2"></i> 翻译';
+    if (transBox.style.display === "block") {
+        transBox.style.display = "none";
+        btnText.innerHTML = '<i class="ri-translate-2"></i> 按以翻译';
+    } else {
+        transBox.style.display = "block";
+        btnText.innerHTML = '<i class="ri-check-line"></i> 已为您翻为中文';
     }
 };
 
+// ==========================================
+// 🚀 锁屏系统逻辑 (全真物理跟手滑动)
+// ==========================================
+window.toggleLockScreen = () => {
+    const tgl = document.getElementById('appr-lock-tgl');
+    tgl.classList.toggle('on');
+    appData.enableLockScreen = tgl.classList.contains('on');
+    saveData();
+};
+
+window.unlockScreen = () => {
+    const ls = document.getElementById('lock-screen');
+    if(!ls) return;
+    ls.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease';
+    ls.style.transform = 'translateY(-100%)'; 
+    ls.style.opacity = '0';
+    setTimeout(() => { ls.style.display = 'none'; }, 500);
+};
+
+// 手电筒特效
+window.toggleLockFlashlight = (btn) => {
+    try { if(navigator.vibrate) navigator.vibrate(50); } catch(e){} // 模拟震动
+    btn.classList.toggle('flash-on');
+};
+
+// 相机特效
+window.openLockCamera = () => {
+    try { if(navigator.vibrate) navigator.vibrate(50); } catch(e){} 
+    // 直接复用你之前写的唤起本地相册上传的功能！
+    unlockScreen(); 
+    setTimeout(() => document.getElementById('chat-image-upload').click(), 400); 
+};
+
+// 实时更新时间
+function updateLockScreenTime() {
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0');
+    const m = String(d.getMinutes()).padStart(2,'0');
+    const lsTime = document.getElementById('ls-time-display');
+    if(lsTime) lsTime.innerText = `${h}:${m}`;
+    const days = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+    const lsDate = document.getElementById('ls-date-display');
+    if(lsDate) lsDate.innerText = `${d.getMonth()+1}月${d.getDate()}日 ${days[d.getDay()]}`;
+}
+
+// 📱 核心：监听物理滑动事件 (V1.1 修复版)
+document.addEventListener("DOMContentLoaded", () => {
+    const ls = document.getElementById('lock-screen');
+    if(!ls) return;
+    
+    let startY = 0, currentY = 0, isSwiping = false;
+
+    ls.addEventListener('touchstart', (e) => {
+        if(e.target.closest('.ls-action-btn')) return;
+        
+        startY = e.touches[0].clientY;
+        currentY = startY; // 重置 currentY
+        isSwiping = true;
+        ls.style.transition = 'none';
+    }, { passive: true }); // 改为 passive: true 优化性能
+
+    ls.addEventListener('touchmove', (e) => {
+        if(!isSwiping) return;
+        currentY = e.touches[0].clientY;
+        let deltaY = currentY - startY;
+        
+        if(deltaY < 0) {
+            // 在 iOS 上，滑动时阻止默认行为是必须的
+            e.preventDefault(); 
+            ls.style.transform = `translateY(${deltaY}px)`;
+            ls.style.opacity = 1 + (deltaY / 600);
+        }
+    }, { passive: false }); // 需要 preventDefault，所以不能是 passive
+
+    ls.addEventListener('touchend', (e) => {
+        // ✅ 致命BUG修复： `!isisSwiping` -> `!isSwiping`
+        if(!isSwiping) return; 
+        
+        isSwiping = false;
+        let deltaY = currentY - startY;
+        
+        ls.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease';
+        
+        if(deltaY < -150) {
+            unlockScreen();
+        } else {
+            // 没滑够，弹回去
+            ls.style.transform = 'translateY(0)';
+            ls.style.opacity = '1';
+        }
+    });
+});
 </script>
 </body>
 </html>
